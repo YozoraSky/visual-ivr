@@ -251,11 +251,11 @@ public class LogRepoController {
 		ResultOutStatus resultOutStatus = new ResultOutStatus();
 		try {
 			ivrDetailLog.info(DES._EncryptByDES(repoModel.getSql(), keyProperties.getKey()) + "#");
+			resultOutStatus.setStatus("s");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			resultOutStatus.setStatus("f");
 			e.printStackTrace();
 		}
-		resultOutStatus.setStatus("s");
 		long ivrOutTime = System.currentTimeMillis();
 		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
 		return resultOutStatus;
