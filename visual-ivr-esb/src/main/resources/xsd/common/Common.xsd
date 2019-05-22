@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by Leon (Microsoft) -->
+<xs:schema xmlns="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/Common" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/Common" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:complexType name="AnyContainer">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:anyAttribute namespace="##any" processContents="skip"/>
+	</xs:complexType>
+	<xs:complexType name="Cursor">
+		<xs:sequence>
+			<xs:element name="ReferenceID" type="xs:string" minOccurs="0"/>
+			<xs:element name="NoOfRecord" type="xs:integer" minOccurs="0"/>
+			<xs:element name="MoreRecord" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="PageNo" type="xs:integer" minOccurs="0"/>
+			<xs:element name="RecordPerPage" type="xs:integer" minOccurs="0"/>
+			<xs:element name="TotalPage" type="xs:integer" minOccurs="0"/>
+			<xs:element ref="ExtensionCursor" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DataSet">
+		<xs:sequence>
+			<xs:element name="NoOfRecord" type="xs:integer" minOccurs="0"/>
+			<xs:element ref="Data" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="Cursor" minOccurs="0"/>
+			<xs:element ref="ExtentionDataSet" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Error">
+		<xs:sequence>
+			<xs:element name="ErrorType" type="xs:string"/>
+			<xs:element name="ErrorCode" type="xs:string"/>
+			<xs:element name="Timestamp" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="ErrorMessage" type="xs:string" minOccurs="0"/>
+			<xs:element name="ErrorContext" type="xs:string" minOccurs="0"/>
+			<xs:element name="ErrorActor" type="xs:string" minOccurs="0"/>
+			<xs:element ref="ExtensionError" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RqDetail">
+		<xs:sequence>
+			<xs:element ref="Data" minOccurs="0"/>
+			<xs:element ref="Cursor" minOccurs="0"/>
+			<xs:element ref="ExtensionRqDetail" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RsDetail">
+		<xs:sequence>
+			<xs:element name="StatusCode" type="xs:integer"/>
+			<xs:element ref="DataSet" minOccurs="0"/>
+			<xs:element ref="Error" minOccurs="0"/>
+			<xs:element ref="ExtensionRsDetail" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="AnyContainer" type="AnyContainer"/>
+	<xs:element name="Cursor" type="Cursor"/>
+	<xs:element name="Data" type="AnyContainer"/>
+	<xs:element name="DataSet" type="DataSet"/>
+	<xs:element name="Error" type="Error"/>
+	<xs:element name="RqDetail" type="RqDetail"/>
+	<xs:element name="RsDetail" type="RsDetail"/>
+	<xs:element name="ExtensionRsDetail" type="AnyContainer"/>
+	<xs:element name="ExtensionRqDetail" type="AnyContainer"/>
+	<xs:element name="ExtentionDataSet" type="AnyContainer"/>
+	<xs:element name="ExtensionError" type="AnyContainer"/>
+	<xs:element name="ExtensionCursor" type="AnyContainer"/>
+</xs:schema>

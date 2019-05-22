@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Code Gen from Clarity schema -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/ivBillInqRq/01" 
+targetNamespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/ivBillInqRq/01" 
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	 <!--  desc="帳單金額查詢" -->
+	<xs:element name="ivBillInqRq">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="REQHDR">
+					<xs:complexType>
+						<xs:sequence>
+						<xs:element name="SystemId" type="xs:string"  minOccurs="0"  ></xs:element>
+							<xs:element name="TrnNum" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="IVR+八位年月日+六位流水號" Chinese name="交易序號" length="20" --> </xs:element>
+<xs:element name="TrnCode" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0010請填入"JCNV0010"" Chinese name="交易代碼" length="8" --> </xs:element>
+
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+
+				<xs:element name="REQBDY" >
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="FUNCD" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0010請填入“STMI"" Chinese name="功能碼" length="4" --> </xs:element>
+<xs:element name="IDNO" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0010輸入欄位:身份証號十碼" Chinese name="身份証號十碼" length="16" --> </xs:element>
+
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Code Gen from Clarity schema -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/ivBillInqRs/01" 
+targetNamespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/ivBillInqRs/01" 
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	 
+	 <!--  desc="帳單金額查詢" -->
+	<xs:element name="ivBillInqRs">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="RESHDR">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="RspCode" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0010輸出欄位:此欄位為主機回覆的訊息代號" Chinese name="回覆碼" length="4" --> </xs:element>
+<xs:element name="TrnNum" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="IVR+八位年月日+六位流水號" Chinese name="交易序號" length="20" --> </xs:element>
+
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+	
+			<xs:element name="RESBDY" >
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BDYREC" maxOccurs="unbounded" minOccurs="0">
+							<xs:complexType>
+								<xs:all>
+									<xs:element name="FLID" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0010輸出欄位:當主機檔案異常時" Chinese name="檔案名稱" length="8" --> </xs:element>
+<xs:element name="BillDate" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0010輸出欄位:BLTM_STMT_DTE + 3天" Chinese name="帳單寄出月日" length="4" --> </xs:element>
+<xs:element name="CurrBalance" type="xs:decimal"  minOccurs="0"  >        <!-- type="xs:decimal" desc="JCNV0010輸出欄位:BLTM_CURR_BAL" Chinese name="本期應繳款" length="14" --> </xs:element>
+<xs:element name="DueAmt" type="xs:decimal"  minOccurs="0"  >        <!-- type="xs:decimal" desc="JCNV0010輸出欄位:BLTM_DUE_AMT" Chinese name="最低應繳額" length="14" --> </xs:element>
+<xs:element name="PymtDueDate" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0010輸出欄位:BLTM_PYMT_DUE_DTE" Chinese name="繳款截止日" length="4" --> </xs:element>
+<xs:element name="StmtYYYYMM" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0010輸出欄位:BLTM_STMT_YYYYMM" Chinese name="帳單年月" length="6" --> </xs:element>
+<xs:element name="CurrBalSign" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0010輸出欄位:+/-" Chinese name="正負號" length="1" --> </xs:element>
+<xs:element name="UnpaidStmtBal" type="xs:decimal"  minOccurs="0"  >        <!-- type="xs:decimal" desc="JCNV0010輸出欄位:同EXMS1331" Chinese name="目前餘額 (整數)" length="13" --> </xs:element>
+<xs:element name="TotAmtDueSign" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0010輸出欄位:+/-" Chinese name="正負號" length="1" --> </xs:element>
+<xs:element name="TotAmtDue" type="xs:decimal"  minOccurs="0"  >        <!-- type="xs:decimal" desc="JCNV0010輸出欄位:同EXMS1331" Chinese name="總計最低應繳款 (整數)" length="13" --> </xs:element>
+<xs:element name="PymtFlag" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0010輸出欄位:CYCLE DATE到DUE DATE之間是否有繳款的FLAG Y:有 N:沒有" Chinese name="繳款FLAG" length="1" --> </xs:element>
+<xs:element name="TotTxAmtSign" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0010輸出欄位:+/-" Chinese name="正負號" length="1" --> </xs:element>
+<xs:element name="TotTxAmt" type="xs:decimal"  minOccurs="0"  >        <!-- type="xs:decimal" desc="JCNV0010輸出欄位:總金額" Chinese name="總金額" length="13" --> </xs:element>
+
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+						
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="RESTLR" minOccurs="0">
+					<xs:complexType>
+						<xs:all>
+							
+						</xs:all>
+					</xs:complexType>						
+			</xs:element>
+
+
+		</xs:sequence>
+	</xs:complexType>
+</xs:element>
+	
+                        
+</xs:schema> 

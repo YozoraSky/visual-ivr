@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Code Gen from Clarity schema -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/ivCardProfChkRs/01" 
+targetNamespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/ivCardProfChkRs/01" 
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	 
+	 <!--  desc="null" -->
+	<xs:element name="ivCardProfChkRs">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="RESHDR">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="RspCode" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001/JCNV0028輸出欄位:此欄位為主機回覆的訊息代號" Chinese name="回覆碼" length="4" --> </xs:element>
+<xs:element name="TrnNum" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="IVR+八位年月日+六位流水號" Chinese name="交易序號" length="20" --> </xs:element>
+
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+	
+			<xs:element name="RESBDY" >
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BDYREC" maxOccurs="unbounded" minOccurs="0">
+							<xs:complexType>
+								<xs:all>
+									<xs:element name="FLID" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001/JCNV0028輸出欄位:當主機檔案異常時" Chinese name="檔案名稱" length="8" --> </xs:element>
+<xs:element name="BirthYYYYMMDD" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:卡人生日YYYYMMDD" Chinese name="卡人生日" length="8" --> </xs:element>
+<xs:element name="PSWD" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:服務確認碼" Chinese name="服務確認碼" length="5" --> </xs:element>
+<xs:element name="NAME" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001/JCNV0028輸出欄位:卡人姓名" Chinese name="卡人姓名" length="15" --> </xs:element>
+<xs:element name="MailFiller" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001/JCNV0028輸出欄位:地址維護日YYYYMMDD" Chinese name="地址維護日" length="8" --> </xs:element>
+<xs:element name="PswdFlag" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:有:Y, 無:N" Chinese name="服務確認碼註記" length="8" --> </xs:element>
+<xs:element name="ChCode" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:1: 有正卡 2: 單持附卡" Chinese name="持卡狀態" length="1" --> </xs:element>
+<xs:element name="PriId" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:正卡ID" Chinese name="正卡ID" length="16" --> </xs:element>
+<xs:element name="AltId" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:附卡ID" Chinese name="附卡ID" length="16" --> </xs:element>
+<xs:element name="PaymentFlag" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:3工作日內是否有繳款 Y: 有 N: 無" Chinese name="繳款註記" length="1" --> </xs:element>
+<xs:element name="VipFlag" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:Y:是, N:否" Chinese name="VIP註記" length="1" --> </xs:element>
+<xs:element name="HomePhone" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:住家電話" Chinese name="住家電話" length="18" --> </xs:element>
+<xs:element name="OfficePhone" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:公司電話" Chinese name="公司電話" length="18" --> </xs:element>
+<xs:element name="MobilePhone" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:行動電話" Chinese name="行動電話" length="11" --> </xs:element>
+<xs:element name="DdFlag" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:是否有辦自扣 Y: 有 N: 沒有" Chinese name="自扣註記" length="1" --> </xs:element>
+<xs:element name="EMAIL" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:EMAIL" Chinese name="EMAIL" length="50" --> </xs:element>
+<xs:element name="ContactAddr" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:通訊地址" Chinese name="通訊地址" length="77" --> </xs:element>
+<xs:element name="BillingCycle" type="xs:decimal"  minOccurs="0"  >        <!-- type="xs:decimal" desc="JCNV0001輸出欄位:CYCLE" Chinese name="CYCLE" length="18" --> </xs:element>
+<xs:element name="CorpFlag" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0001輸出欄位:G: 雙幣卡身分 A: 商務卡  B: 採購卡 C: GE 商務卡  D: GE 採購卡 E: 配銷卡 " Chinese name="雙幣卡身分" length="1" --> </xs:element>
+
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+						
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="RESTLR" minOccurs="0">
+					<xs:complexType>
+						<xs:all>
+							
+						</xs:all>
+					</xs:complexType>						
+			</xs:element>
+
+
+		</xs:sequence>
+	</xs:complexType>
+</xs:element>
+	
+                        
+</xs:schema> 

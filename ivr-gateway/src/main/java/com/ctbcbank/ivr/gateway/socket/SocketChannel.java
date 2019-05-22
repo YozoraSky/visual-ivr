@@ -1,0 +1,127 @@
+package com.ctbcbank.ivr.gateway.socket;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.ctbcbank.visual.ivr.encrypt.Log;
+import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
+import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
+
+@Component
+public class SocketChannel{
+	@Autowired
+	private SocketProperties socketProperties;
+	@Autowired
+	private Log log;
+	private static int changePort = 0;
+	
+	public static synchronized int getChangePort() {
+		changePort++;
+		if(changePort == 3)
+			changePort = 0;
+		return changePort;
+	}
+	
+	public SocketOut sendAndReceive(SocketIn socketIn, String UUID) throws Exception{
+		SocketOut socketOut = new SocketOut();
+		ProcessResult processResult = socketOut.getProcessResult();
+		String result = StringUtils.EMPTY;
+    	String inputHexLen = Integer.toHexString(socketIn.getSocketData().length()).toUpperCase();
+//		長度未滿4，前面補0
+    	while(inputHexLen.length()<4)
+    		inputHexLen = "0" + inputHexLen;
+    	
+//		此byte陣列為10進位的ascii編碼陣列
+		byte[] iso8583MessageByte = buildMessage(socketIn.getSocketData().getBytes(StandardCharsets.US_ASCII), inputHexLen);
+		int nowPort;
+		switch(getChangePort()) {
+			case 0: nowPort = socketProperties.getPort();break;
+			case 1: nowPort = socketProperties.getPort2();break;
+			case 2: nowPort = socketProperties.getPort3();break;
+			default: nowPort = socketProperties.getPort();break;
+		}
+		System.out.println(nowPort);
+		Socket socket = new Socket(socketProperties.getIp(),nowPort);
+		socket.setSoTimeout(3000);
+		if(socket!=null && socket.isConnected()) {
+			BufferedOutputStream outputStream = new BufferedOutputStream(socket.getOutputStream());
+			BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
+			outputStream.write(iso8583MessageByte);
+			long socketInTime = System.currentTimeMillis();
+			outputStream.flush();
+			byte[] dataByte = new byte[2048];
+			int length = -1;
+			boolean retry = false;
+//			接收回傳值
+			for(int i=0;i<3;i++) {
+				length = getResponse(dataByte, inputStream);
+				if(length == -1) {
+					retry = true;
+				}
+				else
+					break;
+				if(i==2 && retry==true)
+					throw new Exception("time out for three time!");
+			}
+			long socketOutTime = System.currentTimeMillis();
+			log.writeTimeLog(socketIn.getConnID(), UUID, "IVRSOCKET", socketInTime, socketOutTime);
+			if(length != -1) {
+				processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
+				String outputHexLen = StringUtils.EMPTY;
+				for(int i=0;i<2;i++) {
+					if(Integer.toHexString(dataByte[i] & 0xff).length()==1)
+						outputHexLen += "0" + Integer.toHexString(dataByte[i] & 0xff).toUpperCase();
+					else
+						outputHexLen += Integer.toHexString(dataByte[i] & 0xff).toUpperCase();
+				}
+				result = outputHexLen + new String(dataByte,2,length,StandardCharsets.US_ASCII);
+				ParseISO8583 parse = new ParseISO8583();
+				String rspCode = parse.getRspCode(new String(dataByte,14,length,StandardCharsets.US_ASCII));
+				socketOut.setRspCode(rspCode);
+				socketOut.setData(result.trim());
+			}
+			else {
+				processResult.setProcessResultEnum(ProcessResultEnum.DATA_NOT_FOUND);
+			}
+			socket.close();
+			log.writeSocketInfo(socketIn, socket, inputHexLen+socketIn.getSocketData(), result.trim(), Log.IVRSOCKETGATEWAY);
+		}
+		return socketOut;
+	}
+    
+//    方法1:把isoMessage的長度和內容皆轉成為16進位字串，並串接起來，之後再一起轉成byte陣列
+//    方法2:把isoMessage的長度轉成16進位字串，再轉成byte陣列(2 byte)，並和isoMessage的getBytes()組合成新陣列
+    private byte[] buildMessage(byte[] isoMessage, String hexLen) {
+    	byte[] result = new byte[isoMessage.length + 2];
+    	System.arraycopy(hexToByte(hexLen), 0, result, 0, 2);
+    	System.arraycopy(isoMessage, 0, result, 2, isoMessage.length);
+		return result;
+    }
+    
+    private byte[] hexToByte(String isoMessage) {
+    	//運算後的位元組長度:16進位數字字串長/2
+    	byte[] byteOut = new byte[isoMessage.length()/2];
+    	for(int i=0;i<isoMessage.length();i+=2)
+    		//每2位16進位數字轉換為一個10進位整數
+    		byteOut[i/2] = (byte) Integer.parseInt(isoMessage.substring(i, i+2),16);
+    	return byteOut;
+    }
+    
+    private int getResponse(byte[] dataByte, BufferedInputStream inputStream) throws Exception {
+    	int length = -1;
+		try {
+			length = inputStream.read(dataByte);
+		}catch(SocketTimeoutException e2) {
+			length = -1;
+		}
+		return length;
+    }
+}
+

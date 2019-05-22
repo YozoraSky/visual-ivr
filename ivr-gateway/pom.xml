@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.ctbcbank</groupId>
+		<artifactId>visual-ivr</artifactId>
+		<version>1.0</version>
+	</parent>
+	<artifactId>ivr-gateway</artifactId>
+	<name>ivr-gateway</name>
+	<packaging>war</packaging>
+	
+	<build>
+        <finalName>${project.name}</finalName>
+  	</build>
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.ctbcbank</groupId>
+			<artifactId>visual-ivr-esb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>sqljdbc4</artifactId>
+			<version>4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>2.4</version>
+			<classifier>jdk15</classifier>
+		</dependency>
+		<dependency>
+    		<groupId>org.jpos</groupId>
+    		<artifactId>jpos</artifactId>
+    		<version>2.0.10</version>
+    		<exclusions>
+    			<exclusion>
+    				<groupId>org.slf4j</groupId>
+    				<artifactId>slf4j-nop</artifactId>
+    			</exclusion>
+    		</exclusions>
+		</dependency>
+		<dependency>
+    		<groupId>com.sleepycat</groupId>
+    		<artifactId>je</artifactId>
+    		<version>18.3.12</version>
+		</dependency>
+	</dependencies>
+</project>

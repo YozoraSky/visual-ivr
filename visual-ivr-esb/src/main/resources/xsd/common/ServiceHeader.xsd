@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by Leon (Microsoft) -->
+<xs:schema xmlns="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceHeader" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:common="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/Common" targetNamespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceHeader" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/Common" schemaLocation="Common.xsd"/>
+	<xs:complexType name="MessageIntegrity">
+		<xs:sequence>
+			<xs:element name="SignatureType" type="xs:string" minOccurs="0"/>
+			<xs:element name="Signature" type="xs:string"/>
+			<xs:element ref="ExtensionMessageIntegrity" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SecurityContext">
+		<xs:sequence>
+			<xs:element name="AuthenticationID" type="xs:string" minOccurs="0"/>
+			<xs:element name="AuthenticationPassword" type="xs:string" minOccurs="0"/>
+			<xs:element name="SecurityTokenType" type="xs:string" minOccurs="0"/>
+			<xs:element name="SecurityToken" type="xs:string" minOccurs="0"/>
+			<xs:element ref="ExtensionSecurityContext" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SecurityDetail">
+		<xs:sequence>
+			<xs:element ref="SecurityContext" minOccurs="0"/>
+			<xs:element ref="MessageIntegrity" minOccurs="0"/>
+			<xs:element ref="ExtensionSecurityDetail" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ServiceHeader">
+		<xs:sequence>
+			<xs:element name="StandardType" type="xs:string" minOccurs="0"/>
+			<xs:element name="StandardVersion" type="xs:string" minOccurs="0"/>
+			<xs:element name="TrackingID" type="xs:string" minOccurs="0"/>
+			<xs:element name="ServiceName" type="xs:string"/>
+			<xs:element name="ServiceVersion" type="xs:string"/>
+			<xs:element name="SourceID" type="xs:string" minOccurs="0"/>
+			<xs:element name="ChannelID" type="xs:string" minOccurs="0"/>
+			<xs:element name="TransactionID" type="xs:string" minOccurs="0"/>
+			<xs:element name="CorrelationID" type="xs:string" minOccurs="0"/>
+			<xs:element name="RqTimestamp" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="RsTimestamp" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="RqExpiration" type="xs:long" minOccurs="0"/>
+			<xs:element name="ServiceRouting" type="xs:string" minOccurs="0"/>
+			<xs:element name="RetryCount" type="xs:integer" minOccurs="0"/>
+			<xs:element name="RetryInterval" type="xs:long" minOccurs="0"/>
+			<xs:element name="StatusCode" type="xs:integer" minOccurs="0"/>
+			<xs:element ref="SecurityDetail" minOccurs="0"/>
+			<xs:element ref="SessionControl" minOccurs="0"/>
+			<xs:element name="InternalData" type="common:AnyContainer" minOccurs="0"/>
+			<xs:element ref="ExtensionServiceHeader" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SessionControl">
+		<xs:sequence>
+			<xs:element name="SessionKey" type="xs:string"/>
+			<xs:element name="SessionData" type="xs:string" minOccurs="0"/>
+			<xs:element ref="ExtensionSessionControl" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="MessageIntegrity" type="MessageIntegrity"/>
+	<xs:element name="SecurityContext" type="SecurityContext"/>
+	<xs:element name="SecurityDetail" type="SecurityDetail"/>
+	<xs:element name="ServiceHeader" type="ServiceHeader"/>
+	<xs:element name="SessionControl" type="SessionControl"/>
+	<xs:element name="ExtensionMessageIntegrity" type="common:AnyContainer"/>
+	<xs:element name="ExtensionSecurityContext" type="common:AnyContainer"/>
+	<xs:element name="ExtensionSecurityDetail" type="common:AnyContainer"/>
+	<xs:element name="ExtensionServiceHeader" type="common:AnyContainer"/>
+	<xs:element name="ExtensionSessionControl" type="common:AnyContainer"/>
+</xs:schema>

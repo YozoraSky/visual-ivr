@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by Leon (Microsoft) -->
+<xs:schema xmlns="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceError" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:common="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/Common" targetNamespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceError" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/Common" schemaLocation="Common.xsd"/>
+	<xs:complexType name="ServiceError">
+		<xs:sequence>
+			<xs:element ref="common:Error"/>
+			<xs:element ref="ExtensionServiceError" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ServiceError" type="ServiceError"/>
+	<xs:element name="ExtensionServiceError" type="common:AnyContainer"/>
+</xs:schema>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by Leon (Microsoft) -->
+<xs:schema xmlns="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceEnvelope" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:common="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/Common" xmlns:header="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceHeader" xmlns:body="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceBody" xmlns:error="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceError" targetNamespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceEnvelope" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/Common" schemaLocation="Common.xsd"/>
+	<xs:import namespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceHeader" schemaLocation="ServiceHeader.xsd"/>
+	<xs:import namespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceBody" schemaLocation="ServiceBody.xsd"/>
+	<xs:import namespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceError" schemaLocation="ServiceError.xsd"/>
+	<xs:complexType name="ServiceEnvelope">
+		<xs:sequence>
+			<xs:element ref="header:ServiceHeader"/>
+			<xs:element ref="body:ServiceBody" minOccurs="0"/>
+			<xs:element ref="error:ServiceError" minOccurs="0"/>
+			<xs:element ref="ExtensionServiceEnvelope" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ServiceEnvelope" type="ServiceEnvelope"/>
+	<xs:element name="ExtensionServiceEnvelope" type="common:AnyContainer"/>
+</xs:schema>

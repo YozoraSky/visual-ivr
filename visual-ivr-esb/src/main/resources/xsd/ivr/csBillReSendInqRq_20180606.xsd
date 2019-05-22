@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by TEAM ViRiLiTY (VRL) -->
+<!-- Code Gen from Clarity schema -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/csBillReSendInqRq/01" targetNamespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/csBillReSendInqRq/01" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--  desc="帳單補寄資訊查詢" -->
+	<xs:element name="csBillReSendInqRq">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="REQHDR">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TrnNum" type="xs:string"/>
+							<!-- type="X" desc=" " Chinese name="交易序號" length="20" -->
+							<xs:element name="TrnCode" type="xs:string" minOccurs="0"/>
+							<!-- type="X" desc="此欄位Option" Chinese name="交易代碼" length="8" -->
+							<xs:element name="CtryCode" type="xs:string" minOccurs="0"/>
+							<!-- type="X" desc="此欄位Option" Chinese name="國家別" length="2" -->
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="REQBDY">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="CustId" type="xs:string"/>
+							<!-- type="X" desc="" Chinese name="客戶身份證字號" length="16" -->
+							<xs:element name="CustName" type="xs:string"/>
+							<!-- type="X" desc="" Chinese name="客戶姓名" length="10" -->
+						        <xs:element name="CustBirthDt" type="xs:string"/>
+							<!-- type="X" desc="'YYYY/MM/DD'" Chinese name="客戶生日" length="10" -->
+							<xs:element name="BillType" type="xs:string"/>
+							<!-- type="X" desc="綜合月結單:1 新版信用卡對帳單:9" Chinese name="帳單類型" length="2" -->
+							<xs:element name="InqStartDt" type="xs:string"/>
+							<!-- type="X" desc="InqEndDt" Chinese name="帳單查詢起日" length="10" -->
+						        <xs:element name="InqEndDt" type="xs:string"/>
+							<!-- type="X" desc="InqEndDt" Chinese name="帳單查詢迄日" length="10" -->
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

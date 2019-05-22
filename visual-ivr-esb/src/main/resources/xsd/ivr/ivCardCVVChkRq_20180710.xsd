@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Code Gen from Clarity schema -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/ivCardCVVChkRq/01" 
+targetNamespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/ivCardCVVChkRq/01" 
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	 <!--  desc="驗證卡片確認碼" -->
+	<xs:element name="ivCardCVVChkRq">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="REQHDR">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TrnNum" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="IVR+八位年月日+六位流水號" Chinese name="交易序號" length="20" --> </xs:element>
+<xs:element name="SystemId" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc=""JCNV"" Chinese name="交易碼" length="4" --> </xs:element>
+<xs:element name="TrnCode" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0097請輸入“JCNV0097”" Chinese name="交易代碼" length="8" --> </xs:element>
+
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+
+				<xs:element name="REQBDY" >
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="FUNCD" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc=""VCVV"" Chinese name="功能碼" length="4" --> </xs:element>
+<xs:element name="CardNo" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="" Chinese name="卡號" length="16" --> </xs:element>
+<xs:element name="ExpirDate" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="" Chinese name="到期日" length="4" --> </xs:element>
+<xs:element name="CVV2" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="" Chinese name="CVV2" length="3" --> </xs:element>
+<xs:element name="CSC" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="" Chinese name="CSC" length="4" --> </xs:element>
+
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

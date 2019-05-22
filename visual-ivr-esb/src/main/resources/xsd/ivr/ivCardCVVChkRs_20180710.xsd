@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Code Gen from Clarity schema -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/ivCardCVVChkRs/01" 
+targetNamespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/ivCardCVVChkRs/01" 
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	 
+	 <!--  desc="驗證卡片確認碼" -->
+	<xs:element name="ivCardCVVChkRs">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="RESHDR">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="RspCode" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="JCNV0097輸出欄位:此欄位為主機回覆的訊息代號" Chinese name="回覆碼" length="4" --> </xs:element>
+<xs:element name="TrnNum" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="IVR+八位年月日+六位流水號" Chinese name="交易序號" length="20" --> </xs:element>
+
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+	
+			<xs:element name="RESBDY" >
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BDYREC" maxOccurs="unbounded" minOccurs="0">
+							<xs:complexType>
+								<xs:all>
+									<xs:element name="FLID" type="xs:string"  minOccurs="0"  >        <!-- type="xs:string" desc="當主機檔案異常時" Chinese name="檔案名稱" length="8" --> </xs:element>
+
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+						
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="RESTLR" minOccurs="0">
+					<xs:complexType>
+						<xs:all>
+							
+						</xs:all>
+					</xs:complexType>						
+			</xs:element>
+
+
+		</xs:sequence>
+	</xs:complexType>
+</xs:element>
+	
+                        
+</xs:schema> 

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by TEAM ViRiLiTY (VRL) -->
+<!-- Code Gen from Clarity schema -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/csBillReSendInqRs/01" targetNamespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/csBillReSendInqRs/01" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--  desc="帳單補寄資訊查詢" -->
+	<xs:element name="csBillReSendInqRs">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="RESHDR">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="RspCode" type="xs:string"/>
+							<!-- type="文字" desc="正確: 0000 , 錯誤: 其它" Chinese name="回覆碼" length="4" -->
+							<xs:element name="TrnNum" type="xs:string"/>
+							<!-- type="文字" desc=" " Chinese name="交易序號" length="20" -->
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="RESBDY" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="BDYREC" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="BillType" type="xs:string"/>
+										<!-- type="X" desc="綜合月結單:1 新版信用卡對帳單:9" Chinese name="帳單類型" length="2" -->
+										<xs:element name="SysSeqNo" type="xs:string"/>
+										<!-- type="X" desc="" Chinese name="系統回覆序號" length="50" -->
+										<xs:element name="CycleDate" type="xs:string"/>
+										<!-- type="X" desc=" " Chinese name="帳單寄送判斷日" length="10" -->
+										<xs:element name="ResendCnt" type="xs:string"/>
+										<!-- type="X" desc=" " Chinese name="該帳單寄送判斷日補寄次數" length="3" -->
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

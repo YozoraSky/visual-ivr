@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by TEAM ViRiLiTY (VRL) -->
+<!-- Code Gen from Clarity schema -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/csBillReSendNtfyRq/01"
+	 targetNamespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/BSMF/csBillReSendNtfyRq/01"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+
+	<!--  desc="帳單補寄通知" -->
+	<xs:element name="csBillReSendNtfyRq">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="REQHDR">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TrnNum" type="xs:string"/>
+
+							<!-- type="X" desc=" " Chinese name="交易序號" length="20" -->
+							<xs:element name="TrnCode" type="xs:string" minOccurs="0"/>
+
+							<!-- type="X" desc="此欄位Option" Chinese name="交易代碼" length="8" -->
+							<xs:element name="CtryCode" type="xs:string" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+
+				<!-- type="X" desc="此欄位Option" Chinese name="國家別" length="2" -->
+				<xs:element name="REQBDY" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:all>
+							<!-- type="X" desc="若前端沒有更新可放空白" Chinese name="補寄 E-MAIL " length="50" -->
+							<xs:element name="SysSeqNo" type="xs:string"/>
+
+							<!-- type="X" desc="" Chinese name="系統回覆序號" length="50" -->
+							<xs:element name="CycleDate" type="xs:string" minOccurs="0"/>
+
+							<!-- type="X" desc="YYYY/MM/DD" Chinese name="帳單寄送判斷日" length="10" -->
+							<xs:element name="ReSendEmail" type="xs:string" minOccurs="0"/>
+							
+							<!-- type="X" desc="若前端沒有更新可放空白" Chinese name="補寄 手機號碼 " length="50" -->
+							<xs:element name="ReSendTel" type="xs:string"  minOccurs="0"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

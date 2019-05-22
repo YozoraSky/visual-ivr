@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by Leon (Microsoft) -->
+<xs:schema xmlns="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceBody" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:common="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/Common" targetNamespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/ServiceBody" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://ns.chinatrust.com.tw/XSD/CTCB/ESB/Message/EMF/Common" schemaLocation="Common.xsd"/>
+	<xs:element name="ServiceBody" type="common:AnyContainer"/>
+</xs:schema>
