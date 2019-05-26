@@ -1,6 +1,5 @@
 package com.ctbcbank.ivr.schedule.batch;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.LineNumberReader;
@@ -28,7 +27,6 @@ import com.ctbcbank.ivr.schedule.properties.KeyProperties;
 @PropertySource(value = { "classpath:batchDlog.properties" })
 public class DetailLog {
 	private Logger logger = LoggerFactory.getLogger("batch_Dlog");
-	private final String insertSQL = "INSERT INTO IVRScheduleStatus() VALUES()";
 	@Autowired
 	private BatchDlogProperties batchDlogProperties;
 	@Autowired
@@ -40,7 +38,7 @@ public class DetailLog {
 	@Scheduled(cron="${batchDlog.cron.msg}")
 	public void run(){
 		try {
-			int totalSqlNum=0;
+			int data=0;
 			//抓前一天(一天有86400000毫秒)
 			long time = System.currentTimeMillis()-86400000;
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -48,43 +46,30 @@ public class DetailLog {
 			int NumFile = checkFile(sdf.format(now), batchDlogProperties.getLogPath());
 			//每個資料的處理
 			List<String> sqlArray = new ArrayList<String>();
-			String tempFileNum = (String) jdbcTemplate.queryForMap(insertSQL).get("FileNum");
-			String tempLineNum = (String) jdbcTemplate.queryForMap(insertSQL).get("LineNum");
-			int fileNum = 0;
-			int lineNum = 0;
-			if(tempFileNum!=null) {
-				fileNum = Integer.parseInt(tempFileNum);
-			}
-			if(tempLineNum!=null) {
-				lineNum = Integer.parseInt(tempLineNum);
-			}
-			for(int i = fileNum;i <= (NumFile-1); i++) {
-				jdbcTemplate.execute(insertSQL); //insert i into fileNum
+			for(int i = 0;i <= (NumFile-1); i++) {
 				String readFileName = sdf.format(now) + "." + i + ".txt";
+				//若是Linux系統需去除"C:"
 				FileReader fr = new FileReader(batchDlogProperties.getLogPath() + "detailLog." + readFileName);
-				BufferedReader bufferedReader = new BufferedReader(fr);
-				LineNumberReader reader = new LineNumberReader(bufferedReader);
+				LineNumberReader reader = new LineNumberReader(fr);
 				//讀取檔案內容資料和資料庫處理
 				while (reader.ready()) {
 					String line = reader.readLine();
-					if(reader.getLineNumber()>lineNum) {
-						String sql = DES._DecryptByDES(line.substring(line.indexOf("ivr_detail_log - ")+17,line.indexOf("#")),keyproperties.getKey());
-						sqlArray.add(sql);
-						if(sqlArray.size()>=5000) {
-							jdbcTemplate.batchUpdate(sqlArray.toArray(new String[0]));
-							jdbcTemplate.execute(sql); // insert reader.getLineNumber() into LineNum
-							sqlArray.clear();
-						}
-						totalSqlNum++;
+					String sql = DES._DecryptByDES(line.substring(line.indexOf("ivr_detail_log - ")+17,line.indexOf("#")),keyproperties.getKey());
+					sqlArray.add(sql);
+					if(sqlArray.size()>=5000) {
+						jdbcTemplate.batchUpdate(sqlArray.toArray(new String[0]));
+						sqlArray.clear();
 					}
+					data++;
 				}
 				fr.close();
 			}
-			jdbcTemplate.batchUpdate(sqlArray.toArray(new String[0]));
-			sqlArray.clear();
-			jdbcTemplate.execute(insertSQL); // insert reader.getLineNumber() into LineNum && insert status "s"
+			if(!sqlArray.isEmpty()) {
+				jdbcTemplate.batchUpdate(sqlArray.toArray(new String[0]));
+				sqlArray.clear();
+			}
 			logger.info("Read " + NumFile + " Folder");
-			logger.info(totalSqlNum + " sql columns are executed");
+			logger.info(data + " sql columns are executed");
 		} 
 		catch (Exception e) {
 			logger.info(e.toString());
