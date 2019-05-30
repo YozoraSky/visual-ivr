@@ -1,25 +1,27 @@
 package com.ctbcbank.ivr.schedule.batch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.ctbcbank.ivr.schedule.function.WriteDetailLog;
+import com.ctbcbank.ivr.schedule.function.DetailLog;
 
 
 @Component
 @EnableScheduling
 @PropertySource(value = { "classpath:batchDlog.properties" })
-public class DetailLog {
+public class BatchDetailLog {
+	private Logger logger = LoggerFactory.getLogger("batch_Dlog");
 	@Autowired
-	WriteDetailLog detailLog;
+	DetailLog detailLog;
 	
 	@Scheduled(cron="${batchDlog.cron.msg}")
 	public void run(){
-		long time = System.currentTimeMillis();
-		detailLog.write();
-		System.out.println("execute time : "+(System.currentTimeMillis()-time));
+		detailLog.insert();
+		logger.info("#$$%%%%$$#");
 	}
 }
