@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import com.ctbcbank.ivr.schedule.encrypt.DES;
 import com.ctbcbank.ivr.schedule.properties.BatchDlogProperties;
-import com.ctbcbank.ivr.schedule.properties.JdbcSQLProperties;
 import com.ctbcbank.ivr.schedule.properties.KeyProperties;
 
 @Component
@@ -27,8 +26,6 @@ public class DetailLog {
 	private Logger logger = LoggerFactory.getLogger("batch_Dlog");
 	@Autowired
 	private BatchDlogProperties batchDlogProperties;
-	@Autowired
-	private JdbcSQLProperties sqlProperties;
 	@Autowired
 	@Qualifier("ivrLogJdbcTemplate")
 	private JdbcTemplate jdbcTemplate;
@@ -44,12 +41,12 @@ public class DetailLog {
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			List<?> list = jdbcTemplate.queryForList(sqlProperties.getDetailLogSelectStatusSQL()
+			List<?> list = jdbcTemplate.queryForList(batchDlogProperties.getDetailLogSelectStatusSQL()
 																  .replace("@name", "detailLog")
 																  .replace("@date", date)
 																  .replace("@hostAddress", hostAddress));
 			if(list.isEmpty())
-				jdbcTemplate.execute(sqlProperties.getDetailLogInsertStatusSQL().replace("@date", date).replace("@hostAddress", hostAddress));
+				jdbcTemplate.execute(batchDlogProperties.getDetailLogInsertStatusSQL().replace("@date", date).replace("@hostAddress", hostAddress));
 			logger.info(date.replace("-", "") + "-detailLog");
 			int NumFile = checkFile(date.replace("-", ""), batchDlogProperties.getLogPath());
 			//每個資料的處理
@@ -80,7 +77,7 @@ public class DetailLog {
 			logger.info("DetailLog insert time : " + (System.currentTimeMillis()-time));
 			logger.info("Read " + NumFile + " Folder");
 			logger.info(totalSqlNum + " sql columns are executed");
-			jdbcTemplate.update(sqlProperties
+			jdbcTemplate.update(batchDlogProperties
 								.getDetailLogUpdateStatusSQL()
 								.replace("@status", "completed")
 								.replace("@LineNumber", String.valueOf(totalSqlNum))
@@ -91,7 +88,7 @@ public class DetailLog {
 		catch (Exception e) {
 			status = false;
 			logger.info(e.toString());
-			jdbcTemplate.update(sqlProperties
+			jdbcTemplate.update(batchDlogProperties
 								.getDetailLogUpdateStatusSQL()
 								.replace("@status", "fail")
 								.replace("@LineNumber", String.valueOf(totalSqlNum))
@@ -122,7 +119,7 @@ public class DetailLog {
 			long time = System.currentTimeMillis();
 //			刪除舊的DetailLog
 			while(count!=0) {
-				count = jdbcTemplate.update(sqlProperties.getDeleteDetailLog().replace("@date", date).replace("@hostAddress", hostAddress));
+				count = jdbcTemplate.update(batchDlogProperties.getDeleteDetailLog().replace("@date", date).replace("@hostAddress", hostAddress));
 			}
 			logger.info("DetailLog delete time : " + (System.currentTimeMillis()-time));
 			status = true;
