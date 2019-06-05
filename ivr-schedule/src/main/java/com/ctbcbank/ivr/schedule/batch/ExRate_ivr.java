@@ -39,6 +39,7 @@ public class ExRate_ivr {
 	@Scheduled(cron="${exrate_ivr.cron.msg}")
 	public void run(){
 		String uuid = UUID.randomUUID().toString();
+		String hostAddress = StringUtils.EMPTY;
 		String url = StringUtils.EMPTY;
 		JSONObject jsonObject = null;
 		String sql;
@@ -46,7 +47,10 @@ public class ExRate_ivr {
 		try {
 			SimpleDateFormat nowdate = new SimpleDateFormat("yyyyMMdd");
 			SimpleDateFormat nowdatetime = new SimpleDateFormat("yyyyMMddHHmmss");
-			url = exRateProperties.getUrl();
+			//抓取主機上的IP
+			InetAddress iAddress = InetAddress.getLocalHost();
+			hostAddress = iAddress.getHostAddress();
+			url = exRateProperties.getUrl().replace("@IP", hostAddress);
 			long Sendtime = System.currentTimeMillis();
 			Date now = new Date(Sendtime);
 			String jsonString = exRateProperties.getJson().replace("@SendTime", nowdatetime.format(now));
