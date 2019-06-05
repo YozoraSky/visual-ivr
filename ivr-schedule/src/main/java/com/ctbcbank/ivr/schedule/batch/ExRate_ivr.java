@@ -86,7 +86,7 @@ public class ExRate_ivr {
 																  .replace("@FilePath", "exrate_ivr"+nowdate.format(now)+".txt")
 																  .replace("@SCount", String.valueOf(success))
 																  .replace("@FCount", String.valueOf(fail)));
-				logger.info("\nRecordId:"+uuid+
+				logger.info("\nBatchId:"+uuid+
 							"\nFilePath:"+"exrate_ivr"+nowdate.format(now)+".txt"+
 							"\nSuccessCount:"+success+
 							"\nFailCount:"+fail+
