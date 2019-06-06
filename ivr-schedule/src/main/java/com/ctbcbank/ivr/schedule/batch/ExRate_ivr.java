@@ -47,10 +47,7 @@ public class ExRate_ivr {
 		try {
 			SimpleDateFormat nowdate = new SimpleDateFormat("yyyyMMdd");
 			SimpleDateFormat nowdatetime = new SimpleDateFormat("yyyyMMddHHmmss");
-			//抓取主機上的IP
-			InetAddress iAddress = InetAddress.getLocalHost();
-			hostAddress = iAddress.getHostAddress();
-			url = exRateProperties.getUrl().replace("@IP", hostAddress);
+			url = exRateProperties.getUrl();
 			long Sendtime = System.currentTimeMillis();
 			Date now = new Date(Sendtime);
 			String jsonString = exRateProperties.getJson().replace("@SendTime", nowdatetime.format(now));
