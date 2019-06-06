@@ -1,4 +1,4 @@
-package com.ctbcbank.ivr.schedule.function;
+package com.ctbcbank.ivr.repo.gateway.detailLog;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,9 +17,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import com.ctbcbank.ivr.schedule.encrypt.DES;
-import com.ctbcbank.ivr.schedule.properties.BatchDlogProperties;
-import com.ctbcbank.ivr.schedule.properties.KeyProperties;
+import com.ctbcbank.ivr.repo.gateway.encrypt.DES;
+import com.ctbcbank.ivr.repo.gateway.properties.BatchDlogProperties;
+import com.ctbcbank.ivr.repo.gateway.properties.KeyProperties;
 
 @Component
 public class DetailLog {
@@ -34,7 +34,7 @@ public class DetailLog {
 	
 	public Boolean execute(String date) {
 		String line;
-		String sql;
+		String sql = StringUtils.EMPTY;
 		int totalSqlNum=0;
 		Boolean status;
 		String hostAddress = StringUtils.EMPTY;
@@ -59,7 +59,14 @@ public class DetailLog {
 				//讀取檔案內容資料和資料庫處理
 				while (reader.ready()) {
 					line = reader.readLine();
-					sql = DES._DecryptByDES(line.substring(line.indexOf("ivr_detail_log - ")+17,line.indexOf("#")),keyproperties.getKey());
+					try {
+						sql = DES._DecryptByDES(line.substring(line.indexOf("ivr_detail_log - ")+17,line.indexOf("#")),keyproperties.getKey());
+					}
+					catch(StringIndexOutOfBoundsException e) {
+						sql = line;
+						logger.info(e.toString());
+						logger.info("Error sql : " + sql);
+					}
 					sqlArray.add(sql);
 					if(sqlArray.size()>=5000) {
 						jdbcTemplate.batchUpdate(sqlArray.toArray(new String[0]));

@@ -1,4 +1,4 @@
-package com.ctbcbank.ivr.schedule.batch;
+package com.ctbcbank.ivr.repo.gateway.detailLog;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,8 +7,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import com.ctbcbank.ivr.schedule.function.DetailLog;
 
 
 @Component

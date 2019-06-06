@@ -22,7 +22,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.ctbcbank.ivr.schedule.properties.SftpProperties;
+import com.ctbcbank.ivr.schedule.properties.RateProperties;
 import com.ctbcbank.ivr.schedule.sftp.SFTPUtil;
 
 //@Component
@@ -34,7 +34,7 @@ public class Rate_ivr {
 	@Qualifier("ivrConfigJdbcTemplate")
 	private JdbcTemplate jdbcTemplate;
 	@Autowired
-	private SftpProperties sftpProperties;
+	private RateProperties sftpProperties;
 	
 	@Scheduled(cron="${rate_ivr.cron.msg}")
 	public void run(){

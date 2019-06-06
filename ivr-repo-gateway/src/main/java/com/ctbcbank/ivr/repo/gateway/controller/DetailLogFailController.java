@@ -1,4 +1,4 @@
-package com.ctbcbank.ivr.schedule.controller;
+package com.ctbcbank.ivr.repo.gateway.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ctbcbank.ivr.schedule.function.DetailLog;
+import com.ctbcbank.ivr.repo.gateway.detailLog.DetailLog;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

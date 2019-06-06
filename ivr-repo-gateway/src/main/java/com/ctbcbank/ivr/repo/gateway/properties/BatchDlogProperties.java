@@ -1,4 +1,4 @@
-package com.ctbcbank.ivr.schedule.properties;
+package com.ctbcbank.ivr.repo.gateway.properties;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @PropertySource(value = { "classpath:rate.properties" })
-public class SftpProperties {
+public class RateProperties {
 	@Value("${rate_ivr.host}")
 	private String host;
 	@Value("${rate_ivr.username}")
