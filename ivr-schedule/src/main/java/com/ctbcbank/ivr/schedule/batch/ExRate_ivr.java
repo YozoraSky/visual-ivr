@@ -5,7 +5,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,7 +38,6 @@ public class ExRate_ivr {
 	@Scheduled(cron="${exrate_ivr.cron.msg}")
 	public void run(){
 		String uuid = UUID.randomUUID().toString();
-		String hostAddress = StringUtils.EMPTY;
 		String url = StringUtils.EMPTY;
 		JSONObject jsonObject = null;
 		String sql;
