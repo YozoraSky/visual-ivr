@@ -42,7 +42,6 @@ public class DetailLog {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			List<?> list = jdbcTemplate.queryForList(batchDlogProperties.getDetailLogSelectStatusSQL()
-																  .replace("@name", "detailLog")
 																  .replace("@date", date)
 																  .replace("@hostAddress", hostAddress));
 			if(list.isEmpty())
@@ -94,7 +93,7 @@ public class DetailLog {
 		} 
 		catch (Exception e) {
 			status = false;
-			logger.info(e.toString());
+			logger.error(e.toString());
 			jdbcTemplate.update(batchDlogProperties
 								.getDetailLogUpdateStatusSQL()
 								.replace("@status", "fail")
