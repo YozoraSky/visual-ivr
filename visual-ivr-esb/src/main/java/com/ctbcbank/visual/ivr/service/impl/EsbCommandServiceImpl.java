@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -33,7 +32,6 @@ import com.ctbcbank.visual.ivr.esb.model.EsbIn;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
 import com.ctbcbank.visual.ivr.service.EsbCommandService;
 import com.ctbcbank.visual.ivr.service.EsbCommonService;
-import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
 
 import net.sf.json.JSON;
 import net.sf.json.xml.XMLSerializer;
@@ -88,9 +86,9 @@ public class EsbCommandServiceImpl extends EsbCommonService implements EsbComman
 		else {
 			serviceEnvelope.getServiceHeader().setTransactionID(this.getTransactionID());
 		}
-		if(esbIn.getServiceName().equals("amOTPAuthntcnAud")) {
+		if(esbIn.getServiceName().equals("amOTPAuthntcnAud") || esbIn.getServiceName().equals("csCmpgnApplyAdd") || esbIn.getServiceName().equals("csCmpgnListInq")) {
 			serviceEnvelope.getServiceHeader().setSourceID("TWIVR");
-			if(((Map<String, String>)reqhdrMap.get("SecurityContext")).get("SecurityMethod").equals("verifyOTP")) {
+			if(esbIn.getServiceName().equals("amOTPAuthntcnAud") && ((Map<String, String>)reqhdrMap.get("SecurityContext")).get("SecurityMethod").equals("verifyOTP")) {
 				String transactionID = (String) reqhdrMap.get("TrnNum");
 				serviceEnvelope.getServiceHeader().setTransactionID(transactionID);
 			}
@@ -189,6 +187,7 @@ public class EsbCommandServiceImpl extends EsbCommonService implements EsbComman
 				processResult.setProcessResultEnum(ProcessResultEnum.NO_RECEIVE_DATA);
 		}
 		return esbCommandOut;
+		
 	}
 
 	protected Object sendAndReceive(Object value) {
@@ -198,11 +197,5 @@ public class EsbCommandServiceImpl extends EsbCommonService implements EsbComman
 		response = this.esbJmsReceiver.receiveSelectedAndConvert(message.getMessageSelector());
 		return response;
 	}
-	
-//	public String EncryptByDES(String str) throws Exception {
-//		if(isEncrypt)
-//			return DES._EncryptByDES(str, keyProperties.getKey());
-//		else
-//			return str;
-//	}
+
 }
