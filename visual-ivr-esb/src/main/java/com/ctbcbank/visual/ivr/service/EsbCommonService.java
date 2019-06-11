@@ -17,6 +17,14 @@ public class EsbCommonService {
 	private final static String ZERO_ONE = "01";
 	private final static String SOURCE_ID = "CSDP";
 	private final static String GS = "GS";
+	private static int serialNum = 0;
+	
+	public static synchronized String getSerialNum() {
+		serialNum++;
+		if(serialNum == 10)
+			serialNum = 0;
+		return String.valueOf(serialNum);
+	}
 	
 	public ServiceHeader getServiceHeader() {
 		final ServiceHeader serviceHeader = new ServiceHeader();
@@ -39,12 +47,14 @@ public class EsbCommonService {
 		return serviceEnvelope;
 	}
 
-	public String getTransactionID() { 
+	public String getTransactionID() {
+//		HHmmss代表流水號
 		return IVR_PREFIX + DateTime.now().toString("yyyyMMddHHmmss");
 	}
 	
 	public String getGSTransactionID() {
-		return GS + DateTime.now().toString("yyyyMMddHHmmss") + "0000";
+//		SSS+getSerialNum()代表流水號
+		return GS + DateTime.now().toString("yyyyMMddHHmmssSSS") + getSerialNum();
 	}
 
 	public String getSystemId() {
