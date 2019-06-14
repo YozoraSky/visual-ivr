@@ -28,7 +28,6 @@ import com.ctbcbank.ivr.repo.gateway.model.in.RepoModel;
 import com.ctbcbank.ivr.repo.gateway.model.in.SplunkIn;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOut;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOutStatus;
-import com.ctbcbank.ivr.repo.gateway.properties.JdbcNamedQueryProperties;
 import com.ctbcbank.ivr.repo.gateway.properties.KeyProperties;
 
 import io.swagger.annotations.Api;
@@ -44,8 +43,6 @@ public class LogRepoController {
 	@Autowired
 	@Qualifier("ivrLogJdbcTemplate")
 	private JdbcTemplate jdbcTemplate;
-	@Autowired
-	private JdbcNamedQueryProperties jdbcNamedQueryProperties;
 	@Autowired
 	private AsyncTask task;
 	@Autowired
@@ -200,32 +197,6 @@ public class LogRepoController {
 		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
 		return resultInfo;
 	}
-	
-//	@ApiOperation(value = "特殊insert", notes = "執行特定的insert語句，insert into IVRHostTxnLog")
-//	@PostMapping("/writeIVRHostTxnLog")
-//	public ResultOut writeIVRHostTxnLog(@ApiParam(required = true, value = "json格式物件") @RequestBody RepoIn repoIn) {
-//		ResultOut resultInfo = new ResultOut();
-//		ProcessResult processResult = resultInfo.getProcessResult();
-//		String hostAddress = StringUtils.EMPTY;
-//		try {
-//			InetAddress iAddress = InetAddress.getLocalHost();
-//			hostAddress = iAddress.getHostAddress();
-//			jdbcTemplate.update(jdbcNamedQueryProperties.getWriteIVRHostTxnLog(), repoIn.getDatas());
-//			processResult.setProcessResultEnum(ProcessResultEnum.ADD_SUCCESS);
-//			log.writeInfo(repoIn);
-//		}
-//		catch (Exception e) {
-//			log.writeError(repoIn, e.toString());
-//			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
-//			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
-//			processResult.setReturnMessage(e.getMessage());
-//		}
-//		processResult.setCallUUID(repoIn.getCallUUID());
-//		processResult.setConnID(repoIn.getConnID());
-//		processResult.setGvpSessionID(repoIn.getGvpSessionID());
-//		processResult.setApServerName(hostAddress);
-//		return resultInfo;
-//	}
 	
 	@ApiOperation(value = "紀錄splunk log", notes = "把splunkA和splunkB的sql語句分別寫成2個log檔案")
 	@PostMapping("/writeSplunkLog")

@@ -14,8 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,27 +24,20 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ctbcbank.ivr.repo.gateway.encrypt.Log;
 import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResult;
 import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResultEnum;
-import com.ctbcbank.ivr.repo.gateway.model.in.IVRVRFunctionIn;
 import com.ctbcbank.ivr.repo.gateway.model.in.RepoModel;
-import com.ctbcbank.ivr.repo.gateway.model.in.RepoModelToMultipleSQL;
-import com.ctbcbank.ivr.repo.gateway.model.out.IVRVRFunctionOut;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOut;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOutIDPriority;
-import com.ctbcbank.ivr.repo.gateway.properties.JdbcNamedQueryProperties;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 //import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 @RestController
@@ -56,11 +47,6 @@ public class ConfigRepoController {
 	@Autowired
 	@Qualifier("ivrConfigJdbcTemplate")
 	private JdbcTemplate jdbcTemplate;
-	@Autowired
-	@Qualifier("ivrConfigNamedParameterJdbcTemplate")
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	@Autowired
-	private JdbcNamedQueryProperties jdbcNamedQueryProperties;
 	@Autowired
 	private Log log;
 	
@@ -152,39 +138,6 @@ public class ConfigRepoController {
 		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
 		return resultOut;
 	}
-	
-//	@PostMapping("/multipleSQL")
-//	public ResultOut multipleSQL(@ModelAttribute RepoModelToMultipleSQL repoModelToMultipleSQL) {
-//		ResultOut resultOut = new ResultOut();
-//		List<Map<String,Object>> dataList = null;
-//		String[] sql = repoModelToMultipleSQL.getSql();
-//		RepoModel repoModel = new RepoModel();
-//		boolean status = true;
-//		repoModel.setCallUUID(repoModelToMultipleSQL.getCallUUID());
-//		repoModel.setConnID(repoModelToMultipleSQL.getConnID());
-//		repoModel.setGvpSessionID(repoModelToMultipleSQL.getGvpSessionID());
-//		for(int i=0;i<sql.length;i++) {
-//			repoModel.setSql(repoModelToMultipleSQL.getSql()[i]);
-//			if(sql[i].trim().substring(0, 6).equalsIgnoreCase("select")) {
-//				resultOut = query(repoModel);
-//				dataList = resultOut.getDataList();
-//			}
-//			if(sql[i].trim().substring(0, 6).equalsIgnoreCase("update"))  {
-//				resultOut = execute(repoModel);
-//			}
-//			if(sql[i].trim().substring(0, 6).equalsIgnoreCase("insert"))  {
-//				resultOut = execute(repoModel);
-//			}
-//			if(resultOut.getProcessResult().getStatus().equals("f"))
-//				status = false;
-//		}
-//		if(!status) {
-//			resultOut.getProcessResult().setProcessResultEnum(ProcessResultEnum.SYSTEM_ERROR);
-//		}
-//		resultOut.setDataList(dataList);
-//		
-//		return resultOut;
-//	}
 	
 //	若要在@ApiOperation中的notes中換行，需要打 空格+空格+\n
 	@ApiOperation(value = "執行DB的預存程序", notes = "只能執行只有一個回傳值，且回傳值為整數的預存程序，可多個輸入參數。  \n注意:依照此格式呼叫API:call 預存程序名稱 (參數*N,?)  \n補充:?表示一個回傳值  \n範例:call sp_IsBlackCustomer ('0922813583',?)")
@@ -342,41 +295,4 @@ public class ConfigRepoController {
 		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
 		return resultOut;
 	}
-	
-	@ApiOperation(value = "計算符合finctionId相同的數量", notes = "執行查詢的sql語句，計算IVRVRFCheck和IVRVRFunction兩個資料表中functionId相同且functionId=輸入值的數量，並回傳結果")
-	@PostMapping("/countIVRVRFunctionByFunctionId")
-	public IVRVRFunctionOut countIVRVRFunctionByFunctionId(@ApiParam(required = true, value = "json格式物件") @RequestBody IVRVRFunctionIn ivrvrFunctionIn) {
-		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
-		IVRVRFunctionOut ivrvrFunctionOut = new IVRVRFunctionOut();
-		ProcessResult processResult = ivrvrFunctionOut.getProcessResult();
-		String hostAddress = StringUtils.EMPTY;
-		try {
-			InetAddress iAddress = InetAddress.getLocalHost();
-			hostAddress = iAddress.getHostAddress();
-			Map<String, Object> paramMap = new ConcurrentHashMap<>();
-			paramMap.put("functionId", ivrvrFunctionIn.getFunctionId());
-			long DBInTime = System.currentTimeMillis();
-			Integer count = namedParameterJdbcTemplate.queryForObject(jdbcNamedQueryProperties.getCountIVRVRFunctionByFunctionId(), paramMap, Integer.class);
-			long DBOutTime = System.currentTimeMillis();
-			log.writeTimeLog(ivrvrFunctionIn.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
-			ivrvrFunctionOut.setCount(count);
-			processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
-			log.writeInfo(ivrvrFunctionIn, count, Log.OUTPUT);
-		}
-		catch (Exception e) {
-			log.writeError(ivrvrFunctionIn, e.toString());
-			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
-			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
-			processResult.setReturnMessage(e.getMessage());
-		}
-		processResult.setCallUUID(ivrvrFunctionIn.getCallUUID());
-		processResult.setConnID(ivrvrFunctionIn.getConnID());
-		processResult.setGvpSessionID(ivrvrFunctionIn.getGvpSessionID());
-		processResult.setApServerName(hostAddress);
-		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(ivrvrFunctionIn.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
-		return ivrvrFunctionOut;
-	}
-
 }
