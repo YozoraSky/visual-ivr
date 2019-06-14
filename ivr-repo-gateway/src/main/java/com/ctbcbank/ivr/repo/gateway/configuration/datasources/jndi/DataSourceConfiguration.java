@@ -78,6 +78,18 @@ public class DataSourceConfiguration {
 		return dataSourceLookup.getDataSource(fourth().getJndiName());
 	}
 	
+	@Bean
+	@ConfigurationProperties(prefix = "spring.ivr_ctcberp_ds")
+	public JndiPropertyHolder fiveth() {
+		return new JndiPropertyHolder();
+	}
+	
+	@Bean(name = "ivrCtcberpDs")
+	public DataSource fivethDataSource() {
+		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
+		return dataSourceLookup.getDataSource(fiveth().getJndiName());
+	}
+	
 	@Bean(name ="ivrConfigJdbcTemplate")
 	public JdbcTemplate ivrConfigJdbcTemplate(@Qualifier("ivrConfigDs") DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
@@ -96,6 +108,10 @@ public class DataSourceConfiguration {
 	}
 	@Bean(name ="ivrRcdmsJdbcTemplate")
 	public JdbcTemplate ivrRcdmsJdbcTemplate(@Qualifier("ivrRcdmsDs") DataSource dataSource) {
+		return new JdbcTemplate(dataSource);
+	}
+	@Bean(name ="ivrCtcberpJdbcTemplate")
+	public JdbcTemplate ivrCtcberpJdbcTemplate(@Qualifier("ivrCtcberpDs") DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
 	}
 	
