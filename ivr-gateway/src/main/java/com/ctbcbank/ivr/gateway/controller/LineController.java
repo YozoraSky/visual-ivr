@@ -181,7 +181,7 @@ public class LineController {
 		JSONObject jsonObject = null;
 		URL endpoint = new URL(url);
 		HttpURLConnection httpConnection = (HttpURLConnection) endpoint.openConnection();
-		httpConnection.setConnectTimeout(11000);
+		httpConnection.setReadTimeout(11000);
 		httpConnection.setRequestMethod("POST");
 		httpConnection.setDoOutput(true);
 		httpConnection.setDoInput(true);

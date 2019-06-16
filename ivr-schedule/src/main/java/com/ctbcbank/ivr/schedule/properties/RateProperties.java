@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @PropertySource(value = { "classpath:rate.properties" })
-public class SftpProperties {
+public class RateProperties {
 	@Value("${rate_ivr.host}")
 	private String host;
 	@Value("${rate_ivr.username}")
@@ -22,7 +22,9 @@ public class SftpProperties {
 	@Value("${InterestRateCode.path}")
 	private String interestRateCodePath;
 	@Value("${NCCInterestRate_sql}")
-	private String sql;
+	private String interestRateSql;
+	@Value("${rate_ivr.batchSql}")
+	private String batchSql;
 	
 	public String getHost() {
 		return host;
@@ -66,10 +68,16 @@ public class SftpProperties {
 	public void setInterestRateCodePath(String interestRateCodePath) {
 		this.interestRateCodePath = interestRateCodePath;
 	}
-	public String getSql() {
-		return sql;
+	public String getInterestRateSql() {
+		return interestRateSql;
 	}
-	public void setSql(String sql) {
-		this.sql = sql;
+	public void setInterestRateSql(String interestRateSql) {
+		this.interestRateSql = interestRateSql;
+	}
+	public String getBatchSql() {
+		return batchSql;
+	}
+	public void setBatchSql(String batchSql) {
+		this.batchSql = batchSql;
 	}
 }

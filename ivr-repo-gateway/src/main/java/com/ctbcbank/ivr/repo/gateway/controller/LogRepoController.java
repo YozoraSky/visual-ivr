@@ -249,8 +249,13 @@ public class LogRepoController {
 		long ivrInTime = System.currentTimeMillis();
 		String UUID = java.util.UUID.randomUUID().toString();
 		ResultOutStatus resultOutStatus = new ResultOutStatus();
+		String hostAddress = StringUtils.EMPTY;
 		try {
-			ivrDetailLog.info(DES._EncryptByDES(repoModel.getSql(), keyProperties.getKey()) + "#");
+			InetAddress iAddress = InetAddress.getLocalHost();
+			hostAddress = iAddress.getHostAddress();
+			String sql = repoModel.getSql().replace("[ProcessDate]", "[ProcessDate],[HostAddress]")
+										   .replace("getdate()", "getdate(),'" + hostAddress + "'");
+			ivrDetailLog.info(DES._EncryptByDES(sql, keyProperties.getKey()) + "#");
 			resultOutStatus.setStatus("s");
 		} catch (Exception e) {
 			resultOutStatus.setStatus("f");
