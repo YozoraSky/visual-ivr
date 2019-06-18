@@ -1,17 +1,22 @@
 package com.ctbcbank.ivr.repo.gateway.controller;
 
 import java.net.InetAddress;
-import java.text.SimpleDateFormat;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.CallableStatementCallback;
+import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,10 +42,9 @@ public class CtcberpRepoController {
 	@Autowired
 	private Log log;
 	
-//	若要在@ApiOperation中的notes中換行，需要打 空格+空格+\n
-	@ApiOperation(value = "查詢", notes = "執行查詢的sql語句，會有回傳結果。  \n補充:可執行內容只有select的預存程序(即預存程序中不可含有insert,update......等等)，須按照MSSQL的預存程序呼叫方法來呼叫。")
-	@PostMapping("/query")
-	public ResultOut query(@ModelAttribute RepoModel repoModel) {
+	@ApiOperation(value = "查詢", notes = "回傳多個結果集。  \n補充:可執行內容只有select的預存程序(即預存程序中不可含有insert,update......等等)，須按照MSSQL的預存程序呼叫方法來呼叫。")
+	@PostMapping("/queryForMultipleResultSet")
+	public ResultOut sp_WriteCTITaskList3(@ModelAttribute final RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
 		String UUID = java.util.UUID.randomUUID().toString();
 		ResultOut resultOut = new ResultOut();
@@ -49,34 +53,41 @@ public class CtcberpRepoController {
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 			long DBInTime = System.currentTimeMillis();
-			List<Map<String, Object>> dataList = ctcberpJdbcTemplate.queryForList(repoModel.getSql());
+			@SuppressWarnings("unchecked")
+			List<Map<String, Object>> result = (List<Map<String, Object>>) ctcberpJdbcTemplate.execute(new CallableStatementCreator() {
+				@Override
+				public CallableStatement createCallableStatement(Connection con) throws SQLException {
+					CallableStatement cstmt = con.prepareCall(repoModel.getSql());
+					return cstmt;
+				}
+			}, new CallableStatementCallback<Object>() {
+				@Override
+				public Object doInCallableStatement(CallableStatement cs) throws SQLException, DataAccessException {
+					List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+			        boolean resultsAvailable = cs.execute();
+			        while (resultsAvailable){
+			        	ResultSet rs = cs.getResultSet();
+			        	ResultSetMetaData rsmd = rs.getMetaData();
+			        	while(rs.next()){
+			        		Map<String, Object> map = new HashMap<String, Object>(); 
+			        		int columnCount = rsmd.getColumnCount();
+			        		for(int i=0;i<columnCount;i++){
+			        			String columnName = rsmd.getColumnName(i+1);
+			        			map.put(columnName, rs.getObject(i+1));
+			        		}
+			        		resultList.add(map);
+			        	}
+			        	resultsAvailable = cs.getMoreResults();
+			        }
+			        return resultList;
+				}
+			});
 			long DBOutTime = System.currentTimeMillis();
 			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Pattern pattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.\\d{3}$|"
-											+ "\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.\\d{2}$|"
-											+ "\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.\\d{1}$");
-			Matcher match;
-			for(Map<String, Object> m:dataList) {
-				for(Map.Entry<String, Object> entry:m.entrySet()) {
-					if(entry.getValue()!=null) {
-						match = pattern.matcher(entry.getValue().toString());
-						if(match.matches()) {
-							Date date = sdf.parse(entry.getValue().toString());
-							m.put(entry.getKey(), sdf.format(date));
-						}
-					}
-				}
-				list.add(m);
-			}
-			if (!dataList.isEmpty())
-				resultOut.setDataList(list);
-			else
-				resultOut.setDataList(new ArrayList<Map<String, Object>>());
+			resultOut.setDataList(result);
 			processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
-			log.writeInfo(repoModel, repoModel.getSql(), list);
+			log.writeInfo(repoModel, repoModel.getSql(), result);
 		}
 		catch (Exception e) {
 			log.writeError(repoModel, e.toString());
