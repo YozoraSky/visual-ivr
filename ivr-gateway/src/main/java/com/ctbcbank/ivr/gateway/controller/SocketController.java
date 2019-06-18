@@ -48,7 +48,7 @@ public class SocketController {
 			if(socketOut==null)
 				socketOut = new SocketOut();
 			processResult = socketOut.getProcessResult();
-			log.writeError(socketIn, e.toString(), Log.IVRSOCKETGATEWAY);
+			log.writeError(socketIn, e, Log.IVRSOCKETGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());

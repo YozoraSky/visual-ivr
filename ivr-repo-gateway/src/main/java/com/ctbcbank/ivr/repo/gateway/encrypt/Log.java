@@ -13,6 +13,10 @@ import com.ctbcbank.ivr.repo.gateway.properties.KeyProperties;
 public class Log {
 	private Logger logger = LoggerFactory.getLogger("ivr-repo-gateway");
 	private Logger logger_time = LoggerFactory.getLogger("time-log");
+	private Logger logger_stackTrace = LoggerFactory.getLogger("stack_trace_error");
+	private Logger ivrDetailLog = LoggerFactory.getLogger("ivr_detail_log");
+	private Logger loggerA = LoggerFactory.getLogger("splunk_A");
+	private Logger loggerB = LoggerFactory.getLogger("splunk_B");
 	public final static int INPUT = 0;
 	public final static int OUTPUT = 1;
 	@Autowired
@@ -33,6 +37,7 @@ public class Log {
 				  requestModel.getConnID(),
 				  requestModel.getGvpSessionID());
 	}
+	
 	public void writeInfo(RequestModel requestModel, Object msg, int type) throws Exception {
 		if(type == INPUT) {
 			logger.info("input : {}#\n"
@@ -71,6 +76,7 @@ public class Log {
 				  requestModel.getConnID(),
 				  requestModel.getGvpSessionID());
 	}
+	
 	public void writeInfo(RequestModel requestModel, Object input, Object output, Object M3count, Object TotalList) throws Exception {
 		logger.info("input : {}#\n"
 				  + "output : {}#\n"
@@ -86,13 +92,34 @@ public class Log {
 				  requestModel.getConnID(),
 				  requestModel.getGvpSessionID());
 	}
-	public void writeError(RequestModel requestModel, Object error) {
-		logger.error("---ERROR--- : {}#\n"
+	
+	public void writeDetailLog(String sql) throws Exception {
+		ivrDetailLog.info(EncryptByDES(sql) + "#");
+	}
+	
+	public void writeSplunkLog(String splunk_a, String splunk_b) {
+		loggerA.info(splunk_a);
+		loggerB.info(splunk_b);
+	}
+	
+	public void writeError(RequestModel requestModel, Exception error) {
+		StackTraceElement[] trace = error.getStackTrace();
+		error.printStackTrace();
+		StringBuilder sb = new StringBuilder();
+		Throwable ourCause = error.getCause();
+		sb.append(error + "\n");
+		for(StackTraceElement traceElement : trace) {
+			sb.append("\tat " + traceElement.getClassName() + " ");
+			sb.append("(" + traceElement.getFileName() + ":");
+			sb.append(traceElement.getLineNumber() + ")");
+			sb.append("\n");
+		}
+		logger.error("---ERROR--- : {}"
 				   + "CallUUID : {}#\n"
 				   + "ConnID : {}#\n"
 				   + "GvpSessionID : {}#\n"
 				   + "#$$%%%%$$#",
-				   error,
+				   sb.toString(),
 				   requestModel.getCallUUID(),
 				   requestModel.getConnID(),
 				   requestModel.getGvpSessionID());

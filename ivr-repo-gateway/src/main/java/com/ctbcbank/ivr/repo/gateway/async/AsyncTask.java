@@ -18,7 +18,7 @@ public class AsyncTask {
 			jdbcTemplate.execute(repoModel.getSql());
 		}
 		catch(Exception e) {
-			log.writeError(repoModel, e.toString());
+			log.writeError(repoModel, e);
 		}
 	}
 }

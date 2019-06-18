@@ -132,13 +132,24 @@ public class MqController {
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
-			logger.error("{} ---ERROR--- : {}#\n"
+			StackTraceElement[] trace = e.getStackTrace();
+			e.printStackTrace();
+			StringBuilder sb = new StringBuilder();
+			Throwable ourCause = e.getCause();
+			sb.append(e + "\n");
+			for(StackTraceElement traceElement : trace) {
+				sb.append("\tat " + traceElement.getClassName() + " ");
+				sb.append("(" + traceElement.getFileName() + ":");
+				sb.append(traceElement.getLineNumber() + ")");
+				sb.append("\n");
+			}
+			logger.error("{} ---ERROR--- : {}"
 					  + "CallUUID : {}#\n"
 					  + "ConnID : {}#\n"
 					  + "GvpSessionID : {}#\n"
 					  + "#$$%%%%$$#", 
 					  mqin.getType(), 
-					  e.getMessage(),
+					  sb.toString(),
 					  mqin.getCallUUID(), 
 					  mqin.getConnID(), 
 					  mqin.getGvpSessionID());

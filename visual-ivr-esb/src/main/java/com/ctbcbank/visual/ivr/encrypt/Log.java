@@ -17,6 +17,7 @@ public class Log {
 	private Logger logger_line = LoggerFactory.getLogger("line");
 	private Logger logger_socket = LoggerFactory.getLogger("socket");
 	private Logger logger_time = LoggerFactory.getLogger("time-log");
+	private Logger logger_stackTrace = LoggerFactory.getLogger("stack_trace_error");
 	public final static int IVRGATEWAY = 10;
 	public final static int IVRLINEGATEWAY = 11;
 	public final static int IVRSOCKETGATEWAY = 12;
@@ -102,13 +103,24 @@ public class Log {
 				  			  requestModel.getGvpSessionID());
 	}
 	
-	public void writeError(RequestModel requestModel, Object error, int loggerName) {
-		logger(loggerName).error("---ERROR--- : {}#\n"
+	public void writeError(RequestModel requestModel, Exception error, int loggerName) {
+		StackTraceElement[] trace = error.getStackTrace();
+		error.printStackTrace();
+		StringBuilder sb = new StringBuilder();
+		Throwable ourCause = error.getCause();
+		sb.append(error + "\n");
+		for(StackTraceElement traceElement : trace) {
+			sb.append("\tat " + traceElement.getClassName() + " ");
+			sb.append("(" + traceElement.getFileName() + ":");
+			sb.append(traceElement.getLineNumber() + ")");
+			sb.append("\n");
+		}
+		logger(loggerName).error("---ERROR--- : {}"
 				   			   + "CallUUID : {}#\n"
 				   			   + "ConnID : {}#\n"
 				   			   + "GvpSessionID : {}#\n"
 				   			   + "#$$%%%%$$#",
-				   			   error,
+				   			   sb.toString(),
 				   			   requestModel.getCallUUID(),
 				   			   requestModel.getConnID(),
 				   			   requestModel.getGvpSessionID());

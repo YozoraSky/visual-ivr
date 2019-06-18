@@ -80,7 +80,7 @@ public class RcdmsRepoController {
 			log.writeInfo(repoModel, repoModel.getSql(), list);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e.toString());
+			log.writeError(repoModel, e);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());

@@ -48,7 +48,7 @@ public class IvrController {
 				esbCommandOut = new EsbCommandOut();
 			}
 			processResult = esbCommandOut.getProcessResult();
-			log.writeError(esbIn, e.toString(), Log.IVRGATEWAY);
+			log.writeError(esbIn, e, Log.IVRGATEWAY);
 			processResult.setProcessResultEnum(ProcessResultEnum.SYSTEM_ERROR);
 		}
 		esbCommandOut.setServiceName(esbIn.getServiceName());

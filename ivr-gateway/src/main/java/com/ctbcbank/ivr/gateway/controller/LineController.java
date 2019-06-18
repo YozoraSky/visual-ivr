@@ -75,7 +75,7 @@ public class LineController {
 			}
 			log.writeInfo(lineIn, jsonString, jsonObject, Log.IVRLINEGATEWAY);
 		}catch(Exception e) {
-			log.writeError(lineIn, e.toString(), Log.IVRLINEGATEWAY);
+			log.writeError(lineIn, e, Log.IVRLINEGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
@@ -112,7 +112,7 @@ public class LineController {
 			}
 			log.writeInfo(lineIn, jsonString, jsonObject, Log.IVRLINEGATEWAY);
 		}catch(Exception e) {
-			log.writeError(lineIn, e.toString(), Log.IVRLINEGATEWAY);
+			log.writeError(lineIn, e, Log.IVRLINEGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
@@ -163,7 +163,7 @@ public class LineController {
 			}
 			log.writeInfo(lineIn, jsonString, jsonObject, Log.IVRLINEGATEWAY);
 		}catch(Exception e) {
-			log.writeError(lineIn, e.toString(), Log.IVRLINEGATEWAY);
+			log.writeError(lineIn, e, Log.IVRLINEGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
