@@ -92,7 +92,7 @@ public class ExRate_ivr {
 				logger.info(new Exception("主機忙線中").toString()+"--url:"+url);
 		}
 		catch(Exception e) {
-			logger.error(e.toString());
+			logger.error("---ERROR--- : ",e);
 		}
 	}
 	public JSONObject httpPost(String url, String output) throws Exception{

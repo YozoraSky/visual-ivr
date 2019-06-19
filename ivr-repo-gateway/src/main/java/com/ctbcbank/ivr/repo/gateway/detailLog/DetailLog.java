@@ -93,7 +93,7 @@ public class DetailLog {
 		} 
 		catch (Exception e) {
 			status = false;
-			logger.error(e.toString());
+			logger.error("---ERROR--- : ",e);
 			jdbcTemplate.update(batchDlogProperties
 								.getDetailLogUpdateStatusSQL()
 								.replace("@status", "fail")

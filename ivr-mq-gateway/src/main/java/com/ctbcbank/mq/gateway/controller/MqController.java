@@ -1,5 +1,7 @@
 package com.ctbcbank.mq.gateway.controller;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
@@ -132,24 +134,16 @@ public class MqController {
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
-			StackTraceElement[] trace = e.getStackTrace();
-			e.printStackTrace();
-			StringBuilder sb = new StringBuilder();
-			Throwable ourCause = e.getCause();
-			sb.append(e + "\n");
-			for(StackTraceElement traceElement : trace) {
-				sb.append("\tat " + traceElement.getClassName() + " ");
-				sb.append("(" + traceElement.getFileName() + ":");
-				sb.append(traceElement.getLineNumber() + ")");
-				sb.append("\n");
-			}
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
 			logger.error("{} ---ERROR--- : {}"
 					  + "CallUUID : {}#\n"
 					  + "ConnID : {}#\n"
 					  + "GvpSessionID : {}#\n"
 					  + "#$$%%%%$$#", 
 					  mqin.getType(), 
-					  sb.toString(),
+					  sw.toString(),
 					  mqin.getCallUUID(), 
 					  mqin.getConnID(), 
 					  mqin.getGvpSessionID());

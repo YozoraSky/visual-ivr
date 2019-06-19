@@ -1,11 +1,11 @@
 package com.ctbcbank.ivr.repo.gateway.enumeration;
 
 public enum ProcessResultEnum {
-	SYSTEM_ERROR(ProcessStatus.FAIL, "APP-001-000", "系統忙碌中!"),
+	SYSTEM_ERROR(ProcessStatus.FAIL, "APP-001-000", "API錯誤!"),
 	QUERY_SUCCESS(ProcessStatus.SUCCESS, "APP-001-001", "查詢成功"),
 	DATA_NOT_FOUND(ProcessStatus.SUCCESS, "APP-001-002", "查無資料"),
-	ADD_SUCCESS(ProcessStatus.SUCCESS, "APP-001-002", "新增成功"),
-	EDIT_SUCCESS(ProcessStatus.SUCCESS, "APP-001-003","編輯成功");
+	ADD_SUCCESS(ProcessStatus.SUCCESS, "APP-001-003", "新增成功"),
+	EDIT_SUCCESS(ProcessStatus.SUCCESS, "APP-001-004","編輯成功");
 	private ProcessStatus status;
 	private String code;
 	private String message;

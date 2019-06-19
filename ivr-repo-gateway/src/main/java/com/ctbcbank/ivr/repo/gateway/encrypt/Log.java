@@ -1,5 +1,8 @@
 package com.ctbcbank.ivr.repo.gateway.encrypt;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,6 @@ import com.ctbcbank.ivr.repo.gateway.properties.KeyProperties;
 public class Log {
 	private Logger logger = LoggerFactory.getLogger("ivr-repo-gateway");
 	private Logger logger_time = LoggerFactory.getLogger("time-log");
-	private Logger logger_stackTrace = LoggerFactory.getLogger("stack_trace_error");
 	private Logger ivrDetailLog = LoggerFactory.getLogger("ivr_detail_log");
 	private Logger loggerA = LoggerFactory.getLogger("splunk_A");
 	private Logger loggerB = LoggerFactory.getLogger("splunk_B");
@@ -103,23 +105,15 @@ public class Log {
 	}
 	
 	public void writeError(RequestModel requestModel, Exception error) {
-		StackTraceElement[] trace = error.getStackTrace();
-		error.printStackTrace();
-		StringBuilder sb = new StringBuilder();
-		Throwable ourCause = error.getCause();
-		sb.append(error + "\n");
-		for(StackTraceElement traceElement : trace) {
-			sb.append("\tat " + traceElement.getClassName() + " ");
-			sb.append("(" + traceElement.getFileName() + ":");
-			sb.append(traceElement.getLineNumber() + ")");
-			sb.append("\n");
-		}
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		error.printStackTrace(pw);
 		logger.error("---ERROR--- : {}"
 				   + "CallUUID : {}#\n"
 				   + "ConnID : {}#\n"
 				   + "GvpSessionID : {}#\n"
 				   + "#$$%%%%$$#",
-				   sb.toString(),
+				   sw.toString(),
 				   requestModel.getCallUUID(),
 				   requestModel.getConnID(),
 				   requestModel.getGvpSessionID());

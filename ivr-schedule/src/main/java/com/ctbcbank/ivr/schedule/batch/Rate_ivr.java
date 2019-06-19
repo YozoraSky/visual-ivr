@@ -109,7 +109,7 @@ public class Rate_ivr {
 			logger.info("insert data number : " + sqlArray.size());
 		}
 		catch(Exception e) {
-			logger.error(e.toString());
+			logger.error("---ERROR--- : ",e);
 		}
 		logger.info("#$$%%%%$$#");
 	}
