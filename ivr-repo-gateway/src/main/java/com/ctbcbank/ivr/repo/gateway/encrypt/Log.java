@@ -96,7 +96,7 @@ public class Log {
 	}
 	
 	public void writeDetailLog(String sql) throws Exception {
-		ivrDetailLog.info(EncryptByDES(sql) + "#");
+		ivrDetailLog.info(DES._EncryptByDES(sql, keyProperties.getKey()) + "#");
 	}
 	
 	public void writeSplunkLog(String splunk_a, String splunk_b) {

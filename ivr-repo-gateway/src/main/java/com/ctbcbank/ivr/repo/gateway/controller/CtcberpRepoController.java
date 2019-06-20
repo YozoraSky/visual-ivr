@@ -44,7 +44,7 @@ public class CtcberpRepoController {
 	
 	@ApiOperation(value = "查詢", notes = "回傳多個結果集。  \n補充:可執行內容只有select的預存程序(即預存程序中不可含有insert,update......等等)，須按照MSSQL的預存程序呼叫方法來呼叫。")
 	@PostMapping("/queryForMultipleResultSet")
-	public ResultOut sp_WriteCTITaskList3(@ModelAttribute final RepoModel repoModel) {
+	public ResultOut queryForMultipleResultSet(@ModelAttribute final RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
 		String UUID = java.util.UUID.randomUUID().toString();
 		ResultOut resultOut = new ResultOut();
