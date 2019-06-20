@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,27 +33,30 @@ public class DetailLog {
 	@Autowired
 	private KeyProperties keyproperties;
 	
-	public Boolean execute(String date) {
+	public Boolean execute(String yesterday) {
 		String line;
 		String sql = StringUtils.EMPTY;
 		int totalSqlNum=0;
 		Boolean status;
 		String hostAddress = StringUtils.EMPTY;
+		Map<String, Object> map;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String today = sdf.format(new Date(System.currentTimeMillis()));
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			List<?> list = jdbcTemplate.queryForList(batchDlogProperties.getDetailLogSelectStatusSQL()
-																  .replace("@date", date)
-																  .replace("@hostAddress", hostAddress));
+																  .replace("@Date", yesterday)
+																  .replace("@HostAddress", hostAddress));
 			if(list.isEmpty())
-				jdbcTemplate.execute(batchDlogProperties.getDetailLogInsertStatusSQL().replace("@date", date).replace("@hostAddress", hostAddress));
-			logger.info(date.replace("-", "") + "-detailLog");
-			int NumFile = checkFile(date.replace("-", ""), batchDlogProperties.getLogPath());
+				jdbcTemplate.execute(batchDlogProperties.getDetailLogInsertStatusSQL().replace("@Date", yesterday).replace("@HostAddress", hostAddress));
+			logger.info(yesterday.replace("-", "") + "-detailLog");
+			int NumFile = checkFile(yesterday.replace("-", ""), batchDlogProperties.getLogPath());
 			//每個資料的處理
 			List<String> sqlArray = new ArrayList<String>();
 			long time = System.currentTimeMillis();
 			for(int i = 0;i <= (NumFile-1); i++) {
-				String readFileName = date.replace("-", "") + "." + i + ".txt";
+				String readFileName = yesterday.replace("-", "") + "." + i + ".txt";
 				FileReader fr = new FileReader(batchDlogProperties.getLogPath() + "detailLog." + readFileName);
 				BufferedReader reader = new BufferedReader(fr);
 				//讀取檔案內容資料和資料庫處理
@@ -81,25 +85,34 @@ public class DetailLog {
 				sqlArray.clear();
 			}
 			logger.info("DetailLog insert time : " + (System.currentTimeMillis()-time));
-			logger.info("Read " + NumFile + " Folder");
-			logger.info(totalSqlNum + " sql columns are executed");
+			map = jdbcTemplate.queryForMap(batchDlogProperties.getDetailLogSelectCountSQL()
+										   .replace("@ProcessDate", today)
+										   .replace("@HostAddress", hostAddress));
 			jdbcTemplate.update(batchDlogProperties
 								.getDetailLogUpdateStatusSQL()
-								.replace("@status", "completed")
+								.replace("@Status", "completed")
 								.replace("@LineNumber", String.valueOf(totalSqlNum))
-								.replace("@date", date)
-								.replace("@hostAddress", hostAddress));
+								.replace("@SuccessCount", String.valueOf(map.get("count")))
+								.replace("@Date", yesterday)
+								.replace("@HostAddress", hostAddress));
+			logger.info("Read " + NumFile + " Folder");
+			logger.info("Read " + totalSqlNum + " sql columns");
+			logger.info(String.valueOf(map.get("count")) + " sql columns was success to be insert");
 			status = true;
 		} 
 		catch (Exception e) {
 			status = false;
 			logger.error("---ERROR--- : ",e);
+			map = jdbcTemplate.queryForMap(batchDlogProperties.getDetailLogSelectCountSQL()
+					   .replace("@ProcessDate", today)
+					   .replace("@HostAddress", hostAddress));
 			jdbcTemplate.update(batchDlogProperties
 								.getDetailLogUpdateStatusSQL()
-								.replace("@status", "fail")
+								.replace("@Status", "fail")
 								.replace("@LineNumber", String.valueOf(totalSqlNum))
-								.replace("@date", date)
-								.replace("@hostAddress", hostAddress));
+								.replace("@SuccessCount", String.valueOf(map.get("count")))
+								.replace("@Date", yesterday)
+								.replace("@HostAddress", hostAddress));
 		}
 		return status;
 	}
@@ -122,10 +135,14 @@ public class DetailLog {
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//			取得後一天，因為若欲刪除的detailLog為6/19，則ProcessDate為6/20
+			long tomorrow = sdf.parse(date).getTime() + 86400000;
+			date = sdf.format(new Date(tomorrow));
 			long time = System.currentTimeMillis();
 //			刪除舊的DetailLog
 			while(count!=0) {
-				count = jdbcTemplate.update(batchDlogProperties.getDeleteDetailLog().replace("@date", date).replace("@hostAddress", hostAddress));
+				count = jdbcTemplate.update(batchDlogProperties.getDeleteDetailLog().replace("@ProcessDate", date).replace("@HostAddress", hostAddress));
 			}
 			logger.info("DetailLog delete time : " + (System.currentTimeMillis()-time));
 			status = true;
