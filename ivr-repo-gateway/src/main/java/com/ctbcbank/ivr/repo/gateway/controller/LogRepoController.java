@@ -212,13 +212,8 @@ public class LogRepoController {
 		long ivrInTime = System.currentTimeMillis();
 		String UUID = java.util.UUID.randomUUID().toString();
 		ResultOutStatus resultOutStatus = new ResultOutStatus();
-		String hostAddress = StringUtils.EMPTY;
 		try {
-			InetAddress iAddress = InetAddress.getLocalHost();
-			hostAddress = iAddress.getHostAddress();
-			String sql = repoModel.getSql().replace("[ProcessDate]", "[ProcessDate],[HostAddress]")
-										   .replace("getdate()", "getdate(),'" + hostAddress + "'");
-			log.writeDetailLog(sql);
+			log.writeDetailLog(repoModel.getSql());
 			resultOutStatus.setStatus("s");
 		} catch (Exception e) {
 			resultOutStatus.setStatus("f");

@@ -33,7 +33,7 @@ public class DetailLog {
 	@Autowired
 	private KeyProperties keyproperties;
 	
-	public Boolean execute(String yesterday) {
+	public Boolean execute(String logDate) {
 		String line;
 		String sql = StringUtils.EMPTY;
 		int totalSqlNum=0;
@@ -46,17 +46,17 @@ public class DetailLog {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			List<?> list = jdbcTemplate.queryForList(batchDlogProperties.getDetailLogSelectStatusSQL()
-																  .replace("@Date", yesterday)
+																  .replace("@Date", logDate)
 																  .replace("@HostAddress", hostAddress));
 			if(list.isEmpty())
-				jdbcTemplate.execute(batchDlogProperties.getDetailLogInsertStatusSQL().replace("@Date", yesterday).replace("@HostAddress", hostAddress));
-			logger.info(yesterday.replace("-", "") + "-detailLog");
-			int NumFile = checkFile(yesterday.replace("-", ""), batchDlogProperties.getLogPath());
+				jdbcTemplate.execute(batchDlogProperties.getDetailLogInsertStatusSQL().replace("@Date", logDate).replace("@HostAddress", hostAddress));
+			logger.info(logDate.replace("-", "") + "-detailLog");
+			int NumFile = checkFile(logDate.replace("-", ""), batchDlogProperties.getLogPath());
 			//每個資料的處理
 			List<String> sqlArray = new ArrayList<String>();
 			long time = System.currentTimeMillis();
 			for(int i = 0;i <= (NumFile-1); i++) {
-				String readFileName = yesterday.replace("-", "") + "." + i + ".txt";
+				String readFileName = logDate.replace("-", "") + "." + i + ".txt";
 				FileReader fr = new FileReader(batchDlogProperties.getLogPath() + "detailLog." + readFileName);
 				BufferedReader reader = new BufferedReader(fr);
 				//讀取檔案內容資料和資料庫處理
@@ -64,6 +64,8 @@ public class DetailLog {
 					line = reader.readLine();
 					try {
 						sql = DES._DecryptByDES(line.substring(line.indexOf("ivr_detail_log - ")+17,line.indexOf("#")),keyproperties.getKey());
+						sql = sql.replace("[ProcessDate]", "[ProcessDate],[HostAddress]")
+								 .replace("getdate()", "getdate(),'" + hostAddress + "'");
 					}
 					catch(StringIndexOutOfBoundsException e) {
 						sql = line;
@@ -88,16 +90,17 @@ public class DetailLog {
 			map = jdbcTemplate.queryForMap(batchDlogProperties.getDetailLogSelectCountSQL()
 										   .replace("@ProcessDate", today)
 										   .replace("@HostAddress", hostAddress));
+			String count = String.valueOf(map.get("count"));
 			jdbcTemplate.update(batchDlogProperties
 								.getDetailLogUpdateStatusSQL()
 								.replace("@Status", "completed")
 								.replace("@LineNumber", String.valueOf(totalSqlNum))
-								.replace("@SuccessCount", String.valueOf(map.get("count")))
-								.replace("@Date", yesterday)
+								.replace("@SuccessCount", count)
+								.replace("@Date", logDate)
 								.replace("@HostAddress", hostAddress));
 			logger.info("Read " + NumFile + " Folder");
 			logger.info("Read " + totalSqlNum + " sql columns");
-			logger.info(String.valueOf(map.get("count")) + " sql columns was success to be insert");
+			logger.info(count + " sql columns was success to be insert");
 			status = true;
 		} 
 		catch (Exception e) {
@@ -111,7 +114,7 @@ public class DetailLog {
 								.replace("@Status", "fail")
 								.replace("@LineNumber", String.valueOf(totalSqlNum))
 								.replace("@SuccessCount", String.valueOf(map.get("count")))
-								.replace("@Date", yesterday)
+								.replace("@Date", logDate)
 								.replace("@HostAddress", hostAddress));
 		}
 		return status;
