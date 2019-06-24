@@ -38,7 +38,7 @@ public class Rate_ivr {
 	
 	@Scheduled(cron="${rate_ivr.cron.msg}")
 	public void run(){
-		SFTPUtil sftp = new SFTPUtil(rateProperties.getUsername(),rateProperties.getPassword(),rateProperties.getHost(),22);
+		SFTPUtil sftp = new SFTPUtil(rateProperties.getUsername(),rateProperties.getPassword(),rateProperties.getHost(),21);
 		sftp.login();
 		try {
 			long time = System.currentTimeMillis();
