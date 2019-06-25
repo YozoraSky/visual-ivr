@@ -68,7 +68,7 @@ public class SFTPUtil {
 			config.put("StrictHostKeyChecking", "no");  
 			session.setConfig(config);  
 			session.connect();  
-			Channel channel = session.openChannel("ftp");  
+			Channel channel = session.openChannel("sftp");  
 			channel.connect();  
 			sftp = (ChannelSftp) channel;  
 		} catch (JSchException e) {  

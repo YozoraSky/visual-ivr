@@ -12,13 +12,11 @@ import com.ctbcbank.ivr.schedule.sftp.SFTPUtil;
 public class TestController {
 	
 	@PostMapping("/command")
-	public String command(){
-		FTPUtil ftp = new FTPUtil("172.24.15.19","AP_CTOB_GET","xn2qy6cj",21);
-		String status;
+	public void command(){
+		FTPUtil ftp = new FTPUtil("192.168.31.215","ineb","yprec370",21);
 		ftp.login();
-		ftp.downloadFile("/DATA/RMS/AP/TCRM_TM1/", "rate_ivr.txt", "C:/Users/050303/Desktop/schedule/123.txt");
-		status = "true";
+		ftp.downloadFile("/", "321.txt", "C:/Users/050303/Desktop/12345.txt");
+		ftp.upLoadFile("/", "32123.txt", "C:/Users/050303/Desktop/12345.txt");
 		ftp.logout();
-		return status;
 	}
 }
