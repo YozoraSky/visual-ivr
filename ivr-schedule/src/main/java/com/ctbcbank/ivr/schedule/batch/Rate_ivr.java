@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +40,8 @@ public class Rate_ivr {
 	
 	@Scheduled(cron="${rate_ivr.cron.msg}")
 	public void run(){
-		FTPUtil ftp = new FTPUtil(rateProperties.getHost(),rateProperties.getUsername(),rateProperties.getPassword(),21);
+		String password = new String(Base64.getDecoder().decode(rateProperties.getPassword()));
+		FTPUtil ftp = new FTPUtil(rateProperties.getHost(),rateProperties.getUsername(),password,21);
 		ftp.login();
 		try {
 			long time = System.currentTimeMillis();
