@@ -23,6 +23,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.ctbcbank.ivr.schedule.properties.RateProperties;
+import com.ctbcbank.ivr.schedule.sftp.FTPUtil;
 import com.ctbcbank.ivr.schedule.sftp.SFTPUtil;
 
 @Component
@@ -38,16 +39,16 @@ public class Rate_ivr {
 	
 	@Scheduled(cron="${rate_ivr.cron.msg}")
 	public void run(){
-		SFTPUtil sftp = new SFTPUtil(rateProperties.getUsername(),rateProperties.getPassword(),rateProperties.getHost(),22);
-		sftp.login();
+		FTPUtil ftp = new FTPUtil(rateProperties.getHost(),rateProperties.getUsername(),rateProperties.getPassword(),21);
+		ftp.login();
 		try {
 			long time = System.currentTimeMillis();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
 			Date now = new Date(time);
 			String saveFileName = "rate_ivr(" + sdf.format(now) + ").txt";
-			sftp.download(rateProperties.getDirectory(), rateProperties.getDownloadFile(), rateProperties.getSavePath() + "/" + saveFileName);
+			ftp.downloadFile(rateProperties.getDirectory(), rateProperties.getDownloadFile(), rateProperties.getSavePath() + "/" + saveFileName);
 			logger.info("sftp download success");
-			sftp.logout();
+			ftp.logout();
 			
 			List<Map<String, String>> interestRateCode = getInterestRateCode();
 			
