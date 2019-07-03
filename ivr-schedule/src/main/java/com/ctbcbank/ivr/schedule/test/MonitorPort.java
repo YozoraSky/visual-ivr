@@ -1,4 +1,4 @@
-package com.ctbcbank.ivr.schedule.batch;
+package com.ctbcbank.ivr.schedule.test;
 
 import java.io.IOException;
 import java.net.Socket;

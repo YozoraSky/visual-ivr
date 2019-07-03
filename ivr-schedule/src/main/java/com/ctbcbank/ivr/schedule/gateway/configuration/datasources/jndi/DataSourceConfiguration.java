@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 
 //import com.zaxxer.hikari.HikariConfig;
@@ -55,6 +56,10 @@ public class DataSourceConfiguration {
 	@Bean(name ="ivrConfigJdbcTemplate")
 	public JdbcTemplate ivrConfigJdbcTemplate(@Qualifier("ivrConfigDs") DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
+	}
+	@Bean(name ="NamedParameterJdbcTemplate")
+	public NamedParameterJdbcTemplate ivrConfigNamedParameterJdbcTemplate(@Qualifier("ivrConfigDs") DataSource dataSource) {
+		return new NamedParameterJdbcTemplate(dataSource);
 	}
 	@Bean(name ="ivrLogJdbcTemplate")
 	public JdbcTemplate ivrLogJdbcTemplate(@Qualifier("ivrLogDs") DataSource dataSource) {

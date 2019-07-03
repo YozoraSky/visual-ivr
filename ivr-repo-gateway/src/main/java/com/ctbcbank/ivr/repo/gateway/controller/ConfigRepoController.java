@@ -3,6 +3,8 @@ package com.ctbcbank.ivr.repo.gateway.controller;
 import java.net.InetAddress;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
@@ -123,6 +125,68 @@ public class ConfigRepoController {
 				resultOut.setDataList(new ArrayList<Map<String, Object>>());
 			processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
 			log.writeInfo(repoModel, repoModel.getSql(), list);
+		}
+		catch (Exception e) {
+			log.writeError(repoModel, e);
+			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
+			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
+			processResult.setReturnMessage(e.getMessage());
+		}
+		processResult.setCallUUID(repoModel.getCallUUID());
+		processResult.setConnID(repoModel.getConnID());
+		processResult.setGvpSessionID(repoModel.getGvpSessionID());
+		processResult.setApServerName(hostAddress);
+		long ivrOutTime = System.currentTimeMillis();
+		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		return resultOut;
+	}
+	
+	@ApiOperation(value = "查詢", notes = "回傳多個結果集。  \n補充:可執行內容只有select的預存程序(即預存程序中不可含有insert,update......等等)，須按照MSSQL的預存程序呼叫方法來呼叫。")
+	@PostMapping("/queryForMultipleResultSet")
+	public ResultOut queryForMultipleResultSet(@ModelAttribute final RepoModel repoModel) {
+		long ivrInTime = System.currentTimeMillis();
+		String UUID = java.util.UUID.randomUUID().toString();
+		ResultOut resultOut = new ResultOut();
+		ProcessResult processResult = resultOut.getProcessResult();
+		String hostAddress = StringUtils.EMPTY;
+		try {
+			InetAddress iAddress = InetAddress.getLocalHost();
+			hostAddress = iAddress.getHostAddress();
+			long DBInTime = System.currentTimeMillis();
+			@SuppressWarnings("unchecked")
+			List<Map<String, Object>> result = (List<Map<String, Object>>) jdbcTemplate.execute(new CallableStatementCreator() {
+				@Override
+				public CallableStatement createCallableStatement(Connection con) throws SQLException {
+					CallableStatement cstmt = con.prepareCall(repoModel.getSql());
+					return cstmt;
+				}
+			}, new CallableStatementCallback<Object>() {
+				@Override
+				public Object doInCallableStatement(CallableStatement cs) throws SQLException, DataAccessException {
+					List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+			        boolean resultsAvailable = cs.execute();
+			        while (resultsAvailable){
+			        	ResultSet rs = cs.getResultSet();
+			        	ResultSetMetaData rsmd = rs.getMetaData();
+			        	while(rs.next()){
+			        		Map<String, Object> map = new HashMap<String, Object>(); 
+			        		int columnCount = rsmd.getColumnCount();
+			        		for(int i=0;i<columnCount;i++){
+			        			String columnName = rsmd.getColumnName(i+1);
+			        			map.put(columnName, rs.getObject(i+1));
+			        		}
+			        		resultList.add(map);
+			        	}
+			        	resultsAvailable = cs.getMoreResults();
+			        }
+			        return resultList;
+				}
+			});
+			long DBOutTime = System.currentTimeMillis();
+			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
+			resultOut.setDataList(result);
+			processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
+			log.writeInfo(repoModel, repoModel.getSql(), result);
 		}
 		catch (Exception e) {
 			log.writeError(repoModel, e);

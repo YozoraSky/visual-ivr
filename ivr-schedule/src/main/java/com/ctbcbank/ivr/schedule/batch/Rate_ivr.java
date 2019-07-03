@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import com.ctbcbank.ivr.schedule.properties.RateProperties;
 import com.ctbcbank.ivr.schedule.sftp.FTPUtil;
-import com.ctbcbank.ivr.schedule.sftp.SFTPUtil;
 
 @Component
 @EnableScheduling
@@ -42,14 +41,14 @@ public class Rate_ivr {
 	public void run(){
 		String password = new String(Base64.getDecoder().decode(rateProperties.getPassword()));
 		FTPUtil ftp = new FTPUtil(rateProperties.getHost(),rateProperties.getUsername(),password,21);
-		ftp.login();
 		try {
+			ftp.login();
 			long time = System.currentTimeMillis();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
 			Date now = new Date(time);
 			String saveFileName = "rate_ivr(" + sdf.format(now) + ").txt";
 			ftp.downloadFile(rateProperties.getDirectory(), rateProperties.getDownloadFile(), rateProperties.getSavePath() + "/" + saveFileName);
-			logger.info("sftp download success");
+			logger.info("ftp download success");
 			ftp.logout();
 			
 			List<Map<String, String>> interestRateCode = getInterestRateCode();

@@ -1,4 +1,4 @@
-package com.ctbcbank.ivr.schedule.batch;
+package com.ctbcbank.ivr.schedule.test;
 
 import java.io.File;
 import java.util.Date;

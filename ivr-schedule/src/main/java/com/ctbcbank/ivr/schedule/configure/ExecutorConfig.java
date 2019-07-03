@@ -1,4 +1,4 @@
-package com.ctbcbank.ivr.schedule.batch;
+package com.ctbcbank.ivr.schedule.configure;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;

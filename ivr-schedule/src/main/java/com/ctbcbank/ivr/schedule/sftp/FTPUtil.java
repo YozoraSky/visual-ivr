@@ -2,7 +2,6 @@ package com.ctbcbank.ivr.schedule.sftp;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 
@@ -20,31 +19,22 @@ public class FTPUtil {
 		this.port = port;
 	}
 	
-	public void login(){
-		ftpClient = new FTPClient(); 
-        try {
-        	ftpClient.connect(host, port);
-		    ftpClient.login(username, password);
-			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-			ftpClient.enterLocalPassiveMode();
-		    if(FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
-		    	System.out.println("成功連線");
-		    }
-		    else
-		    	System.out.println("連線失敗");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
+	public void login() throws Exception{
+		ftpClient = new FTPClient();
+        ftpClient.connect(host, port);
+		ftpClient.login(username, password);
+		ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+		ftpClient.enterLocalPassiveMode();
+		if(FTPReply.isPositiveCompletion(ftpClient.getReplyCode()))
+			System.out.println("成功連線");
+		else
+		    System.out.println("連線失敗");
 	}
 	
-	public void logout() {
-		try {
-			if(ftpClient!=null) {
-				ftpClient.logout();
-				ftpClient.disconnect();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+	public void logout() throws Exception{
+		if(ftpClient!=null) {
+			ftpClient.logout();
+			ftpClient.disconnect();
 		}
 	}
 	
@@ -54,16 +44,12 @@ public class FTPUtil {
 	* @param downloadFile 下載的檔案 
 	* @param saveFile 本地端檔案路徑 
 	*/
-	public void downloadFile(String directory, String downloadFile, String saveFile) {
-			FileOutputStream fout;
-			try {
-				fout = new FileOutputStream(saveFile);
-				ftpClient.changeWorkingDirectory(directory);
-				ftpClient.retrieveFile(downloadFile, fout);
-				fout.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+	public void downloadFile(String directory, String downloadFile, String saveFile) throws Exception{
+		FileOutputStream fout;
+		fout = new FileOutputStream(saveFile);
+		ftpClient.changeWorkingDirectory(directory);
+		ftpClient.retrieveFile(downloadFile, fout);
+		fout.close();
 	}
 	
 	/**  
@@ -72,15 +58,11 @@ public class FTPUtil {
 	* @param fileName  上傳的檔名  
 	* @param localFile 本地端檔案路徑  
 	*/  
-	public void upLoadFile(String directory, String fileName, String localFile) {
+	public void upLoadFile(String directory, String fileName, String localFile) throws Exception{
 		FileInputStream fin;
-		try {
-			fin = new FileInputStream(localFile);
-			ftpClient.changeWorkingDirectory(directory);
-			ftpClient.storeFile(fileName, fin);
-			fin.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		fin = new FileInputStream(localFile);
+		ftpClient.changeWorkingDirectory(directory);
+		ftpClient.storeFile(fileName, fin);
+		fin.close();
 	}
 }
