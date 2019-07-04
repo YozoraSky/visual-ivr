@@ -57,7 +57,7 @@ public class DataSourceConfiguration {
 	public JdbcTemplate ivrConfigJdbcTemplate(@Qualifier("ivrConfigDs") DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
 	}
-	@Bean(name ="NamedParameterJdbcTemplate")
+	@Bean(name ="ivrConfigNamedParameterJdbcTemplate")
 	public NamedParameterJdbcTemplate ivrConfigNamedParameterJdbcTemplate(@Qualifier("ivrConfigDs") DataSource dataSource) {
 		return new NamedParameterJdbcTemplate(dataSource);
 	}

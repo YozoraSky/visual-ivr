@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.ctbcbank.ivr.repo.gateway.encrypt.DES;
@@ -27,6 +29,9 @@ public class DetailLog {
 	private Logger logger = LoggerFactory.getLogger("batch_Dlog");
 	@Autowired
 	private BatchDlogProperties batchDlogProperties;
+	@Autowired
+	@Qualifier("ivrLogNamedParameterJdbcTemplate")
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	@Autowired
 	@Qualifier("ivrLogJdbcTemplate")
 	private JdbcTemplate jdbcTemplate;
@@ -40,16 +45,17 @@ public class DetailLog {
 		Boolean status;
 		String hostAddress = StringUtils.EMPTY;
 		Map<String, Object> map;
+		Map<String, Object> params = new HashMap<String, Object>();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String today = sdf.format(new Date(System.currentTimeMillis()));
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			List<?> list = jdbcTemplate.queryForList(batchDlogProperties.getDetailLogSelectStatusSQL()
-																  .replace("@Date", logDate)
-																  .replace("@HostAddress", hostAddress));
+			params.put("Date", logDate);
+			params.put("HostAddress", hostAddress);
+			List<?> list = namedParameterJdbcTemplate.queryForList(batchDlogProperties.getDetailLogSelectStatusSQL(), params);
 			if(list.isEmpty())
-				jdbcTemplate.execute(batchDlogProperties.getDetailLogInsertStatusSQL().replace("@Date", logDate).replace("@HostAddress", hostAddress));
+				namedParameterJdbcTemplate.update(batchDlogProperties.getDetailLogInsertStatusSQL(), params);
 			logger.info(logDate.replace("-", "") + "-detailLog");
 			int NumFile = checkFile(logDate.replace("-", ""), batchDlogProperties.getLogPath());
 			//每個資料的處理
@@ -86,17 +92,18 @@ public class DetailLog {
 				sqlArray.clear();
 			}
 			logger.info("DetailLog insert time : " + (System.currentTimeMillis()-time));
-			map = jdbcTemplate.queryForMap(batchDlogProperties.getDetailLogSelectCountSQL()
-										   .replace("@ProcessDate", today)
-										   .replace("@HostAddress", hostAddress));
+			params.clear();
+			params.put("ProcessDate", today + "%");
+			params.put("HostAddress", hostAddress);
+			map = namedParameterJdbcTemplate.queryForMap(batchDlogProperties.getDetailLogSelectCountSQL(), params);
 			String count = String.valueOf(map.get("count"));
-			jdbcTemplate.update(batchDlogProperties
-								.getDetailLogUpdateStatusSQL()
-								.replace("@Status", "completed")
-								.replace("@LineNumber", String.valueOf(totalSqlNum))
-								.replace("@SuccessCount", count)
-								.replace("@Date", logDate)
-								.replace("@HostAddress", hostAddress));
+			params.clear();
+			params.put("Status", "completed");
+			params.put("LineNumber", String.valueOf(totalSqlNum));
+			params.put("SuccessCount", count);
+			params.put("Date", logDate);
+			params.put("HostAddress", hostAddress);
+			namedParameterJdbcTemplate.update(batchDlogProperties.getDetailLogUpdateStatusSQL(), params);
 			logger.info("Read " + NumFile + " Folder");
 			logger.info("Read " + totalSqlNum + " sql columns");
 			logger.info(count + " sql columns was success to be insert");
@@ -105,16 +112,17 @@ public class DetailLog {
 		catch (Exception e) {
 			status = false;
 			logger.error("---ERROR--- : ",e);
-			map = jdbcTemplate.queryForMap(batchDlogProperties.getDetailLogSelectCountSQL()
-					   .replace("@ProcessDate", today)
-					   .replace("@HostAddress", hostAddress));
-			jdbcTemplate.update(batchDlogProperties
-								.getDetailLogUpdateStatusSQL()
-								.replace("@Status", "fail")
-								.replace("@LineNumber", String.valueOf(totalSqlNum))
-								.replace("@SuccessCount", String.valueOf(map.get("count")))
-								.replace("@Date", logDate)
-								.replace("@HostAddress", hostAddress));
+			params.clear();
+			params.put("ProcessDate", today + "%");
+			params.put("HostAddress", hostAddress);
+			map = namedParameterJdbcTemplate.queryForMap(batchDlogProperties.getDetailLogSelectCountSQL(), params);
+			params.clear();
+			params.put("Status", "completed");
+			params.put("LineNumber", String.valueOf(totalSqlNum));
+			params.put("SuccessCount", String.valueOf(map.get("count")));
+			params.put("Date", logDate);
+			params.put("HostAddress", hostAddress);
+			namedParameterJdbcTemplate.update(batchDlogProperties.getDetailLogUpdateStatusSQL(), params);
 		}
 		return status;
 	}
@@ -142,9 +150,13 @@ public class DetailLog {
 			long tomorrow = sdf.parse(date).getTime() + 86400000;
 			date = sdf.format(new Date(tomorrow));
 			long time = System.currentTimeMillis();
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.clear();
+			params.put("ProcessDate", date + "%");
+			params.put("HostAddress", hostAddress);
 //			刪除舊的DetailLog
 			while(count!=0) {
-				count = jdbcTemplate.update(batchDlogProperties.getDeleteDetailLog().replace("@ProcessDate", date).replace("@HostAddress", hostAddress));
+				count = namedParameterJdbcTemplate.update(batchDlogProperties.getDeleteDetailLog(), params);
 			}
 			logger.info("DetailLog delete time : " + (System.currentTimeMillis()-time));
 			status = true;

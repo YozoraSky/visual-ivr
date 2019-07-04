@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 
 //import com.zaxxer.hikari.HikariConfig;
@@ -96,6 +97,10 @@ public class DataSourceConfiguration {
 	@Bean(name ="ivrLogJdbcTemplate")
 	public JdbcTemplate ivrLogJdbcTemplate(@Qualifier("ivrLogDs") DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
+	}
+	@Bean(name ="ivrLogNamedParameterJdbcTemplate")
+	public NamedParameterJdbcTemplate ivrLogNamedParameterJdbcTemplate(@Qualifier("ivrLogDs") DataSource dataSource) {
+		return new NamedParameterJdbcTemplate(dataSource);
 	}
 	@Bean(name ="ivrClubJdbcTemplate")
 	public JdbcTemplate ivrClubJdbcTemplate(@Qualifier("ivrClubDs") DataSource dataSource) {

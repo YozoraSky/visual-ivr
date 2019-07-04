@@ -30,7 +30,7 @@ public class Auth_ivr {
 	@Autowired
 	private AuthProperties authProperties;
 	@Autowired
-	@Qualifier("NamedParameterJdbcTemplate")
+	@Qualifier("ivrConfigNamedParameterJdbcTemplate")
 	private NamedParameterJdbcTemplate jdbcTemplate;
 	
 	@Scheduled(cron="${auth.cron.msg}")
