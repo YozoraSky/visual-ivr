@@ -60,8 +60,7 @@ public class DetailLog {
 				FileReader fr = new FileReader(batchDlogProperties.getLogPath() + "detailLog." + readFileName);
 				BufferedReader reader = new BufferedReader(fr);
 				//讀取檔案內容資料和資料庫處理
-				while (reader.ready()) {
-					line = reader.readLine();
+				while ((line = reader.readLine()) != null) {
 					try {
 						sql = DES._DecryptByDES(line.substring(line.indexOf("ivr_detail_log - ")+17,line.indexOf("#")),keyproperties.getKey());
 						sql = sql.replace("[ProcessDate]", "[ProcessDate],[HostAddress]")
