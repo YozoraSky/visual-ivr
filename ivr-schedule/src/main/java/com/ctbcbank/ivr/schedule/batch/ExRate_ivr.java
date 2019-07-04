@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -43,8 +42,7 @@ public class ExRate_ivr {
 		String uuid = UUID.randomUUID().toString();
 		String url = StringUtils.EMPTY;
 		JSONObject jsonObject = null;
-		String sql;
-		int check, success = 0, fail = 0;
+		int success = 0, fail = 0;
 		Map<String, Object> params = new HashMap<String, Object>();
 		try {
 			SimpleDateFormat nowdate = new SimpleDateFormat("yyyyMMdd");
@@ -69,7 +67,7 @@ public class ExRate_ivr {
 					params.put("BuyRate", BuyRate);
 					params.put("SellRate", SellRate);
 					try {
-						check=namedParameterJdbcTemplate.update(exRateProperties.getSql(), params);//insert DB
+						namedParameterJdbcTemplate.update(exRateProperties.getSql(), params);//insert DB
 						success++;
 					}
 					catch(Exception e) {

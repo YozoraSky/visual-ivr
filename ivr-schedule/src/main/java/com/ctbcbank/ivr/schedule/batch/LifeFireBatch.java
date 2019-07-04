@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,7 +21,7 @@ import org.springframework.stereotype.Component;
 import com.ctbcbank.ivr.schedule.properties.LifeFireProperties;
 import com.ctbcbank.ivr.schedule.sftp.FTPUtil;
 
-@Component
+//@Component
 @EnableScheduling
 @PropertySource(value = { "classpath:lifefire.properties" })
 public class LifeFireBatch {
