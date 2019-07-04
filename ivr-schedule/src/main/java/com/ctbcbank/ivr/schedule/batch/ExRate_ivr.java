@@ -8,6 +8,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -31,8 +34,8 @@ import net.sf.json.JSONObject;
 public class ExRate_ivr {
 	private Logger logger = LoggerFactory.getLogger("exrate_ivr");
 	@Autowired
-	@Qualifier("ivrConfigJdbcTemplate")
-	private JdbcTemplate jdbcTemplate;
+	@Qualifier("ivrConfigNamedParameterJdbcTemplate")
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	@Autowired
 	private ExRateProperties exRateProperties;
 	@Scheduled(cron="${exrate_ivr.cron.msg}")
@@ -42,6 +45,7 @@ public class ExRate_ivr {
 		JSONObject jsonObject = null;
 		String sql;
 		int check, success = 0, fail = 0;
+		Map<String, Object> params = new HashMap<String, Object>();
 		try {
 			SimpleDateFormat nowdate = new SimpleDateFormat("yyyyMMdd");
 			SimpleDateFormat nowdatetime = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -58,29 +62,31 @@ public class ExRate_ivr {
 					CashInd = exchangeRate.getJSONObject(index).getString("CashInd");
 					BuyRate = Decimal_point(exchangeRate.getJSONObject(index).getString("BuyRate"));
 					SellRate = Decimal_point(exchangeRate.getJSONObject(index).getString("SellRate"));
-					sql = exRateProperties.getSql().replace("@UUId", uuid)
-												   .replace("@Ccy", Ccy)
-												   .replace("@CashInd", CashInd)
-												   .replace("@BuyRate", BuyRate)
-												   .replace("@SellRate", SellRate);
-					check=jdbcTemplate.update(sql);//insert DB
-					if(check==1) {
+					if(Ccy.equals("{}") && CashInd.equals("CashInd")) break;
+					params.put("UUId", uuid);
+					params.put("Ccy", Ccy);
+					params.put("CashInd", CashInd);
+					params.put("BuyRate", BuyRate);
+					params.put("SellRate", SellRate);
+					try {
+						check=namedParameterJdbcTemplate.update(exRateProperties.getSql(), params);//insert DB
 						success++;
-						logger.info("Ccy:" + Ccy + 
-									" CashInd:" + CashInd + 
-									" BuyRate:" + BuyRate + 
-									" SellRate:" + SellRate);
 					}
-					else {
+					catch(Exception e) {
 						fail++;
-						logger.info("Fail SQL:"+sql);
-					}	
+					}
+					logger.info("Ccy:" + Ccy + 
+								" CashInd:" + CashInd + 
+								" BuyRate:" + BuyRate + 
+								" SellRate:" + SellRate);
 				}
 				//批次狀態insert DB
-				jdbcTemplate.update(exRateProperties.getBatchsql().replace("@UUId", uuid)
-																  .replace("@FilePath", "exrate_ivr"+nowdate.format(now)+".txt")
-																  .replace("@SCount", String.valueOf(success))
-																  .replace("@FCount", String.valueOf(fail)));
+				params.clear();
+				params.put("UUId", uuid);
+				params.put("FilePath", "exrate_ivr"+nowdate.format(now)+".txt");
+				params.put("SCount", String.valueOf(success));
+				params.put("FCount", String.valueOf(fail));
+				namedParameterJdbcTemplate.update(exRateProperties.getBatchsql(), params);
 				logger.info("\nBatchId:"+uuid+
 							"\nFilePath:"+"exrate_ivr"+nowdate.format(now)+".txt"+
 							"\nSuccessCount:"+success+

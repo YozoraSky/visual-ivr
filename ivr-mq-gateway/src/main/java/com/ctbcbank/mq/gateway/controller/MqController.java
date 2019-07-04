@@ -3,6 +3,7 @@ package com.ctbcbank.mq.gateway.controller;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.InetAddress;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.ctbcbank.mq.software_enc.DES;
@@ -16,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,8 +41,8 @@ public class MqController {
 	@Autowired
 	private MqProperties mq;
 	@Autowired
-	@Qualifier("ivrConfigJdbcTemplate")
-	private JdbcTemplate jdbcTemplate;
+	@Qualifier("ivrConfigNamedParameterJdbcTemplate")
+	private NamedParameterJdbcTemplate nameparameterjdbcTemplate;
 	@Autowired
 	private KeyProperties keyProperties;
 	
@@ -59,8 +60,9 @@ public class MqController {
 			String mqdata_Enc = DES._EncryptByDES(mqin.getdata(), keyProperties.getKey());
 			if(mqin.getType().length()!=3)
 				throw new Exception("Type length error: "+mqin.getType());
-			String sql = mq.getSql().replace("{}", mqin.getType());
-			List<Map<String, Object>> dataList=jdbcTemplate.queryForList(sql);
+			Map<String, Object> paramMap = new HashMap<>();
+			paramMap.put("Type", mqin.getType());
+			List<Map<String, Object>> dataList=nameparameterjdbcTemplate.queryForList(mq.getSql(),paramMap);
 			if(dataList.isEmpty()) 
 				throw new Exception("SQL not found data");
 			int HeaderLength=Integer.parseInt((String)dataList.get(0).get("HeaderLength"));
