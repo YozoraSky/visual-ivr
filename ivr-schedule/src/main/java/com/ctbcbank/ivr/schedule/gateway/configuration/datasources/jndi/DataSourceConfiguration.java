@@ -65,6 +65,10 @@ public class DataSourceConfiguration {
 	public JdbcTemplate ivrLogJdbcTemplate(@Qualifier("ivrLogDs") DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
 	}
+	@Bean(name ="ivrLogNamedParameterJdbcTemplate")
+	public NamedParameterJdbcTemplate ivrLogNamedParameterJdbcTemplate(@Qualifier("ivrLogDs") DataSource dataSource) {
+		return new NamedParameterJdbcTemplate(dataSource);
+	}
 	
 	private static class JndiPropertyHolder {
         private String jndiName;
