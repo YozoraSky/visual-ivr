@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -20,7 +22,7 @@ import org.springframework.stereotype.Component;
 import com.ctbcbank.ivr.schedule.properties.LifeFireProperties;
 import com.ctbcbank.ivr.schedule.sftp.FTPUtil;
 
-//@Component
+@Component
 @EnableScheduling
 @PropertySource(value = { "classpath:lifefire.properties" })
 public class LifeFireBatch {
@@ -28,15 +30,17 @@ public class LifeFireBatch {
 	private Logger AMOT_logger = LoggerFactory.getLogger("amot_life");
 	private Logger ACC_logger = LoggerFactory.getLogger("acc_life");
 	@Autowired
-	@Qualifier("ivrLogJdbcTemplate")
-	private JdbcTemplate jdbcTemplate;
+	@Qualifier("ivrLogNamedParameterJdbcTemplate")
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	@Autowired
 	private LifeFireProperties lifefireproperties;
 	@Scheduled(cron="${lifefire.cron.msg}")
 	public void run(){
 		try {
 			int Sum_Money = 0;
-			List<Map<String , Object>> DateList = jdbcTemplate.queryForList(lifefireproperties.getSearchsql().replace("@date", (Formatdate("yyyyMMdd", false))));
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("date", (Formatdate("yyyyMMdd", false)));
+			List<Map<String , Object>> DateList = namedParameterJdbcTemplate.queryForList(lifefireproperties.getSearchsql(), params);
 			String[] RecordId = new String[DateList.size()];
 			for(int index=0 ; index < DateList.size() ; index++) {
 				RecordId[index]= (String)DateList.get(index).get("RecordId");
@@ -53,8 +57,11 @@ public class LifeFireBatch {
 			ftp.login();
 			ftp.upLoadFile(lifefireproperties.getFtpsavepath(), fileName, lifefireproperties.getFtplocalFile()+fileName);
 			ftp.logout();
-			for(int index=0 ; index < RecordId.length ; index++)
-				jdbcTemplate.update(lifefireproperties.getUpdatesql().replace("@RecordId", RecordId[index]));
+			params.clear();
+			for(int index=0 ; index < RecordId.length ; index++) {
+				params.put("RecordId", RecordId[index]);
+				namedParameterJdbcTemplate.update(lifefireproperties.getUpdatesql(), params);
+			}
 			logger.info(Formatdate("yyyy/MM/dd", true)+" Finish");
 		}
 		catch(Exception e) {
