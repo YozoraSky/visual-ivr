@@ -15,6 +15,7 @@
 		<module>visual-ivr-service</module>
     	<module>ivr-mq-gateway</module>
     	<module>ivr-schedule</module>
+    	<module>ivr-old-gateway</module>
   </modules>
     
 	<parent>
