@@ -60,7 +60,7 @@ public class ExRate_ivr {
 					CashInd = exchangeRate.getJSONObject(index).getString("CashInd");
 					BuyRate = Decimal_point(exchangeRate.getJSONObject(index).getString("BuyRate"));
 					SellRate = Decimal_point(exchangeRate.getJSONObject(index).getString("SellRate"));
-					if(Ccy.equals("{}") && CashInd.equals("CashInd")) break;
+					if(Ccy.equals("{}") && CashInd.equals("{}")) break;
 					params.put("UUId", uuid);
 					params.put("Ccy", Ccy);
 					params.put("CashInd", CashInd);
