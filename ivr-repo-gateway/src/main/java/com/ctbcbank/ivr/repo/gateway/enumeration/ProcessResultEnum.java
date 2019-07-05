@@ -5,7 +5,8 @@ public enum ProcessResultEnum {
 	QUERY_SUCCESS(ProcessStatus.SUCCESS, "APP-001-001", "查詢成功"),
 	DATA_NOT_FOUND(ProcessStatus.SUCCESS, "APP-001-002", "查無資料"),
 	ADD_SUCCESS(ProcessStatus.SUCCESS, "APP-001-003", "新增成功"),
-	EDIT_SUCCESS(ProcessStatus.SUCCESS, "APP-001-004","編輯成功");
+	EDIT_SUCCESS(ProcessStatus.SUCCESS, "APP-001-004","編輯成功"),
+	DES_SUCCESS(ProcessStatus.SUCCESS, "APP-001-005","Des成功");
 	private ProcessStatus status;
 	private String code;
 	private String message;
