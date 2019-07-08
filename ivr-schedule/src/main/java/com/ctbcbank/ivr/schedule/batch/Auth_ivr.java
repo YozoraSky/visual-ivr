@@ -39,15 +39,39 @@ public class Auth_ivr {
 		FTPUtil ftp = new FTPUtil(authProperties.getHost(), authProperties.getUsername(), password, 21);
 		try {
 			Auth authow05 = new AUTHOW05(jdbcTemplate, logger, authProperties);
-			Auth authpq25 = new AUTHPQ25(jdbcTemplate, logger, authProperties);
-			Auth authpq26 = new AUTHPQ26(jdbcTemplate, logger, authProperties);
-			Auth authpq27 = new AUTHPQ27(jdbcTemplate, logger, authProperties);
-			Auth authpq28 = new AUTHPQ28(jdbcTemplate, logger, authProperties);
 			authow05.execute(ftp, authProperties.getRemotePath(),authProperties.getAuthow05LocalPath(), authProperties.getDeCompressKey());
-			authpq25.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq25LocalPath(), authProperties.getDeCompressKey());
-			authpq26.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq26LocalPath(), authProperties.getDeCompressKey());
-			authpq27.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq27LocalPath(), authProperties.getDeCompressKey());
-			authpq28.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq28LocalPath(), authProperties.getDeCompressKey());
+		}
+		catch(Exception e) {
+			logger.error("---ERROR--- : ",e);
+		}
+		
+		try {
+			Auth authpq25 = new AUTHPQ25(jdbcTemplate, logger, authProperties);
+//			authpq25.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq25LocalPath(), authProperties.getDeCompressKey());
+		}
+		catch(Exception e) {
+			logger.error("---ERROR--- : ",e);
+		}
+		
+		try {
+			Auth authpq26 = new AUTHPQ26(jdbcTemplate, logger, authProperties);
+//			authpq26.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq26LocalPath(), authProperties.getDeCompressKey());
+		}
+		catch(Exception e) {
+			logger.error("---ERROR--- : ",e);
+		}
+		
+		try {
+			Auth authpq27 = new AUTHPQ27(jdbcTemplate, logger, authProperties);
+//			authpq27.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq27LocalPath(), authProperties.getDeCompressKey());
+		}
+		catch(Exception e) {
+			logger.error("---ERROR--- : ",e);
+		}
+		
+		try {
+			Auth authpq28 = new AUTHPQ28(jdbcTemplate, logger, authProperties);
+//			authpq28.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq28LocalPath(), authProperties.getDeCompressKey());
 		}
 		catch(Exception e) {
 			logger.error("---ERROR--- : ",e);

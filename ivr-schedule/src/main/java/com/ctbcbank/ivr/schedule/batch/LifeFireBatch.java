@@ -1,5 +1,9 @@
 package com.ctbcbank.ivr.schedule.batch;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Calendar;
@@ -26,7 +30,6 @@ import com.ctbcbank.ivr.schedule.sftp.FTPUtil;
 @PropertySource(value = { "classpath:lifefire.properties" })
 public class LifeFireBatch {
 	private Logger logger = LoggerFactory.getLogger("life");
-	private Logger AMOT_logger = LoggerFactory.getLogger("amot_life");
 	private Logger ACC_logger = LoggerFactory.getLogger("acc_life");
 	@Autowired
 	@Qualifier("ivrLogNamedParameterJdbcTemplate")
@@ -37,20 +40,27 @@ public class LifeFireBatch {
 	public void run(){
 		try {
 			int Sum_Money = 0;
+			String date = Formatdate("yyyyMMdd", false);
 			Map<String, Object> params = new HashMap<String, Object>();
-			params.put("date", (Formatdate("yyyyMMdd", false)));
+			params.put("date", date);
 			List<Map<String , Object>> DateList = namedParameterJdbcTemplate.queryForList(lifefireproperties.getSearchsql(), params);
+			File f = new File(lifefireproperties.getFtplocalFile());
+			if(!f.exists())
+				f.mkdirs();
+			BufferedWriter bw = new BufferedWriter(new FileWriter(lifefireproperties.getFtplocalFile()+"AMOT"+ date +".txt"));
 			String[] RecordId = new String[DateList.size()];
 			for(int index=0 ; index < DateList.size() ; index++) {
 				RecordId[index]= (String)DateList.get(index).get("RecordId");
 				String CardNo=(String) DateList.get(index).get("CardNo");
 				int Amount=(int) DateList.get(index).get("Amount");
 				String AuthCode=(String) DateList.get(index).get("AuthCode");
-				AMOTLog(CardNo,Amount,AuthCode);
+				AMOTLog(CardNo,Amount,AuthCode,bw);
 				Sum_Money += Amount;
 			}
+			bw.flush();
+			bw.close();
 			ACCLog(DateList.size(), Sum_Money);
-			String fileName="AMOT"+Formatdate("yyyyMMdd", false)+".txt";
+			String fileName="AMOT"+date+".txt";
 			String password = new String(Base64.getDecoder().decode(lifefireproperties.getFtppassword()));
 			FTPUtil ftp = new FTPUtil(lifefireproperties.getFtphostname(),lifefireproperties.getFtpusername(),password,21);
 			ftp.login();
@@ -71,9 +81,9 @@ public class LifeFireBatch {
 		ACC_logger.info(Formatdate("yyyy/MM/dd", true));
 		ACC_logger.info("筆數："+count+"    金額："+sum_Money);
 	}
-	private void AMOTLog(String cardNo, int amount, String authCode) {
+	private void AMOTLog(String cardNo, int amount, String authCode, BufferedWriter bw) throws IOException {
 		String date=Formatdate("yyyyMMdd", false).substring(1, Formatdate("yyyyMMdd", false).length());
-		AMOT_logger.info("8220101613126"+cardNo+FormatZero(amount, 10)+authCode+"4"+date);
+		bw.write("8220101613126"+cardNo+FormatZero(amount, 10)+authCode+"4"+date + "\n");
 	}
 	//amount 數字
 	//number 總數

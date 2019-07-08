@@ -1,6 +1,7 @@
 package com.ctbcbank.ivr.schedule.batch;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -48,14 +49,17 @@ public class Rate_ivr {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
 			Date now = new Date(time);
 			String saveFileName = "rate_ivr(" + sdf.format(now) + ").txt";
+			File file = new File(rateProperties.getSavePath());
+			if(!file.exists())
+				file.mkdirs();
 			ftp.downloadFile(rateProperties.getDirectory(), rateProperties.getDownloadFile(),
-					rateProperties.getSavePath() + "/" + saveFileName);
+					rateProperties.getSavePath() + saveFileName);
 			logger.info("ftp download success");
 			ftp.logout();
 
 			List<Map<String, String>> interestRateCode = getInterestRateCode();
 
-			InputStream input = new FileInputStream(rateProperties.getSavePath() + "/" + saveFileName);
+			InputStream input = new FileInputStream(rateProperties.getSavePath() + saveFileName);
 			InputStreamReader inputStreamReader = new InputStreamReader(input, "big5");
 			BufferedReader reader = new BufferedReader(inputStreamReader);
 			String productName;
