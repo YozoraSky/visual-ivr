@@ -4,7 +4,10 @@ public enum ProcessResultEnum {
 	SYSTEM_ERROR(ProcessStatus.FAIL, "APP-001-000", "API錯誤!"),
 	QUERY_SUCCESS(ProcessStatus.SUCCESS, "APP-001-001", "查詢成功"),
 	DATA_NOT_FOUND(ProcessStatus.SUCCESS, "APP-001-002", "查無資料"),
-	NO_RECEIVE_DATA(ProcessStatus.FAIL, "APP-001-003", "因為逾時所以未收到資料");
+	NO_RECEIVE_DATA(ProcessStatus.FAIL, "APP-001-003", "因為逾時所以未收到資料"),
+	UPDATE_SUCCESS(ProcessStatus.SUCCESS, "APP-001-004","更新成功"),
+	UPDATE_FAIL(ProcessStatus.FAIL, "APP-001-005", "更新失敗"),
+	INSERT_SUCCESS(ProcessStatus.SUCCESS, "APP-001-006","新增成功");
 	private ProcessStatus status;
 	private String code;
 	private String message;
