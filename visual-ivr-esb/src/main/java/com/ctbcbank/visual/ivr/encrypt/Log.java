@@ -19,11 +19,9 @@ public class Log {
 	private Logger logger_line = LoggerFactory.getLogger("line");
 	private Logger logger_socket = LoggerFactory.getLogger("socket");
 	private Logger logger_time = LoggerFactory.getLogger("time-log");
-	private Logger logger_authBackup = LoggerFactory.getLogger("authBackup");
 	public final static int IVRGATEWAY = 10;
 	public final static int IVRLINEGATEWAY = 11;
 	public final static int IVRSOCKETGATEWAY = 12;
-	public final static int IVRAUTHBACKUPGATEWAY = 13;
 	@Autowired
 	private KeyProperties keyProperties;
 	@Value("${log.isEncrypt}")
@@ -34,7 +32,6 @@ public class Log {
 			case 10:return logger_esb;
 			case 11:return logger_line;
 			case 12:return logger_socket;
-			case 13:return logger_authBackup;
 		}
 		return null;
 	}
@@ -52,18 +49,6 @@ public class Log {
 				  			  + "#$$%%%%$$#", 
 				  			  EncryptByDES(String.valueOf(input)),
 				  			  EncryptByDES(String.valueOf(output)),
-				  			  requestModel.getCallUUID(),
-				  			  requestModel.getConnID(),
-				  			  requestModel.getGvpSessionID());
-	}
-	
-	public void writeAuthBackupInfo(RequestModel requestModel, Object input, int loggerName) throws Exception {
-		logger(loggerName).info("input : {}#\n"
-				  			  + "CallUUID : {}#\n"
-				  			  + "ConnID : {}#\n"
-				  			  + "GvpSessionID : {}#\n"
-				  			  + "#$$%%%%$$#", 
-				  			  input,
 				  			  requestModel.getCallUUID(),
 				  			  requestModel.getConnID(),
 				  			  requestModel.getGvpSessionID());
