@@ -16,6 +16,7 @@
     	<module>ivr-mq-gateway</module>
     	<module>ivr-schedule</module>
     	<module>ivr-old-gateway</module>
+    	<module>ivr-authBackup-gateway</module>
   </modules>
     
 	<parent>
