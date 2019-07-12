@@ -46,7 +46,7 @@ public class IaIvrController {
 			client = new ServiceNameProxy();
 			result = client.setAuthBackupFromIvr(authSetBackupIn.getType(), authSetBackupIn.getAmount(),
 					authSetBackupIn.getModifiedDate(), authSetBackupIn.getTransactionId());
-			authBackupOut.setCode(result.getError().getCode());
+			authBackupOut.setRspCode(result.getError().getCode());
 			authBackupOut.setTransactionId(result.getTransactionId());
 			if (result.getIsSuccess()) {
 				processResult.setReturnCode(ProcessResultEnum.UPDATE_SUCCESS.getCode());
@@ -94,12 +94,13 @@ public class IaIvrController {
 			DataResult = client.insertIVRData(authInsertIVRDataIn.getCardNumber(), authInsertIVRDataIn.getAmount(),
 					authInsertIVRDataIn.getRetlId(), authInsertIVRDataIn.getTrackExpirationDate(),
 					authInsertIVRDataIn.getTransactionId());
-			authBackupOut.setCode(DataResult.getError().getCode());
+			authBackupOut.setRspCode(DataResult.getError().getCode());
 			authBackupOut.setTransactionId(DataResult.getTransactionId());
+			authBackupOut.setAuthApprvCode(DataResult.getAuthApprvCode());
 			processResult.setReturnCode(ProcessResultEnum.INSERT_SUCCESS.getCode());
 			processResult.setStatus(ProcessResultEnum.INSERT_SUCCESS.getStatus());
 			processResult.setReturnMessage(DataResult.getError().getDescription());
-			String input = String.format("cardNumber : %s, amount : %s, retlId : %s, TrackExpirationDate : %s, transactionId : %s",
+			String input = String.format("cardNumber : %s, amount : %s, retlId : %s, TrackExpirationDate : %s, transactionId : %s", 
 					authInsertIVRDataIn.getCardNumber(), authInsertIVRDataIn.getAmount(), authInsertIVRDataIn.getRetlId(),authInsertIVRDataIn.getTrackExpirationDate(),
 					authInsertIVRDataIn.getTransactionId());
 			log.writeAuthBackupInfo(authInsertIVRDataIn, input);

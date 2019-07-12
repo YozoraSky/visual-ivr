@@ -2,13 +2,20 @@ package com.ctbcbank.ivr.authbackup.gateway.model;
 
 public class AuthBackupOut extends ReturnModel{
 	private static final long serialVersionUID = 2232675842599542465L;
-	private String code;
+	private String rspCode;
 	private String transactionId;
-	public String getCode() {
-		return code;
+	private String authApprvCode;
+	public String getAuthApprvCode() {
+		return authApprvCode;
 	}
-	public void setCode(String code) {
-		this.code = code;
+	public void setAuthApprvCode(String authApprvCode) {
+		this.authApprvCode = authApprvCode;
+	}
+	public String getRspCode() {
+		return rspCode;
+	}
+	public void setRspCode(String rspCode) {
+		this.rspCode = rspCode;
 	}
 	public String getTransactionId() {
 		return transactionId;
