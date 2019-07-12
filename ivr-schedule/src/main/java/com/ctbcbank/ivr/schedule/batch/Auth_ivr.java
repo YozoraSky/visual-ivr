@@ -47,7 +47,7 @@ public class Auth_ivr {
 		
 		try {
 			Auth authpq25 = new AUTHPQ25(jdbcTemplate, logger, authProperties);
-//			authpq25.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq25LocalPath(), authProperties.getDeCompressKey());
+			authpq25.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq25LocalPath(), authProperties.getDeCompressKey());
 		}
 		catch(Exception e) {
 			logger.error("---ERROR--- : ",e);
@@ -55,7 +55,7 @@ public class Auth_ivr {
 		
 		try {
 			Auth authpq26 = new AUTHPQ26(jdbcTemplate, logger, authProperties);
-//			authpq26.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq26LocalPath(), authProperties.getDeCompressKey());
+			authpq26.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq26LocalPath(), authProperties.getDeCompressKey());
 		}
 		catch(Exception e) {
 			logger.error("---ERROR--- : ",e);
@@ -63,7 +63,7 @@ public class Auth_ivr {
 		
 		try {
 			Auth authpq27 = new AUTHPQ27(jdbcTemplate, logger, authProperties);
-//			authpq27.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq27LocalPath(), authProperties.getDeCompressKey());
+			authpq27.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq27LocalPath(), authProperties.getDeCompressKey());
 		}
 		catch(Exception e) {
 			logger.error("---ERROR--- : ",e);
@@ -71,7 +71,7 @@ public class Auth_ivr {
 		
 		try {
 			Auth authpq28 = new AUTHPQ28(jdbcTemplate, logger, authProperties);
-//			authpq28.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq28LocalPath(), authProperties.getDeCompressKey());
+			authpq28.execute(ftp, authProperties.getRemotePath(), authProperties.getAuthpq28LocalPath(), authProperties.getDeCompressKey());
 		}
 		catch(Exception e) {
 			logger.error("---ERROR--- : ",e);

@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.ctbcbank.ivr.authbackup.gateway.model.RequestModel;
-import com.ctbcbank.visual.ivr.properties.KeyProperties;
+import com.ctbcbank.ivr.authbackup.gateway.properties.KeyProperties;
 
 
 @Component

@@ -34,11 +34,17 @@ public class AuthProperties {
 	@Value("${auth.authow05.insertSql}")
 	private String authow05InsertSql;
 	
+	@Value("${auth.authow05.batchSql}")
+	private String authow05BatchSql;
+	
 	@Value("${auth.authpq25.localPath}")
 	private String authpq25LocalPath;
 	
 	@Value("${auth.authpq25.insertSql}")
 	private String authpq25InsertSql;
+	
+	@Value("${auth.authpq25.batchSql}")
+	private String authpq25BatchSql;
 	
 	@Value("${auth.authpq26.localPath}")
 	private String authpq26LocalPath;
@@ -46,11 +52,17 @@ public class AuthProperties {
 	@Value("${auth.authpq26.insertSql}")
 	private String authpq26InsertSql;
 	
+	@Value("${auth.authpq26.batchSql}")
+	private String authpq26BatchSql;
+	
 	@Value("${auth.authpq27.localPath}")
 	private String authpq27LocalPath;
 	
 	@Value("${auth.authpq27.insertSql}")
 	private String authpq27InsertSql;
+	
+	@Value("${auth.authpq27.batchSql}")
+	private String authpq27BatchSql;
 	
 	@Value("${auth.authpq28.localPath}")
 	private String authpq28LocalPath;
@@ -58,6 +70,49 @@ public class AuthProperties {
 	@Value("${auth.authpq28.insertSql}")
 	private String authpq28InsertSql;
 	
+	@Value("${auth.authpq28.batchSql}")
+	private String authpq28BatchSql;
+	
+	public String getAuthow05BatchSql() {
+		return authow05BatchSql;
+	}
+
+	public void setAuthow05BatchSql(String authow05BatchSql) {
+		this.authow05BatchSql = authow05BatchSql;
+	}
+
+	public String getAuthpq25BatchSql() {
+		return authpq25BatchSql;
+	}
+
+	public void setAuthpq25BatchSql(String authpq25BatchSql) {
+		this.authpq25BatchSql = authpq25BatchSql;
+	}
+
+	public String getAuthpq26BatchSql() {
+		return authpq26BatchSql;
+	}
+
+	public void setAuthpq26BatchSql(String authpq26BatchSql) {
+		this.authpq26BatchSql = authpq26BatchSql;
+	}
+
+	public String getAuthpq27BatchSql() {
+		return authpq27BatchSql;
+	}
+
+	public void setAuthpq27BatchSql(String authpq27BatchSql) {
+		this.authpq27BatchSql = authpq27BatchSql;
+	}
+
+	public String getAuthpq28BatchSql() {
+		return authpq28BatchSql;
+	}
+
+	public void setAuthpq28BatchSql(String authpq28BatchSql) {
+		this.authpq28BatchSql = authpq28BatchSql;
+	}
+
 	public String getDeCompressKey() {
 		return deCompressKey;
 	}

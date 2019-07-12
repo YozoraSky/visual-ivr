@@ -75,7 +75,7 @@ public abstract class Auth {
 		BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 		long time = System.currentTimeMillis();
 		batchUpdate(bufferedReader);
-		logger.info("DetailLog insert time : " + (System.currentTimeMillis() - time));
+		logger.info("batchUpdate time : " + (System.currentTimeMillis() - time));
 		bufferedReader.close();
 		ftp.logout();
 	}

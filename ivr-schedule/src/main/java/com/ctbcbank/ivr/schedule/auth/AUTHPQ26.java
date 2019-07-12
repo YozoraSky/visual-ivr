@@ -5,7 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -34,8 +36,9 @@ public class AUTHPQ26 extends Auth {
 	@Override
 	public void batchUpdate(BufferedReader bufferedReader) throws Exception {
 		List<MapSqlParameterSource> batchArgsForInsert = new ArrayList<MapSqlParameterSource>();
+		Map<String, Object> params = new HashMap<String, Object>();
 		String line;
-		int insertTimes = 0;
+		int insertCount = 0;
 		while ((line = bufferedReader.readLine()) != null) {
 			byte[] temp = line.getBytes("big5");
 //			帳單日
@@ -100,15 +103,19 @@ public class AUTHPQ26 extends Auth {
 			batchArgsForInsert.add(parameters);
 			while (batchArgsForInsert.size() >= 5000) {
 				namedParameterJdbcTemplate.batchUpdate(authProperties.getAuthpq26InsertSql(),batchArgsForInsert.toArray(new MapSqlParameterSource[0]));
-				insertTimes += batchArgsForInsert.size();
+				insertCount += batchArgsForInsert.size();
 				batchArgsForInsert.clear();
 			}
 		}
 		if(!batchArgsForInsert.isEmpty()) {
 			namedParameterJdbcTemplate.batchUpdate(authProperties.getAuthpq26InsertSql(), batchArgsForInsert.toArray(new MapSqlParameterSource[0]));
-			insertTimes += batchArgsForInsert.size();
+			insertCount += batchArgsForInsert.size();
 			batchArgsForInsert.clear();
 		}
-		logger.info("Authpq26 insert times : {}", insertTimes);
+		logger.info("Authpq26 insert times : {}", insertCount);
+		params.put("FilePath", getFileName());
+		params.put("SuccessCount", insertCount);
+		params.put("FailCount", "0");
+		namedParameterJdbcTemplate.update(authProperties.getAuthpq26BatchSql(), params);
 	}
 }

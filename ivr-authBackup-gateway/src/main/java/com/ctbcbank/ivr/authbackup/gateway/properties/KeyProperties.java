@@ -1,4 +1,4 @@
-package com.ctbcbank.visual.ivr.properties;
+package com.ctbcbank.ivr.authbackup.gateway.properties;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;

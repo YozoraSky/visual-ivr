@@ -36,9 +36,10 @@ public class AUTHOW05 extends Auth {
 	public void batchUpdate(BufferedReader bufferedReader) throws Exception {
 		List<MapSqlParameterSource> batchArgsForUpdate = new ArrayList<MapSqlParameterSource>();
 		List<MapSqlParameterSource> batchArgsForInsert = new ArrayList<MapSqlParameterSource>();
+		Map<String, Object> params = new HashMap<String, Object>();
 		String line;
-		int insertTimes = 0;
-		int updateTimes = 0;
+		int insertCount = 0;
+		int updateCount = 0;
 		while((line = bufferedReader.readLine())!=null) {
 			byte[] temp = line.getBytes("big5");
 //			商店類別代碼
@@ -71,7 +72,6 @@ public class AUTHOW05 extends Auth {
 //			主機異動日期
 			String maint_date = new String(Arrays.copyOfRange(temp, 96, 104),"big5");
 //			String chechSql = authProperties.getAuthow05CheckSql().replace("@MerchantNo", merch_org + merch_nbr);
-			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("MerchantNo", merch_org + merch_nbr);
 			List<Map<String, Object>> list = namedParameterJdbcTemplate.queryForList(authProperties.getAuthow05CheckSql(), params);
 			MapSqlParameterSource parameters = new MapSqlParameterSource();
@@ -92,7 +92,7 @@ public class AUTHOW05 extends Auth {
 				batchArgsForUpdate.add(parameters);
 				while(batchArgsForUpdate.size()>=5000) {
 					namedParameterJdbcTemplate.batchUpdate(authProperties.getAuthow05UpdateSql(), batchArgsForUpdate.toArray(new MapSqlParameterSource[0]));
-					updateTimes += batchArgsForUpdate.size();
+					updateCount += batchArgsForUpdate.size();
 					batchArgsForUpdate.clear();
 				}
 			}
@@ -100,22 +100,27 @@ public class AUTHOW05 extends Auth {
 				batchArgsForInsert.add(parameters);
 				while(batchArgsForInsert.size()>=5000) {
 					namedParameterJdbcTemplate.batchUpdate(authProperties.getAuthow05InsertSql(), batchArgsForInsert.toArray(new MapSqlParameterSource[0]));
-					insertTimes += batchArgsForInsert.size();
+					insertCount += batchArgsForInsert.size();
 					batchArgsForInsert.clear();
 				}
 			}
 		}
 		if(!batchArgsForUpdate.isEmpty()) {
 			namedParameterJdbcTemplate.batchUpdate(authProperties.getAuthow05UpdateSql(), batchArgsForUpdate.toArray(new MapSqlParameterSource[0]));
-			updateTimes += batchArgsForUpdate.size();
+			updateCount += batchArgsForUpdate.size();
 			batchArgsForUpdate.clear();
 		}
 		if(!batchArgsForInsert.isEmpty()) {
 			namedParameterJdbcTemplate.batchUpdate(authProperties.getAuthow05InsertSql(), batchArgsForInsert.toArray(new MapSqlParameterSource[0]));
-			insertTimes += batchArgsForInsert.size();
+			insertCount += batchArgsForInsert.size();
 			batchArgsForInsert.clear();
 		}
-		logger.info("Authow05 update times : {}", updateTimes);
-		logger.info("Authow05 insert times : {}", insertTimes);
+		logger.info("Authow05 update count : {}", updateCount);
+		logger.info("Authow05 insert count : {}", insertCount);
+		params.clear();
+		params.put("FilePath", getFileName());
+		params.put("SuccessCount", updateCount + insertCount);
+		params.put("FailCount", "0");
+		namedParameterJdbcTemplate.update(authProperties.getAuthow05BatchSql(), params);
 	}
 }
