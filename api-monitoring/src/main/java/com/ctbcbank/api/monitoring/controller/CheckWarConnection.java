@@ -38,8 +38,6 @@ public class CheckWarConnection {
 		String[] wars = monitoringProperties.getWar();
 		try {
 			File file = new File(monitoringProperties.getFile());
-			if(!(file.exists()))
-				file.createNewFile();
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 			for(String war : wars) {
 				result = httpPost(monitoringProperties.getUrl().replace("@war", war), war);
@@ -64,10 +62,6 @@ public class CheckWarConnection {
 			httpConnection.setDoOutput(true);
 			httpConnection.setDoInput(true);
 			httpConnection.setRequestProperty("Content-Type", "Text");
-//			DataOutputStream outputStream = new DataOutputStream(httpConnection.getOutputStream());
-//			outputStream.write(output.getBytes("UTF-8"));
-//			outputStream.flush();
-//			outputStream.close();
 			DataInputStream inputStream = new DataInputStream(httpConnection.getInputStream());
 			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 			BufferedReader bufferReader = new BufferedReader(inputStreamReader);
@@ -96,11 +90,11 @@ public class CheckWarConnection {
 				case "ivr-repo-gateway":ivr_repo_gateway++;break;
 				case "ivr-schedule":ivr_schedule++;break;
 			}
-			if(ivr_authBackup_gateway==3||
-			   ivr_gateway==3||
-			   ivr_mq_gateway==3||
-			   ivr_repo_gateway==3||
-			   ivr_schedule==3)
+			if(ivr_authBackup_gateway>=3||
+			   ivr_gateway>=3||
+			   ivr_mq_gateway>=3||
+			   ivr_repo_gateway>=3||
+			   ivr_schedule>=3)
 				return "Connection interruption";
 			else
 				return "Warning";
