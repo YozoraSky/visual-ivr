@@ -90,17 +90,17 @@ public class DataSourceConfiguration {
 		return dataSourceLookup.getDataSource(fiveth().getJndiName());
 	}
 	
-	@Bean
-	@ConfigurationProperties(prefix = "spring.ivr_cif_ds")
-	public JndiPropertyHolder sixth() {
-		return new JndiPropertyHolder();
-	}
-	
-	@Bean(name = "ivrCifDs")
-	public DataSource sixthDataSource() {
-		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
-		return dataSourceLookup.getDataSource(sixth().getJndiName());
-	}
+//	@Bean
+//	@ConfigurationProperties(prefix = "spring.ivr_cif_ds")
+//	public JndiPropertyHolder sixth() {
+//		return new JndiPropertyHolder();
+//	}
+//	
+//	@Bean(name = "ivrCifDs")
+//	public DataSource sixthDataSource() {
+//		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
+//		return dataSourceLookup.getDataSource(sixth().getJndiName());
+//	}
 	
 	@Bean(name ="ivrConfigJdbcTemplate")
 	public JdbcTemplate ivrConfigJdbcTemplate(@Qualifier("ivrConfigDs") DataSource dataSource) {
@@ -126,10 +126,10 @@ public class DataSourceConfiguration {
 	public JdbcTemplate ivrCtcberpJdbcTemplate(@Qualifier("ivrCtcberpDs") DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
 	}
-	@Bean(name ="ivrCifJdbcTemplate")
-	public JdbcTemplate ivrCifJdbcTemplate(@Qualifier("ivrCifDs") DataSource dataSource) {
-		return new JdbcTemplate(dataSource);
-	}
+//	@Bean(name ="ivrCifJdbcTemplate")
+//	public JdbcTemplate ivrCifJdbcTemplate(@Qualifier("ivrCifDs") DataSource dataSource) {
+//		return new JdbcTemplate(dataSource);
+//	}
 	
 	private static class JndiPropertyHolder {
         private String jndiName;
