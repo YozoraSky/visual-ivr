@@ -34,10 +34,10 @@
 <isofield id="30" length="8" name="AMOUNT, TRANSACTION PROCESSING FEE" class="org.jpos.iso.IFA_AMOUNT"/>
 <isofield id="31" length="8" name="AMOUNT, SETTLEMENT PROCESSING FEE" class="org.jpos.iso.IFA_AMOUNT"/>
 <isofield id="32" length="90" name="ACQUIRING INSTITUTION IDENT CODE" class="org.jpos.iso.IFA_LLNUM"/>
-<isofield id="33" length="11" name="FORWARDING INSTITUTION IDENT CODE" class="org.jpos.iso.IFA_LLNUM"/>
+<isofield id="33" length="13" name="FORWARDING INSTITUTION IDENT CODE" class="org.jpos.iso.IFA_LLNUM"/>
 <isofield id="34" length="28" name="PAN EXTENDED" class="org.jpos.iso.IFA_LLCHAR"/>
 <isofield id="35" length="37" name="TRACK 2 DATA" class="org.jpos.iso.IFA_LLNUM"/>
-<isofield id="36" length="104" name="TRACK 3 DATA" class="org.jpos.iso.IFA_LLLCHAR"/>
+<isofield id="36" length="107" name="TRACK 3 DATA" class="org.jpos.iso.IFA_LLLCHAR"/>
 <isofield id="37" length="12" name="RETRIEVAL REFERENCE NUMBER" class="org.jpos.iso.IF_CHAR"/>
 <isofield id="38" length="6" name="AUTHORIZATION IDENTIFICATION RESPONSE" class="org.jpos.iso.IF_CHAR"/>
 <isofield id="39" length="2" name="RESPONSE CODE" class="org.jpos.iso.IF_CHAR"/>
@@ -46,7 +46,7 @@
 <isofield id="42" length="15" name="CARD ACCEPTOR IDENTIFICATION CODE" class="org.jpos.iso.IF_CHAR"/>
 <isofield id="43" length="40" name="CARD ACCEPTOR NAME/LOCATION" class="org.jpos.iso.IF_CHAR"/>
 <isofield id="44" length="25" name="ADITIONAL RESPONSE DATA" class="org.jpos.iso.IFA_LLCHAR"/>
-<isofield id="45" length="76" name="TRACK 1 DATA" class="org.jpos.iso.IFA_LLCHAR"/>
+<isofield id="45" length="78" name="TRACK 1 DATA" class="org.jpos.iso.IFA_LLCHAR"/>
 <isofield id="46" length="999" name="ADITIONAL DATA - ISO" class="org.jpos.iso.IFA_LLLCHAR"/>
 <isofield id="47" length="999" name="ADITIONAL DATA - NATIONAL" class="org.jpos.iso.IFA_LLLCHAR"/>
 <isofield id="48" length="999" name="ADITIONAL DATA - PRIVATE" class="org.jpos.iso.IFA_LLLCHAR"/>
@@ -129,5 +129,5 @@
 <isofield id="125" length="999" name="RESERVED PRIVATE USE" class="org.jpos.iso.IFA_LLLCHAR"/>
 <isofield id="126" length="999" name="RESERVED PRIVATE USE" class="org.jpos.iso.IFA_LLLCHAR"/>
 <isofield id="127" length="999" name="RESERVED PRIVATE USE" class="org.jpos.iso.IFA_LLLCHAR"/>
-<isofield id="128" length="8" name="MAC 2" class="org.jpos.iso.IFA_BINARY"/>
+<isofield id="128" length="16" name="MAC 2" class="org.jpos.iso.IFA_BINARY"/>
 </isopackager>

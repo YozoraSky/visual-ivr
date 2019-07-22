@@ -49,7 +49,7 @@ public class SocketChannel{
 		}
 		System.out.println(nowPort);
 		Socket socket = new Socket(socketProperties.getIp(),nowPort);
-		socket.setSoTimeout(3000);
+		socket.setSoTimeout(socketProperties.getTimeout());
 		if(socket!=null && socket.isConnected()) {
 			BufferedOutputStream outputStream = new BufferedOutputStream(socket.getOutputStream());
 			BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
