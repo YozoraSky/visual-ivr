@@ -66,7 +66,7 @@ public abstract class Auth {
 		if(!file.exists())
 			file.mkdirs();
 		String fileName = getFileName();
-		ftp.login();
+		logger.info(ftp.login());
 		ftp.downloadFile(remotePath, fileName + ".EXE", directory + fileName + ".EXE");
 		logger.info("{}.exe downLoad success", fileName);
 		cmd_EXE(fileName, directory, deCompressKey);

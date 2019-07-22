@@ -19,16 +19,16 @@ public class FTPUtil {
 		this.port = port;
 	}
 	
-	public void login() throws Exception{
+	public String login() throws Exception{
 		ftpClient = new FTPClient();
         ftpClient.connect(host, port);
 		ftpClient.login(username, password);
 		ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 		ftpClient.enterLocalPassiveMode();
 		if(FTPReply.isPositiveCompletion(ftpClient.getReplyCode()))
-			System.out.println("成功連線");
+			return "連線成功";
 		else
-		    System.out.println("連線失敗");
+		    return "連線失敗";
 	}
 	
 	public void logout() throws Exception{

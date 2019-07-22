@@ -33,7 +33,7 @@
 <isofield id="29" length="8" name="AMOUNT, SETTLEMENT FEE" class="org.jpos.iso.IFA_AMOUNT"/>
 <isofield id="30" length="8" name="AMOUNT, TRANSACTION PROCESSING FEE" class="org.jpos.iso.IFA_AMOUNT"/>
 <isofield id="31" length="8" name="AMOUNT, SETTLEMENT PROCESSING FEE" class="org.jpos.iso.IFA_AMOUNT"/>
-<isofield id="32" length="11" name="ACQUIRING INSTITUTION IDENT CODE" class="org.jpos.iso.IFA_LLNUM"/>
+<isofield id="32" length="90" name="ACQUIRING INSTITUTION IDENT CODE" class="org.jpos.iso.IFA_LLNUM"/>
 <isofield id="33" length="11" name="FORWARDING INSTITUTION IDENT CODE" class="org.jpos.iso.IFA_LLNUM"/>
 <isofield id="34" length="28" name="PAN EXTENDED" class="org.jpos.iso.IFA_LLCHAR"/>
 <isofield id="35" length="37" name="TRACK 2 DATA" class="org.jpos.iso.IFA_LLNUM"/>
