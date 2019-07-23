@@ -41,13 +41,11 @@ public class DetailLog {
 	public Boolean execute(String logDate) {
 		String line;
 		String sql = StringUtils.EMPTY;
-		int totalSqlNum=0;
+		int successInsertSqlCount=0;
+		int readSqlCount = 0;
 		Boolean status;
 		String hostAddress = StringUtils.EMPTY;
-		Map<String, Object> map;
 		Map<String, Object> params = new HashMap<String, Object>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String today = sdf.format(new Date(System.currentTimeMillis()));
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
@@ -67,6 +65,7 @@ public class DetailLog {
 				BufferedReader reader = new BufferedReader(fr);
 				//讀取檔案內容資料和資料庫處理
 				while ((line = reader.readLine()) != null) {
+					readSqlCount++;
 					try {
 						sql = DES._DecryptByDES(line.substring(line.indexOf("ivr_detail_log - ")+17,line.indexOf("#")),keyproperties.getKey());
 						sql = sql.replace("[ProcessDate]", "[ProcessDate],[HostAddress]")
@@ -80,7 +79,7 @@ public class DetailLog {
 					sqlArray.add(sql);
 					if(sqlArray.size()>=5000) {
 						jdbcTemplate.batchUpdate(sqlArray.toArray(new String[0]));
-						totalSqlNum += sqlArray.size();
+						successInsertSqlCount += sqlArray.size();
 						sqlArray.clear();
 					}
 				}
@@ -88,38 +87,29 @@ public class DetailLog {
 			}
 			if(!sqlArray.isEmpty()) {
 				jdbcTemplate.batchUpdate(sqlArray.toArray(new String[0]));
-				totalSqlNum += sqlArray.size();
+				successInsertSqlCount += sqlArray.size();
 				sqlArray.clear();
 			}
 			logger.info("DetailLog insert time : " + (System.currentTimeMillis()-time));
 			params.clear();
-			params.put("ProcessDate", today + "%");
-			params.put("HostAddress", hostAddress);
-			map = namedParameterJdbcTemplate.queryForMap(batchDlogProperties.getDetailLogSelectCountSQL(), params);
-			String count = String.valueOf(map.get("count"));
-			params.clear();
 			params.put("Status", "completed");
-			params.put("LineNumber", String.valueOf(totalSqlNum));
-			params.put("SuccessCount", count);
+			params.put("LineNumber", readSqlCount);
+			params.put("SuccessCount", successInsertSqlCount);
 			params.put("Date", logDate);
 			params.put("HostAddress", hostAddress);
 			namedParameterJdbcTemplate.update(batchDlogProperties.getDetailLogUpdateStatusSQL(), params);
 			logger.info("Read " + NumFile + " Folder");
-			logger.info("Read " + totalSqlNum + " sql columns");
-			logger.info(count + " sql columns was success to be insert");
+			logger.info("Read " + readSqlCount + " sql columns");
+			logger.info(successInsertSqlCount + " sql columns was success to be insert");
 			status = true;
 		} 
 		catch (Exception e) {
 			status = false;
 			logger.error("---ERROR--- : ",e);
 			params.clear();
-			params.put("ProcessDate", today + "%");
-			params.put("HostAddress", hostAddress);
-			map = namedParameterJdbcTemplate.queryForMap(batchDlogProperties.getDetailLogSelectCountSQL(), params);
-			params.clear();
-			params.put("Status", "completed");
-			params.put("LineNumber", String.valueOf(totalSqlNum));
-			params.put("SuccessCount", String.valueOf(map.get("count")));
+			params.put("Status", "api error");
+			params.put("LineNumber", readSqlCount);
+			params.put("SuccessCount", successInsertSqlCount);
 			params.put("Date", logDate);
 			params.put("HostAddress", hostAddress);
 			namedParameterJdbcTemplate.update(batchDlogProperties.getDetailLogUpdateStatusSQL(), params);
@@ -145,14 +135,10 @@ public class DetailLog {
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//			取得後一天，因為若欲刪除的detailLog為6/19，則ProcessDate為6/20
-			long tomorrow = sdf.parse(date).getTime() + 86400000;
-			date = sdf.format(new Date(tomorrow));
 			long time = System.currentTimeMillis();
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.clear();
-			params.put("ProcessDate", date + "%");
+			params.put("StartTime", date + "%");
 			params.put("HostAddress", hostAddress);
 //			刪除舊的DetailLog
 			while(count!=0) {

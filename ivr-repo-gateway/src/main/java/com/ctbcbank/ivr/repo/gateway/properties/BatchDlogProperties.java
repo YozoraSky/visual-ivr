@@ -17,8 +17,6 @@ public class BatchDlogProperties {
 	private String detailLogSelectStatusSQL;
 	@Value("${batchDlog.deleteDetailLog}")
 	private String deleteDetailLog;
-	@Value("${batcgDlog.selectCountSQL}")
-	private String detailLogSelectCountSQL;
 	
 	public String getDetailLogInsertStatusSQL() {
 		return detailLogInsertStatusSQL;
@@ -59,13 +57,4 @@ public class BatchDlogProperties {
 	public void setLogPath(String logPath) {
 		this.logPath = logPath;
 	}
-	
-	public String getDetailLogSelectCountSQL() {
-		return detailLogSelectCountSQL;
-	}
-
-	public void setDetailLogSelectCountSQL(String detailLogSelectCountSQL) {
-		this.detailLogSelectCountSQL = detailLogSelectCountSQL;
-	}
-
 }
