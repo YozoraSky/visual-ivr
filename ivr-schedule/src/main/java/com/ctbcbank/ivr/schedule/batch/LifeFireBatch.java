@@ -22,6 +22,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.ctbcbank.ivr.schedule.encrypt.DES;
+import com.ctbcbank.ivr.schedule.properties.KeyProperties;
 import com.ctbcbank.ivr.schedule.properties.LifeFireProperties;
 import com.ctbcbank.ivr.schedule.sftp.FTPUtil;
 
@@ -36,6 +38,8 @@ public class LifeFireBatch {
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	@Autowired
 	private LifeFireProperties lifefireproperties;
+	@Autowired
+	private KeyProperties keyProperties;
 	@Scheduled(cron="${lifefire.cron.msg}")
 	public void run(){
 		try {
@@ -51,7 +55,7 @@ public class LifeFireBatch {
 			String[] RecordId = new String[DateList.size()];
 			for(int index=0 ; index < DateList.size() ; index++) {
 				RecordId[index]= (String)DateList.get(index).get("RecordId");
-				String CardNo=(String) DateList.get(index).get("CardNo");
+				String CardNo=DES._DecryptByDES((String) DateList.get(index).get("CardNo"),keyProperties.getKey());
 				int Amount=(int) DateList.get(index).get("Amount");
 				String AuthCode=(String) DateList.get(index).get("AuthCode");
 				AMOTLog(CardNo,Amount,AuthCode,bw);
