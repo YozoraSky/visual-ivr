@@ -48,8 +48,26 @@ public class FTPUtil {
 		FileOutputStream fout;
 		fout = new FileOutputStream(saveFile);
 		ftpClient.changeWorkingDirectory(directory);
-		ftpClient.retrieveFile(downloadFile, fout);
-		fout.close();
+		if(isExisted(downloadFile)) {
+			ftpClient.retrieveFile(downloadFile, fout);
+			fout.close();
+		}
+		else {
+			fout.close();
+			throw new Exception("file is not found on the ftp server");
+		}
+	}
+	
+	public boolean isExisted(String fileName) throws Exception{
+		String[] fileNames = ftpClient.listNames();
+		boolean status = true;
+		for(int i=0;i<fileNames.length;i++) {
+			if(fileName.equals(fileNames[i]))
+				status = true;
+			else 
+				status = false;
+		}
+		return status;
 	}
 	
 	/**  
