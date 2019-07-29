@@ -44,8 +44,11 @@ public class IaIvrController {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			client = new ServiceNameProxy();
+			long authBackupInTime = System.currentTimeMillis();
 			result = client.setAuthBackupFromIvr(authSetBackupIn.getType(), authSetBackupIn.getAmount(),
 					authSetBackupIn.getModifiedDate(), authSetBackupIn.getTransactionId());
+			long authBackupOutTime = System.currentTimeMillis();
+			log.writeTimeLog(authSetBackupIn.getConnID(), UUID, "IVRAUTHBACKUP", authBackupInTime, authBackupOutTime);
 			authBackupOut.setRspCode(result.getError().getCode());
 			authBackupOut.setTransactionId(result.getTransactionId());
 			if (result.getIsSuccess()) {
@@ -91,9 +94,12 @@ public class IaIvrController {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			client = new ServiceNameProxy();
+			long authBackupInTime = System.currentTimeMillis();
 			DataResult = client.insertIVRData(authInsertIVRDataIn.getCardNumber(), authInsertIVRDataIn.getAmount(),
 					authInsertIVRDataIn.getRetlId(), authInsertIVRDataIn.getTrackExpirationDate(),
 					authInsertIVRDataIn.getTransactionId());
+			long authBackupOutTime = System.currentTimeMillis();
+			log.writeTimeLog(authInsertIVRDataIn.getConnID(), UUID, "IVRAUTHBACKUP", authBackupInTime, authBackupOutTime);
 			authBackupOut.setRspCode(DataResult.getError().getCode());
 			authBackupOut.setTransactionId(DataResult.getTransactionId());
 			authBackupOut.setAuthApprvCode(DataResult.getAuthApprvCode());
