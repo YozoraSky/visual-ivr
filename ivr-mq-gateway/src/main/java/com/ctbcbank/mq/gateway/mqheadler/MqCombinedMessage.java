@@ -44,7 +44,7 @@ public class MqCombinedMessage {
 			//0936 957702    +886912 345678
 			if(mqin.getMobilno().matches("([\\)]?)[+]?(886)?([\\)]?)([-_－—\\s]?)"
 					+ "([\\(]?)[0]?[1-9]{1}"
-					+ "([-_－—\\s\\)]?)[1-9]{2}"
+					+ "([-_－—\\s\\)]?)[0-9]{2}"
 					+ "[-_－—]?[0-9]{3}[-_－—]?[0-9]{3}$"))
 				msg.append(FormatSpace(mqin.getMobilno(),14));//MOBILNO 14
 			else throw new Exception("Mobilno no matches (error)");

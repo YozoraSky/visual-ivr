@@ -2,8 +2,11 @@ package com.ctbcbank.ivr.gateway.socket;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,8 +51,8 @@ public class SocketChannel{
 			default: nowPort = socketProperties.getPort();break;
 		}
 		System.out.println(nowPort);
-		Socket socket = new Socket(socketProperties.getIp(),nowPort);
-		socket.setSoTimeout(socketProperties.getTimeout());
+		Socket socket = connect(nowPort);
+		socket.setSoTimeout(socketProperties.getSoTimeout());
 		if(socket!=null && socket.isConnected()) {
 			BufferedOutputStream outputStream = new BufferedOutputStream(socket.getOutputStream());
 			BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
@@ -58,18 +61,8 @@ public class SocketChannel{
 			outputStream.flush();
 			byte[] dataByte = new byte[2048];
 			int length = -1;
-			boolean retry = false;
 //			接收回傳值
-			for(int i=0;i<3;i++) {
-				length = getResponse(dataByte, inputStream);
-				if(length == -1) {
-					retry = true;
-				}
-				else
-					break;
-				if(i==2 && retry==true)
-					throw new Exception("time out for three time!");
-			}
+			length = inputStream.read(dataByte);
 			long socketOutTime = System.currentTimeMillis();
 			log.writeTimeLog(socketIn.getConnID(), UUID, "IVRSOCKET", socketInTime, socketOutTime);
 			if(length != -1) {
@@ -114,14 +107,24 @@ public class SocketChannel{
     	return byteOut;
     }
     
-    private int getResponse(byte[] dataByte, BufferedInputStream inputStream) throws Exception {
-    	int length = -1;
-		try {
-			length = inputStream.read(dataByte);
-		}catch(SocketTimeoutException e2) {
-			length = -1;
-		}
-		return length;
+    private Socket connect(int port) throws Exception {
+    	Socket socket = new Socket();
+    	SocketAddress sokcetAddress = new InetSocketAddress(socketProperties.getIp(),port);
+    	boolean status = false;
+    	for(int i=0;i<3;i++) {
+        	try {
+        		socket.connect(sokcetAddress,socketProperties.getConnectTimeout());
+    			status = true;
+    			break;
+    		} catch (UnknownHostException e) {
+    			e.printStackTrace();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
+    	}
+    	if(!status)
+    		throw new Exception("Connect fail");
+    	return socket;
     }
 }
 

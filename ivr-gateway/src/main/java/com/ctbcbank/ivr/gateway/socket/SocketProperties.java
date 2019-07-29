@@ -15,14 +15,22 @@ public class SocketProperties {
 	private int port2;
 	@Value("${socket.port3}")
 	private int port3;
-	@Value("${socket.timeout}")
-	private int timeout;
+	@Value("${socket.connectTimeout}")
+	private int connectTimeout;
+	@Value("${socket.soTimeout}")
+	private int soTimeout;
 	
-	public int getTimeout() {
-		return timeout;
+	public int getConnectTimeout() {
+		return connectTimeout;
 	}
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
+	public void setConnectTimeout(int connectTimeout) {
+		this.connectTimeout = connectTimeout;
+	}
+	public int getSoTimeout() {
+		return soTimeout;
+	}
+	public void setSoTimeout(int soTimeout) {
+		this.soTimeout = soTimeout;
 	}
 	public String getIp() {
 		return ip;
