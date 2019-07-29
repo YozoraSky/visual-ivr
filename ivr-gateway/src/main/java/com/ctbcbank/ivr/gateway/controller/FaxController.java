@@ -3,6 +3,7 @@ package com.ctbcbank.ivr.gateway.controller;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -45,11 +46,25 @@ public class FaxController {
 		ProcessResult processResult = faxOut.getProcessResult();
 		String result = StringUtils.EMPTY;
 		String hostAddress = StringUtils.EMPTY;
+		String connect_ip = StringUtils.EMPTY;
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			long faxInTime = System.currentTimeMillis();
-			result = httpPost(faxProperties.getUrl(), JSONObject.fromObject(faxIn.getData()).toString());
+			for(int i=0;i<2;i++) {
+				if(checkConnect(faxProperties.getMain_ip()))
+					break;
+			}
+			if(!checkConnectExecuteTimes(2,faxProperties.getMain_ip())) {
+				if(!checkConnectExecuteTimes(2,faxProperties.getBackup_ip())) {
+					throw new Exception("Taipei and Taichung servers hang up");
+				}
+				else
+					connect_ip = faxProperties.getBackup_ip();
+			}
+			else
+				connect_ip = faxProperties.getMain_ip();
+			result = httpPost(connect_ip, JSONObject.fromObject(faxIn.getData()).toString());
 			long faxOutTime = System.currentTimeMillis();
 			log.writeTimeLog(faxIn.getConnID(), UUID, "IVRFAX", faxInTime, faxOutTime);
 			processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
@@ -73,7 +88,8 @@ public class FaxController {
 	public String httpPost(String url, String output) throws Exception{
 		URL endpoint = new URL(url);
 		HttpURLConnection httpConnection = (HttpURLConnection) endpoint.openConnection();
-		httpConnection.setReadTimeout(3000);
+		httpConnection.setConnectTimeout(faxProperties.getConnectTimeout());
+		httpConnection.setReadTimeout(faxProperties.getSoTimeout());
 		httpConnection.setRequestMethod("POST");
 		httpConnection.setDoOutput(true);
 		httpConnection.setDoInput(true);
@@ -92,5 +108,48 @@ public class FaxController {
 		}
 		bufferReader.close();
 		return stringBuilder.toString();
+	}
+	
+	public boolean checkConnectExecuteTimes(int times, String url) {
+		boolean status = false;
+		for(int i=0;i<times;i++) {
+			if(checkConnect(url)) {
+				status = true;
+				break;
+			}
+		}
+		return status;
+	}
+	
+	public boolean checkConnect(String url) {
+		try {
+			URL endpoint = new URL(url);
+			HttpURLConnection httpConnection = (HttpURLConnection) endpoint.openConnection();
+			httpConnection.setRequestMethod("POST");
+			httpConnection.setConnectTimeout(faxProperties.getConnectTimeout());
+			httpConnection.setReadTimeout(faxProperties.getSoTimeout());
+			httpConnection.setDoOutput(true);
+			httpConnection.setDoInput(true);
+			httpConnection.setRequestProperty("Content-Type", "Text");
+			DataOutputStream outputStream = new DataOutputStream(httpConnection.getOutputStream());
+			outputStream.write("TEST".getBytes("UTF-8"));
+			outputStream.flush();
+			outputStream.close();
+			DataInputStream inputStream = new DataInputStream(httpConnection.getInputStream());
+			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			BufferedReader bufferReader = new BufferedReader(inputStreamReader);
+			String line;
+			StringBuilder stringBuilder = new StringBuilder();
+			while ((line = bufferReader.readLine()) != null) {
+				stringBuilder.append(line);
+			}
+			bufferReader.close();
+			String ok = stringBuilder.toString();
+			if(ok.equals("ok"))
+				return true;
+			else return false;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }
