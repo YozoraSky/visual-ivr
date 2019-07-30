@@ -24,6 +24,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.ctbcbank.ivr.schedule.properties.ExRateProperties;
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -39,10 +42,10 @@ public class ExRate_ivr {
 	private ExRateProperties exRateProperties;
 	@Scheduled(cron="${exrate_ivr.cron.msg}")
 	public void run(){
-		String uuid = UUID.randomUUID().toString();
 		String url = StringUtils.EMPTY;
 		JSONObject jsonObject = null;
 		int success = 0, fail = 0;
+		UUID uuid = getUUIDByTimeBase();
 		Map<String, Object> params = new HashMap<String, Object>();
 		try {
 			SimpleDateFormat nowdate = new SimpleDateFormat("yyyyMMdd");
@@ -127,5 +130,8 @@ public class ExRate_ivr {
 		StringBuffer sb = new StringBuffer(str);
 		sb=sb.insert(2, ".");
 		return sb.toString();
+	}
+	public UUID getUUIDByTimeBase() {
+		return Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate();
 	}
 }

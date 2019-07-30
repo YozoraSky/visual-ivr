@@ -59,5 +59,5 @@ public class IvrController {
 		long ivrOutTime = System.currentTimeMillis();
 		log.writeTimeLog(esbIn.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
 		return esbCommandOut;
-	} 
+	}
 }

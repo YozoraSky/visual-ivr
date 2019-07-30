@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,8 @@ import org.springframework.stereotype.Component;
 
 import com.ctbcbank.ivr.schedule.properties.RateProperties;
 import com.ctbcbank.ivr.schedule.sftp.FTPUtil;
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
 
 @Component
 @EnableScheduling
@@ -43,6 +46,7 @@ public class Rate_ivr {
 	public void run() {
 		String password = new String(Base64.getDecoder().decode(rateProperties.getPassword()));
 		FTPUtil ftp = new FTPUtil(rateProperties.getHost(), rateProperties.getUsername(), password, 21);
+		UUID uuid = getUUIDByTimeBase();
 		try {
 			logger.info(ftp.login());
 			long time = System.currentTimeMillis();
@@ -85,6 +89,7 @@ public class Rate_ivr {
 								&& productName.equals(interestRateCode.get(i).get("ProductName"))) {
 							MapSqlParameterSource parameters = new MapSqlParameterSource();
 							parameters.addValue("CurrencyId", interestRateCode.get(i).get("CurrencyId"));
+							parameters.addValue("BatchId", uuid);
 							parameters.addValue("ProductCode", interestRateCode.get(i).get("ProductCode"));
 							parameters.addValue("RateType", interestRateCode.get(i).get("RateType"));
 							parameters.addValue("TermType", interestRateCode.get(i).get("TermType"));
@@ -110,6 +115,7 @@ public class Rate_ivr {
 					fail++;
 			}
 			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("RecordId", uuid);
 			params.put("FilePath", saveFileName);
 			params.put("SuccessCount", String.valueOf(success));
 			params.put("FailCount", String.valueOf(fail));
@@ -157,5 +163,9 @@ public class Rate_ivr {
 		}
 		reader.close();
 		return interestRateCodeMap;
+	}
+	
+	public UUID getUUIDByTimeBase() {
+		return Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate();
 	}
 }
