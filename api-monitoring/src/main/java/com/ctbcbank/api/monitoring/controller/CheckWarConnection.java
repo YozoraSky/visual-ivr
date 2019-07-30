@@ -47,7 +47,7 @@ public class CheckWarConnection {
 			bw.flush();
 			bw.close();
 		} catch (Exception e) {
-			logger.info(e.toString());
+			logger.info("error : ",e);
 		}
 	}
 	
@@ -82,7 +82,7 @@ public class CheckWarConnection {
 			return result;
 		}
 		catch(Exception e){
-			logger.error(e.toString());
+			logger.error(e.toString() + " : " +  war);
 			switch(war) {
 				case "ivr-authBackup-gateway":ivr_authBackup_gateway++;break;
 				case "ivr-gateway":ivr_gateway++;break;
