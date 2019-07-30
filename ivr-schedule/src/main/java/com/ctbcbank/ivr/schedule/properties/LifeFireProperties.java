@@ -19,8 +19,16 @@ public class LifeFireProperties {
 	private String ftppassword;
 	@Value("${lifefire.ftpsavepath}")
 	private String ftpsavepath;
+	@Value("${lifefire.originalFile}")
+	private String originalpath;
 	public String getSearchsql() {
 		return searchsql;
+	}
+	public String getOriginalpath() {
+		return originalpath;
+	}
+	public void setOriginalpath(String originalpath) {
+		this.originalpath = originalpath;
 	}
 	public void setSearchsql(String searchsql) {
 		this.searchsql = searchsql;

@@ -46,7 +46,7 @@ public class Rate_ivr {
 	public void run() {
 		String password = new String(Base64.getDecoder().decode(rateProperties.getPassword()));
 		FTPUtil ftp = new FTPUtil(rateProperties.getHost(), rateProperties.getUsername(), password, 21);
-		UUID uuid = getUUIDByTimeBase();
+		String uuid = getUUIDByTimeBase().toString();
 		try {
 			logger.info(ftp.login());
 			long time = System.currentTimeMillis();

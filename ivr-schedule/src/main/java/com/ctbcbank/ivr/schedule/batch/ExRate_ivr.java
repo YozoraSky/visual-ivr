@@ -45,7 +45,7 @@ public class ExRate_ivr {
 		String url = StringUtils.EMPTY;
 		JSONObject jsonObject = null;
 		int success = 0, fail = 0;
-		UUID uuid = getUUIDByTimeBase();
+		String uuid = getUUIDByTimeBase().toString();
 		Map<String, Object> params = new HashMap<String, Object>();
 		try {
 			SimpleDateFormat nowdate = new SimpleDateFormat("yyyyMMdd");
