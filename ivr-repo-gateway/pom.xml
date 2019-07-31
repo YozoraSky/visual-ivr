@@ -30,6 +30,21 @@
         	<groupId>com.zaxxer</groupId>
         	<artifactId>HikariCP</artifactId>
     	</dependency>
+    	<dependency>
+    		<groupId>com.ctbc</groupId>
+    		<artifactId>ibm.mq</artifactId>
+    		<version>1.0</version>
+		</dependency>
+		<dependency>
+    		<groupId>com.ctbc</groupId>
+    		<artifactId>ibm.mq.iiop</artifactId>
+    		<version>1.0</version>
+		</dependency>
+		<dependency>
+    		<groupId>com.ctbc</groupId>
+    		<artifactId>ibm.mqjms</artifactId>
+    		<version>1.0</version>
+		</dependency>
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>sqljdbc4</artifactId>

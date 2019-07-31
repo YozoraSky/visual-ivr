@@ -9,12 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.ctbcbank.ivr.repo.gateway.model.in.MqIn;
 import com.ctbcbank.ivr.repo.gateway.model.in.RequestModel;
 import com.ctbcbank.ivr.repo.gateway.properties.KeyProperties;
 
 @Component
 public class Log {
 	private Logger logger = LoggerFactory.getLogger("ivr-repo-gateway");
+	private Logger logger_mq = LoggerFactory.getLogger("ivr-mq-geteway");
 	private Logger logger_time = LoggerFactory.getLogger("time-log");
 	private Logger ivrDetailLog = LoggerFactory.getLogger("ivr_detail_log");
 	private Logger loggerA = LoggerFactory.getLogger("splunk_A");
@@ -25,6 +27,33 @@ public class Log {
 	private KeyProperties keyProperties;
 	@Value("${log.isEncrypt}")
 	private boolean isEncrypt;
+	
+	public void writeMqLog(MqIn mqin,String mqdata,String msg, String charset, String channel, String queuemanagername,String queuename, String mq_host, int mq_port) throws Exception {
+	 logger_mq.info("========={} input========= : {}# \n"
+				  + "msg_Enc : {}#\n"
+				  + "charset : {}#\n"
+				  + "channel : {}#\n"
+				  + "queuemanagername : {}#\n"
+				  + "queuename : {}#\n"
+				  + "MQ Host : {}#\n"
+				  + "MQ Port : {}#\n"
+				  + "CallUUID : {}#\n"
+				  + "ConnID : {}#\n"
+				  + "GvpSessionID : {}#\n"
+				  + "MQ Success\n"
+				  + "#$$%%%%$$#", 
+				  mqin.getType(), EncryptByDES(mqdata),
+				  EncryptByDES(msg),
+				  charset,
+				  channel,
+				  queuemanagername,
+				  queuename,
+				  mq_host,
+				  mq_port,
+				  mqin.getCallUUID(), 
+				  mqin.getConnID(), 
+				  mqin.getGvpSessionID());
+	}
 	
 	public void writeTimeLog(String connId, String key, String type, long in, long out) {
 		logger_time.info("{}, {}, {}, {}, {}", connId, key, type, in, out);

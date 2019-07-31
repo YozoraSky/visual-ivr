@@ -3,7 +3,6 @@ package com.ctbcbank.ivr.repo.gateway.configuration.datasources.jndi;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -90,21 +89,13 @@ public class DataSourceConfiguration {
 		return dataSourceLookup.getDataSource(fiveth().getJndiName());
 	}
 	
-//	@Bean
-//	@ConfigurationProperties(prefix = "spring.ivr_cif_ds")
-//	public JndiPropertyHolder sixth() {
-//		return new JndiPropertyHolder();
-//	}
-//	
-//	@Bean(name = "ivrCifDs")
-//	public DataSource sixthDataSource() {
-//		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
-//		return dataSourceLookup.getDataSource(sixth().getJndiName());
-//	}
-	
 	@Bean(name ="ivrConfigJdbcTemplate")
 	public JdbcTemplate ivrConfigJdbcTemplate(@Qualifier("ivrConfigDs") DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
+	}
+	@Bean(name ="ivrConfigNamedParameterJdbcTemplate")
+	public NamedParameterJdbcTemplate ivrConfigNameParameterJdbcTemplate(@Qualifier("ivrConfigDs") DataSource dataSource) {
+		return new NamedParameterJdbcTemplate(dataSource);
 	}
 	@Bean(name ="ivrLogJdbcTemplate")
 	public JdbcTemplate ivrLogJdbcTemplate(@Qualifier("ivrLogDs") DataSource dataSource) {
@@ -126,10 +117,6 @@ public class DataSourceConfiguration {
 	public JdbcTemplate ivrCtcberpJdbcTemplate(@Qualifier("ivrCtcberpDs") DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
 	}
-//	@Bean(name ="ivrCifJdbcTemplate")
-//	public JdbcTemplate ivrCifJdbcTemplate(@Qualifier("ivrCifDs") DataSource dataSource) {
-//		return new JdbcTemplate(dataSource);
-//	}
 	
 	private static class JndiPropertyHolder {
         private String jndiName;
