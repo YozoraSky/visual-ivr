@@ -95,7 +95,7 @@ public class CheckWarConnection {
 			   ivr_mq_gateway>=3||
 			   ivr_repo_gateway>=3||
 			   ivr_schedule>=3)
-				return "Connection interruption";
+				return "Error";
 			else
 				return "Warning";
 		}
