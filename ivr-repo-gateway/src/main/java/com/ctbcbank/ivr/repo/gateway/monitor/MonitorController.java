@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MonitorController {
 	
 	@RequestMapping("/monitor")
-	public  @ResponseBody String MonitorConnection(){
+	public @ResponseBody String MonitorConnection(){
 		String ok = "ok";
 		return ok;
 	} 
