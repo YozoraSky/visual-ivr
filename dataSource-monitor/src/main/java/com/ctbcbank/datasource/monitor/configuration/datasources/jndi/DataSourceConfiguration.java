@@ -1,4 +1,4 @@
-package com.ctbcbank.datasource.control.configuration.datasources.jndi;
+package com.ctbcbank.datasource.monitor.configuration.datasources.jndi;
 
 import javax.sql.DataSource;
 
