@@ -12,7 +12,6 @@
 		<module>ivr-gateway</module>
 		<module>ivr-repo-gateway</module>
 		<module>visual-ivr-esb</module>
-    	<module>ivr-mq-gateway</module>
     	<module>ivr-schedule</module>
     	<module>ivr-old-gateway</module>
     	<module>ivr-authBackup-gateway</module>
