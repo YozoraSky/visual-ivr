@@ -28,6 +28,8 @@ import com.ctbcbank.ivr.repo.gateway.model.in.SplunkIn;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOut;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOutStatus;
 import com.ctbcbank.ivr.repo.gateway.monitor.DynamicDataSource;
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,7 +49,7 @@ public class LogRepoController {
 	@PostMapping("/execute")
 	public ResultOut execute(@ModelAttribute RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		ResultOut resultInfo = new ResultOut();
 		ProcessResult processResult = resultInfo.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
@@ -80,7 +82,7 @@ public class LogRepoController {
 	@PostMapping("/executeThread")
 	public ResultOutStatus executeThread(@ModelAttribute final RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		try {
 			log.writeInfo(repoModel, repoModel.getSql(), Log.INPUT);
 		} catch (Exception e) {
@@ -115,7 +117,7 @@ public class LogRepoController {
 	@PostMapping("/IVRDetailLog")
 	public ResultOutStatus IVRDetailLog(@ModelAttribute final RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		try {
 			log.writeInfo(repoModel, repoModel.getSql(), Log.INPUT);
 		} catch (Exception e) {
@@ -140,7 +142,7 @@ public class LogRepoController {
 	@PostMapping("/query")
 	public ResultOut query(@ModelAttribute RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		ResultOut resultOut = new ResultOut();
 		ProcessResult processResult = resultOut.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
@@ -195,7 +197,7 @@ public class LogRepoController {
 	@PostMapping("/writeSplunkLog")
 	public ResultOutStatus writeSplunkLog(@ModelAttribute SplunkIn splunkIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		ResultOutStatus resultOutStatus = new ResultOutStatus();
 		log.writeSplunkLog(splunkIn.getSplunk_a(), splunkIn.getSplunk_b());
 		resultOutStatus.setStatus("s");
@@ -210,7 +212,7 @@ public class LogRepoController {
 	@PostMapping("/IVRDetailLog_notUsed")
 	public ResultOutStatus writeLog(@ModelAttribute RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		ResultOutStatus resultOutStatus = new ResultOutStatus();
 		try {
 			log.writeDetailLog(repoModel.getSql());

@@ -16,6 +16,8 @@ import com.ctbcbank.ivr.authbackup.gateway.enumeraion.ProcessResultEnum;
 import com.ctbcbank.ivr.authbackup.gateway.model.AuthBackupOut;
 import com.ctbcbank.ivr.authbackup.gateway.model.AuthInsertIVRDataIn;
 import com.ctbcbank.ivr.authbackup.gateway.model.AuthSetBackupIn;
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
 
 import Eai.IAcquirer.Ctcb.ServiceNameProxy;
 import io.swagger.annotations.Api;
@@ -34,7 +36,7 @@ public class IaIvrController {
 	public AuthBackupOut setAuthBackupFromIvr(
 			@ApiParam(required = true, value = "輸入資料") @RequestBody AuthSetBackupIn authSetBackupIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		AuthBackupOut authBackupOut = new AuthBackupOut();
 		ProcessResult processResult = authBackupOut.getProcessResult();
 		ServiceNameProxy client;
@@ -84,7 +86,7 @@ public class IaIvrController {
 	public AuthBackupOut insertIVRData(
 			@ApiParam(required = true, value = "輸入資料") @RequestBody AuthInsertIVRDataIn authInsertIVRDataIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		AuthBackupOut authBackupOut = new AuthBackupOut();
 		ProcessResult processResult = authBackupOut.getProcessResult();
 		ServiceNameProxy client;

@@ -23,6 +23,9 @@ import com.ctbcbank.ivr.old.gateway.enumeration.ProcessResult;
 import com.ctbcbank.ivr.old.gateway.enumeration.ProcessResultEnum;
 import com.ctbcbank.ivr.old.gateway.model.in.RepoModel;
 import com.ctbcbank.ivr.old.gateway.model.out.ResultOut;
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 //import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
@@ -41,7 +44,7 @@ public class ConfigRepoController {
 	@PostMapping("/execute")
 	public ResultOut execute(@ModelAttribute RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		ResultOut resultOut = new ResultOut();
 		ProcessResult processResult = resultOut.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
@@ -75,7 +78,7 @@ public class ConfigRepoController {
 	@PostMapping("/query")
 	public ResultOut query(@ModelAttribute RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		ResultOut resultOut = new ResultOut();
 		ProcessResult processResult = resultOut.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;

@@ -22,6 +22,8 @@ import com.ctbcbank.ivr.repo.gateway.encrypt.Log;
 import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResult;
 import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResultEnum;
 import com.ctbcbank.ivr.repo.gateway.properties.MqProperties;
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
 import com.ctbcbank.ivr.repo.gateway.mq.MqCombinedMessage;
 import com.ctbcbank.ivr.repo.gateway.mq.MqHandlerfunction;
 import com.ctbcbank.ivr.repo.gateway.model.in.MqIn;
@@ -43,7 +45,7 @@ public class MqController {
 	@PostMapping("/mqApplication")
 	public ReturnModel MqApplitaction(@ApiParam(required = true, value = "簡訊資料(json格式)") @RequestBody final MqIn mqin) {
 			long ivrInTime = System.currentTimeMillis();
-			String UUID = java.util.UUID.randomUUID().toString();	
+			String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 			ReturnModel returnModel = new ReturnModel();
 			ProcessResult processResult = returnModel.getProcessResult();
 			String hostAddress = StringUtils.EMPTY;

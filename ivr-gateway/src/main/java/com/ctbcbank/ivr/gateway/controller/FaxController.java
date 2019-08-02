@@ -23,6 +23,8 @@ import com.ctbcbank.ivr.gateway.fax.FaxProperties;
 import com.ctbcbank.visual.ivr.encrypt.Log;
 import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,7 +43,7 @@ public class FaxController {
 	@PostMapping("/fax")
 	public FaxOut fax(@RequestBody FaxIn faxIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		FaxOut faxOut = new FaxOut();
 		ProcessResult processResult = faxOut.getProcessResult();
 		String result = StringUtils.EMPTY;

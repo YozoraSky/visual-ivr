@@ -19,6 +19,8 @@ import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResultEnum;
 import com.ctbcbank.ivr.repo.gateway.model.in.RepoDesModel;
 import com.ctbcbank.ivr.repo.gateway.model.out.DesResult;
 import com.ctbcbank.ivr.repo.gateway.properties.KeyProperties;
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,6 +38,8 @@ public class DesController {
 	@ApiOperation(value = "利用Des來加解密資料", notes = "type=\"E\"為加密, Type=\"D\"為解密")
 	@PostMapping("/des")
 	public DesResult des(@ApiParam(required = true, value = "加密資料") @RequestBody final RepoDesModel repoDesModel) {
+		long ivrInTime = System.currentTimeMillis();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		DesResult desResult = new DesResult();
 		ProcessResult processResult = desResult.getProcessResult();
 		Map<String, Object> map = repoDesModel.getData();
@@ -68,6 +72,8 @@ public class DesController {
 		processResult.setConnID(repoDesModel.getConnID());
 		processResult.setCallUUID(repoDesModel.getCallUUID());
 		processResult.setGvpSessionID(repoDesModel.getGvpSessionID());
+		long ivrOutTime = System.currentTimeMillis();
+		log.writeTimeLog(repoDesModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
 		return desResult;
 	}
 

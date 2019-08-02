@@ -16,6 +16,8 @@ import com.ctbcbank.ivr.gateway.socket.SocketOut;
 import com.ctbcbank.visual.ivr.encrypt.Log;
 import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,7 +37,7 @@ public class SocketController {
 	@PostMapping("/socket")
 	public SocketOut socket(@ApiParam(required = true, value = "已組好的iso8583報文字串") @RequestBody final SocketIn socketIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		SocketOut socketOut = null;
 		ProcessResult processResult = null;
 		String hostAddress = StringUtils.EMPTY;

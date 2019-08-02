@@ -24,6 +24,8 @@ import com.ctbcbank.ivr.gateway.line.LineSendOut;
 import com.ctbcbank.visual.ivr.encrypt.Log;
 import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,7 +45,7 @@ public class LineController {
 	@PostMapping("/lineBcSend")
 	public LineSendOut lineBcSend(@ApiParam(required = true, value = "line推播相關資料(json格式)") @RequestBody LineBcSendIn lineIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		LineSendOut out = new LineSendOut();
 		ProcessResult processResult = out.getProcessResult();
 		JSONObject jsonObject = null;
@@ -93,7 +95,7 @@ public class LineController {
 	@PostMapping("/lineBcGetUid")
 	public LineGetUidOut lineBcGetUid(@ApiParam(required = true, value = "填寫客戶natioalId") @RequestBody LineBcGetUidIn lineIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		LineGetUidOut out = new LineGetUidOut();
 		ProcessResult processResult = out.getProcessResult();
 		JSONObject jsonObject = null;
@@ -130,7 +132,7 @@ public class LineController {
 	@PostMapping("/lineCcSend")
 	public LineSendOut lineCcSend(@ApiParam(required = true, value = "line推播相關資料(json格式)") @RequestBody LineCcSendIn lineIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		LineSendOut out = new LineSendOut();
 		ProcessResult processResult = out.getProcessResult();
 		JSONObject jsonObject = null;

@@ -19,6 +19,8 @@ import com.ctbcbank.visual.ivr.esb.model.EsbCommandOut;
 import com.ctbcbank.visual.ivr.esb.model.EsbIn;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
 import com.ctbcbank.visual.ivr.service.EsbCommandService;
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
 
 
 @RestController
@@ -32,7 +34,7 @@ public class MockController {
 	
  	@PostMapping("/mockCommand")
 	public EsbCommandOut command(@RequestBody final EsbIn esbIn) throws InterruptedException{
- 		String UUID = java.util.UUID.randomUUID().toString();
+ 		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
  		EsbCommandOut esbCommandOut = null;
 		ProcessResult processResult = null;
 		String hostAddress = StringUtils.EMPTY;
