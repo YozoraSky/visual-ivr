@@ -37,6 +37,7 @@ import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResultEnum;
 import com.ctbcbank.ivr.repo.gateway.model.in.RepoModel;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOut;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOutIDPriority;
+import com.ctbcbank.ivr.repo.gateway.monitor.DynamicDataSource;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,8 +48,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags = "針對Config data base進行操作")
 public class ConfigRepoController {
 	@Autowired
-	@Qualifier("ivrConfigJdbcTemplate")
-	private JdbcTemplate jdbcTemplate;
+	private DynamicDataSource dynamicDataSource;
 	@Autowired
 	private Log log;
 	
@@ -64,7 +64,7 @@ public class ConfigRepoController {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			long DBInTime = System.currentTimeMillis();
-			jdbcTemplate.execute(repoModel.getSql());
+			dynamicDataSource.getConfigJdbcTemplate().execute(repoModel.getSql());
 			long DBOutTime = System.currentTimeMillis();
 			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
 			processResult.setProcessResultEnum(ProcessResultEnum.EDIT_SUCCESS);
@@ -99,7 +99,7 @@ public class ConfigRepoController {
 			hostAddress = iAddress.getHostAddress();
 			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 			long DBInTime = System.currentTimeMillis();
-			List<Map<String, Object>> dataList = jdbcTemplate.queryForList(repoModel.getSql());
+			List<Map<String, Object>> dataList = dynamicDataSource.getConfigJdbcTemplate().queryForList(repoModel.getSql());
 			long DBOutTime = System.currentTimeMillis();
 			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -154,7 +154,7 @@ public class ConfigRepoController {
 			hostAddress = iAddress.getHostAddress();
 			long DBInTime = System.currentTimeMillis();
 			@SuppressWarnings("unchecked")
-			List<Map<String, Object>> result = (List<Map<String, Object>>) jdbcTemplate.execute(new CallableStatementCreator() {
+			List<Map<String, Object>> result = (List<Map<String, Object>>) dynamicDataSource.getConfigJdbcTemplate().execute(new CallableStatementCreator() {
 				@Override
 				public CallableStatement createCallableStatement(Connection con) throws SQLException {
 					CallableStatement cstmt = con.prepareCall(repoModel.getSql());
@@ -218,7 +218,7 @@ public class ConfigRepoController {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			long DBInTime = System.currentTimeMillis();
-			int i = (Integer) jdbcTemplate.execute(new CallableStatementCreator() {
+			int i = (Integer) dynamicDataSource.getConfigJdbcTemplate().execute(new CallableStatementCreator() {
 				@Override
 				public CallableStatement createCallableStatement(Connection con) throws SQLException {
 					CallableStatement cstmt = con.prepareCall("{" + repoModel.getSql() + "}");
@@ -277,7 +277,7 @@ public class ConfigRepoController {
 			hostAddress = iAddress.getHostAddress();
 			List<Map<String,Object>> result = new ArrayList<Map<String,Object>>();
 			long DBInTime = System.currentTimeMillis();
-			List<Map<String, Object>> dataList = jdbcTemplate.queryForList(repoModel.getSql());
+			List<Map<String, Object>> dataList = dynamicDataSource.getConfigJdbcTemplate().queryForList(repoModel.getSql());
 			long DBOutTime = System.currentTimeMillis();
 			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
 			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
