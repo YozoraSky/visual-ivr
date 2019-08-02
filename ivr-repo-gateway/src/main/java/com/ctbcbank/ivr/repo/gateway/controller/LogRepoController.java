@@ -27,6 +27,7 @@ import com.ctbcbank.ivr.repo.gateway.model.in.RepoModel;
 import com.ctbcbank.ivr.repo.gateway.model.in.SplunkIn;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOut;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOutStatus;
+import com.ctbcbank.ivr.repo.gateway.monitor.DynamicDataSource;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,8 +37,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags = "針對Log data base進行操作")
 public class LogRepoController {
 	@Autowired
-	@Qualifier("ivrLogJdbcTemplate")
-	private JdbcTemplate jdbcTemplate;
+	private DynamicDataSource dynamicDataSource;
 	@Autowired
 	private AsyncTask task;
 	@Autowired
@@ -55,7 +55,7 @@ public class LogRepoController {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			long DBInTime = System.currentTimeMillis();
-			jdbcTemplate.execute(repoModel.getSql());
+			dynamicDataSource.getLogJdbcTemplate().execute(repoModel.getSql());
 			long DBOutTime = System.currentTimeMillis();
 			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
 			processResult.setProcessResultEnum(ProcessResultEnum.EDIT_SUCCESS);
@@ -100,7 +100,7 @@ public class LogRepoController {
 //					}
 //				}
 //			}.start();
-			task.jdbcExecute(jdbcTemplate, repoModel);
+			task.jdbcExecute(dynamicDataSource.getLogJdbcTemplate(), repoModel);
 		}
 		else {
 			resultOut.setStatus(ProcessStatus.FAIL.getStatus());
@@ -125,7 +125,7 @@ public class LogRepoController {
 		ResultOutStatus resultOut = new ResultOutStatus();
 		if(!repoModel.getSql().equals(StringUtils.EMPTY)) {
 			resultOut.setStatus(ProcessStatus.SUCCESS.getStatus());
-			task.jdbcExecute(jdbcTemplate, repoModel);
+			task.jdbcExecute(dynamicDataSource.getLogJdbcTemplate(), repoModel);
 		}
 		else {
 			resultOut.setStatus(ProcessStatus.FAIL.getStatus());
@@ -149,7 +149,7 @@ public class LogRepoController {
 			hostAddress = iAddress.getHostAddress();
 			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 			long DBInTime = System.currentTimeMillis();
-			List<Map<String, Object>> dataList = jdbcTemplate.queryForList(repoModel.getSql());
+			List<Map<String, Object>> dataList = dynamicDataSource.getLogJdbcTemplate().queryForList(repoModel.getSql());
 			long DBOutTime = System.currentTimeMillis();
 			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -17,6 +17,7 @@
     	<module>ivr-old-gateway</module>
     	<module>ivr-authBackup-gateway</module>
     	<module>api-monitoring</module>
+    	<module>dataSource-monitor</module>
   </modules>
     
 	<parent>

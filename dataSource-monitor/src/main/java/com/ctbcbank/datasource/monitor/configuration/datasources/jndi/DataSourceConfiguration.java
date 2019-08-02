@@ -1,4 +1,4 @@
-package com.ctbcbank.ivr.repo.gateway.configuration.datasources.jndi;
+package com.ctbcbank.datasource.monitor.configuration.datasources.jndi;
 
 import javax.sql.DataSource;
 
@@ -77,42 +77,6 @@ public class DataSourceConfiguration {
 		return dataSourceLookup.getDataSource(secondary_backup().getJndiName());
 	}
 	
-	@Bean
-	@ConfigurationProperties(prefix = "spring.ivr_club_ds")
-	public JndiPropertyHolder third() {
-		return new JndiPropertyHolder();
-	}
-	
-	@Bean(name = "ivrClubDs")
-	public DataSource thirdDataSource() {
-		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
-		return dataSourceLookup.getDataSource(third().getJndiName());
-	}
-	
-	@Bean
-	@ConfigurationProperties(prefix = "spring.ivr_rcdms_ds")
-	public JndiPropertyHolder fourth() {
-		return new JndiPropertyHolder();
-	}
-	
-	@Bean(name = "ivrRcdmsDs")
-	public DataSource fourthDataSource() {
-		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
-		return dataSourceLookup.getDataSource(fourth().getJndiName());
-	}
-	
-	@Bean
-	@ConfigurationProperties(prefix = "spring.ivr_ctcberp_ds")
-	public JndiPropertyHolder fiveth() {
-		return new JndiPropertyHolder();
-	}
-	
-	@Bean(name = "ivrCtcberpDs")
-	public DataSource fivethDataSource() {
-		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
-		return dataSourceLookup.getDataSource(fiveth().getJndiName());
-	}
-	
 	@Bean(name ="ivrConfigJdbcTemplate")
 	public JdbcTemplate ivrConfigJdbcTemplate(@Qualifier("ivrConfigDs") DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
@@ -121,14 +85,6 @@ public class DataSourceConfiguration {
 	public JdbcTemplate ivrConfigJdbcTemplate_backup(@Qualifier("ivrConfigDs_backup") DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
 	}
-	@Bean(name ="ivrConfigNamedParameterJdbcTemplate")
-	public NamedParameterJdbcTemplate ivrConfigNameParameterJdbcTemplate(@Qualifier("ivrConfigDs") DataSource dataSource) {
-		return new NamedParameterJdbcTemplate(dataSource);
-	}
-	@Bean(name ="ivrConfigNamedParameterJdbcTemplate_backup")
-	public NamedParameterJdbcTemplate ivrConfigNameParameterJdbcTemplate_backup(@Qualifier("ivrConfigDs_backup") DataSource dataSource) {
-		return new NamedParameterJdbcTemplate(dataSource);
-	}
 	
 	@Bean(name ="ivrLogJdbcTemplate")
 	public JdbcTemplate ivrLogJdbcTemplate(@Qualifier("ivrLogDs") DataSource dataSource) {
@@ -136,29 +92,6 @@ public class DataSourceConfiguration {
 	}
 	@Bean(name ="ivrLogJdbcTemplate_backup")
 	public JdbcTemplate ivrLogJdbcTemplate_backup(@Qualifier("ivrLogDs_backup") DataSource dataSource) {
-		return new JdbcTemplate(dataSource);
-	}
-	@Bean(name ="ivrLogNamedParameterJdbcTemplate")
-	public NamedParameterJdbcTemplate ivrLogNamedParameterJdbcTemplate(@Qualifier("ivrLogDs") DataSource dataSource) {
-		return new NamedParameterJdbcTemplate(dataSource);
-	}
-	@Bean(name ="ivrLogNamedParameterJdbcTemplate_backup")
-	public NamedParameterJdbcTemplate ivrLogNamedParameterJdbcTemplate_backup(@Qualifier("ivrLogDs_backup") DataSource dataSource) {
-		return new NamedParameterJdbcTemplate(dataSource);
-	}
-	
-	@Bean(name ="ivrClubJdbcTemplate")
-	public JdbcTemplate ivrClubJdbcTemplate(@Qualifier("ivrClubDs") DataSource dataSource) {
-		return new JdbcTemplate(dataSource);
-	}
-	
-	@Bean(name ="ivrRcdmsJdbcTemplate")
-	public JdbcTemplate ivrRcdmsJdbcTemplate(@Qualifier("ivrRcdmsDs") DataSource dataSource) {
-		return new JdbcTemplate(dataSource);
-	}
-	
-	@Bean(name ="ivrCtcberpJdbcTemplate")
-	public JdbcTemplate ivrCtcberpJdbcTemplate(@Qualifier("ivrCtcberpDs") DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
 	}
 	

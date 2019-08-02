@@ -26,6 +26,7 @@ import com.ctbcbank.ivr.repo.gateway.mq.MqCombinedMessage;
 import com.ctbcbank.ivr.repo.gateway.mq.MqHandlerfunction;
 import com.ctbcbank.ivr.repo.gateway.model.in.MqIn;
 import com.ctbcbank.ivr.repo.gateway.model.out.ReturnModel;
+import com.ctbcbank.ivr.repo.gateway.monitor.DynamicDataSource;
 
 @Api(tags = "發簡訊API[(IBM)Manager Queue Series]")
 @RestController
@@ -34,8 +35,7 @@ public class MqController {
 	@Autowired
 	private MqProperties mq;
 	@Autowired
-	@Qualifier("ivrConfigNamedParameterJdbcTemplate")
-	private NamedParameterJdbcTemplate nameparameterjdbcTemplate;
+	private DynamicDataSource dynamicDataSource;
 	@Autowired
 	private Log log;
 	
@@ -54,7 +54,7 @@ public class MqController {
 				throw new Exception("Type length error: "+mqin.getType());
 			Map<String, Object> paramMap = new HashMap<>();
 			paramMap.put("Type", mqin.getType());
-			List<Map<String, Object>> dataList=nameparameterjdbcTemplate.queryForList(mq.getSql(),paramMap);
+			List<Map<String, Object>> dataList=dynamicDataSource.getConfigNamedParameterJdbcTemplate().queryForList(mq.getSql(),paramMap);
 			if(dataList.isEmpty()) 
 				throw new Exception("SQL not found data");
 			int HeaderLength=Integer.parseInt((String)dataList.get(0).get("HeaderLength"));
