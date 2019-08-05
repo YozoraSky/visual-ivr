@@ -10,6 +10,8 @@ import com.ctbcbank.ivr.repo.gateway.encrypt.Log;
 import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessStatus;
 import com.ctbcbank.ivr.repo.gateway.model.in.MPlusIn;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOutStatus;
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,7 +28,7 @@ public class MPlusController {
 	@PostMapping("/mPlus")
 	public ResultOutStatus MPlus(@RequestBody MPlusIn mPlusIn) {
 		long mPlusInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		ResultOutStatus resultOut = new ResultOutStatus();
 		if(mPlusIn!=null) {
 			resultOut.setStatus(ProcessStatus.SUCCESS.getStatus());
