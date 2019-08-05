@@ -64,7 +64,7 @@ public class SocketChannel{
 //			接收回傳值
 			length = inputStream.read(dataByte);
 			long socketOutTime = System.currentTimeMillis();
-			log.writeTimeLog(socketIn.getConnID(), UUID, "IVRSOCKET", socketInTime, socketOutTime);
+			log.writeTimeLog(socketIn.getConnID(), UUID, "IVRTANDEM", socketInTime, socketOutTime);
 			if(length != -1) {
 				processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
 				String outputHexLen = StringUtils.EMPTY;

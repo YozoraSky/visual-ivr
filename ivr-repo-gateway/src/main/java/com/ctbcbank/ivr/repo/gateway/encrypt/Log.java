@@ -16,8 +16,8 @@ import com.ctbcbank.ivr.repo.gateway.properties.KeyProperties;
 
 @Component
 public class Log {
-	private Logger loggerRepo = LoggerFactory.getLogger("ivr-repo-gateway");
-	private Logger logger_mq = LoggerFactory.getLogger("ivr-mq-geteway");
+	private Logger loggerRepo = LoggerFactory.getLogger("db");
+	private Logger logger_mq = LoggerFactory.getLogger("mq");
 	private Logger logger_mPlus = LoggerFactory.getLogger("mPlus");
 	private Logger logger_time = LoggerFactory.getLogger("time-log");
 	private Logger ivrDetailLog = LoggerFactory.getLogger("ivr_detail_log");

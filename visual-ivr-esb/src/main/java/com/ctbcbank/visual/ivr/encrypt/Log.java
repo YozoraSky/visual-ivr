@@ -15,10 +15,10 @@ import com.ctbcbank.visual.ivr.properties.KeyProperties;
 
 @Component
 public class Log {
-	private Logger logger_esb = LoggerFactory.getLogger("ivr-gateway");
+	private Logger logger_esb = LoggerFactory.getLogger("esb");
 	private Logger logger_authBackup = LoggerFactory.getLogger("authBackup");
 	private Logger logger_line = LoggerFactory.getLogger("line");
-	private Logger logger_socket = LoggerFactory.getLogger("socket");
+	private Logger logger_socket = LoggerFactory.getLogger("tandem");
 	private Logger logger_fax = LoggerFactory.getLogger("fax");
 	private Logger logger_time = LoggerFactory.getLogger("time-log");
 	
