@@ -9,14 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.ctbcbank.ivr.repo.gateway.model.in.MPlusIn;
 import com.ctbcbank.ivr.repo.gateway.model.in.MqIn;
 import com.ctbcbank.ivr.repo.gateway.model.in.RequestModel;
 import com.ctbcbank.ivr.repo.gateway.properties.KeyProperties;
 
 @Component
 public class Log {
-	private Logger logger = LoggerFactory.getLogger("ivr-repo-gateway");
+	private Logger loggerRepo = LoggerFactory.getLogger("ivr-repo-gateway");
 	private Logger logger_mq = LoggerFactory.getLogger("ivr-mq-geteway");
+	private Logger logger_mPlus = LoggerFactory.getLogger("mPlus");
 	private Logger logger_time = LoggerFactory.getLogger("time-log");
 	private Logger ivrDetailLog = LoggerFactory.getLogger("ivr_detail_log");
 	private Logger loggerA = LoggerFactory.getLogger("splunk_A");
@@ -27,6 +29,32 @@ public class Log {
 	private KeyProperties keyProperties;
 	@Value("${log.isEncrypt}")
 	private boolean isEncrypt;
+	public final static int IVRREPOGATEWAY = 10;
+	public final static int IVRMQGATEWAY = 11;
+	public final static int IVRMPLUSGATEWAY = 12;
+	
+	public Logger logger(int loggerName) {
+		switch(loggerName) {
+			case 10:return loggerRepo;
+			case 11:return logger_mq;
+			case 12:return logger_mPlus;
+		}
+		return null;
+	}
+	
+	public void writeMPlusLog(MPlusIn mPlusIn, String output) {
+		logger_mPlus.info("input : {}#\n"
+	  			  		+ "output : {}#\n"
+	  			  		+ "CallUUID : {}#\n"
+	  			  		+ "ConnID : {}#\n"
+	  			  		+ "GvpSessionID : {}#\n"
+	  			  		+ "#$$%%%%$$#", 
+	  			  		mPlusIn.toString(),
+	  			  		output,
+	  			  		mPlusIn.getCallUUID(),
+	  			  		mPlusIn.getConnID(),
+	  			  		mPlusIn.getGvpSessionID());
+	}
 	
 	public void writeMqLog(MqIn mqin,String mqdata,String msg, String charset, String channel, String queuemanagername,String queuename, String mq_host, int mq_port) throws Exception {
 	 logger_mq.info("========={} input========= : {}# \n"
@@ -60,7 +88,7 @@ public class Log {
 	}
 	
 	public void writeInfo(RequestModel requestModel) {
-		logger.info("CallUUID : {}#\n"
+		loggerRepo.info("CallUUID : {}#\n"
 				  + "ConnID : {}#\n"
 				  + "GvpSessionID : {}#\n"
 				  + "#$$%%%%$$#",
@@ -71,7 +99,7 @@ public class Log {
 	
 	public void writeInfo(RequestModel requestModel, Object msg, int type) throws Exception {
 		if(type == INPUT) {
-			logger.info("input : {}#\n"
+			loggerRepo.info("input : {}#\n"
 					  + "CallUUID : {}#\n"
 					  + "ConnID : {}#\n"
 					  + "GvpSessionID : {}#\n"
@@ -82,7 +110,7 @@ public class Log {
 					  requestModel.getGvpSessionID());
 		}
 		if(type == OUTPUT) {
-			logger.info("output : {}#\n"
+			loggerRepo.info("output : {}#\n"
 					  + "CallUUID : {}#\n"
 					  + "ConnID : {}#\n"
 					  + "GvpSessionID : {}#\n"
@@ -95,7 +123,7 @@ public class Log {
 	}
 	
 	public void writeInfo(RequestModel requestModel, Object input, Object output) throws Exception {
-		logger.info("input : {}#\n"
+		loggerRepo.info("input : {}#\n"
 				  + "output : {}#\n"
 				  + "CallUUID : {}#\n"
 				  + "ConnID : {}#\n"
@@ -109,7 +137,7 @@ public class Log {
 	}
 	
 	public void writeInfo(RequestModel requestModel, Object input, Object output, Object M3count, Object TotalList) throws Exception {
-		logger.info("input : {}#\n"
+		loggerRepo.info("input : {}#\n"
 				  + "output : {}#\n"
 				  + "M3count : {}#\n"
 				  + "TotalList : {}#\n"
@@ -133,19 +161,19 @@ public class Log {
 		loggerB.info(splunk_b);
 	}
 	
-	public void writeError(RequestModel requestModel, Exception error) {
+	public void writeError(RequestModel requestModel, Exception error, int loggerName) {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		error.printStackTrace(pw);
-		logger.error("---ERROR--- : {}"
-				   + "CallUUID : {}#\n"
-				   + "ConnID : {}#\n"
-				   + "GvpSessionID : {}#\n"
-				   + "#$$%%%%$$#",
-				   sw.toString(),
-				   requestModel.getCallUUID(),
-				   requestModel.getConnID(),
-				   requestModel.getGvpSessionID());
+		logger(loggerName).error("---ERROR--- : {}"
+				   			   + "CallUUID : {}#\n"
+				   			   + "ConnID : {}#\n"
+				   			   + "GvpSessionID : {}#\n"
+				   			   + "#$$%%%%$$#",
+				   			   sw.toString(),
+				   			   requestModel.getCallUUID(),
+				   			   requestModel.getConnID(),
+				   			   requestModel.getGvpSessionID());
 	}
 	
 	public String EncryptByDES(String str) throws Exception {

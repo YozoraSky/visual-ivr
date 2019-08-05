@@ -73,7 +73,7 @@ public class ConfigRepoController {
 			log.writeInfo(repoModel, repoModel.getSql(), Log.INPUT);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e);
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
@@ -129,7 +129,7 @@ public class ConfigRepoController {
 			log.writeInfo(repoModel, repoModel.getSql(), list);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e);
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
@@ -191,7 +191,7 @@ public class ConfigRepoController {
 			log.writeInfo(repoModel, repoModel.getSql(), result);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e);
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
@@ -249,7 +249,7 @@ public class ConfigRepoController {
 			log.writeInfo(repoModel, repoModel.getSql(), data);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e);
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
@@ -348,7 +348,7 @@ public class ConfigRepoController {
 			log.writeInfo(repoModel, repoModel.getSql(), result, bmas, idCount);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e);
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());

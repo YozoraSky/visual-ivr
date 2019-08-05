@@ -63,7 +63,7 @@ public class DesController {
 			processResult.setProcessResultEnum(ProcessResultEnum.DES_SUCCESS);
 			desResult.setData(result);
 		} catch (Exception e) {
-			log.writeError(repoDesModel, e);
+			log.writeError(repoDesModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
