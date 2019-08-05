@@ -74,7 +74,7 @@ public class MqController {
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
-			log.writeError(mqin, e);
+			log.writeError(mqin, e, Log.IVRMQGATEWAY);
 		}
 		processResult.setCallUUID(mqin.getCallUUID());
 		processResult.setConnID(mqin.getConnID());

@@ -90,7 +90,7 @@ public class CtcberpRepoController {
 			log.writeInfo(repoModel, repoModel.getSql(), result);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e);
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
