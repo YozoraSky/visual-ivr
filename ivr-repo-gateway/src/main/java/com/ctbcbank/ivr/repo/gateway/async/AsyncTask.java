@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -35,9 +36,13 @@ public class AsyncTask {
 			IvrCallLog oData = new IvrCallLog();
 			SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 			Calendar startTime = Calendar.getInstance();
-			startTime.setTimeInMillis(sdf.parse(mPlusIn.getIvrCallLog().getStartTime()).getTime());
 			Calendar endTime = Calendar.getInstance();
-			endTime.setTimeInMillis(sdf.parse(mPlusIn.getIvrCallLog().getStartTime()).getTime());
+			if(!mPlusIn.getIvrCallLog().getStartTime().equals(StringUtils.EMPTY)) {
+				startTime.setTimeInMillis(sdf.parse(mPlusIn.getIvrCallLog().getStartTime()).getTime());
+			}
+			if(!mPlusIn.getIvrCallLog().getEndTime().equals(StringUtils.EMPTY)) {
+				endTime.setTimeInMillis(sdf.parse(mPlusIn.getIvrCallLog().getEndTime()).getTime());
+			}
 			oData.setAgentExt(mPlusIn.getIvrCallLog().getAgentExt());
 			oData.setAgentName(mPlusIn.getIvrCallLog().getAgentName());
 			oData.setGroupId(mPlusIn.getIvrCallLog().getGroupId());
