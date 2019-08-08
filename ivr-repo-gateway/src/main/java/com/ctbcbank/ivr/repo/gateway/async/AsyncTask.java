@@ -3,6 +3,9 @@ package com.ctbcbank.ivr.repo.gateway.async;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +18,15 @@ import org.tempuri.MPlusServiceSoapProxy;
 import com.ctbcbank.ivr.repo.gateway.encrypt.Log;
 import com.ctbcbank.ivr.repo.gateway.model.in.MPlusIn;
 import com.ctbcbank.ivr.repo.gateway.model.in.RepoModel;
+import com.ctbcbank.ivr.repo.gateway.monitor.DynamicDataSource;
+import com.ctbcbank.ivr.repo.gateway.properties.MPlusProperties;
 
 @Component
 public class AsyncTask {
+	@Autowired
+	private DynamicDataSource dynamicDataSource;
+	@Autowired
+	private MPlusProperties mPlusProperties;
 	@Autowired
 	private Log log;
 	@Async("myAsync")
@@ -55,6 +64,12 @@ public class AsyncTask {
 			Date date = new Date(System.currentTimeMillis());
 			Calendar rightNow = Calendar.getInstance();
 			rightNow.setTime(date);
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("IVRDynamicGroupId", mPlusIn.getIvrCallLog().getGroupId());
+			List<Map<String, Object>> list = dynamicDataSource.getConfigNamedParameterJdbcTemplate().queryForList(mPlusProperties.getSql(), params);
+			mPlusIn.setGroupId((String) list.get(0).get("MPlusGroupId"));
+			mPlusIn.setTitle((String) list.get(0).get("NoticeTitle"));
+			mPlusIn.setContent((String) list.get(0).get("NoticeContent"));
 			String result = mPlusServiceSoapProxy.sendMessage(mPlusIn.getGroupId(), mPlusIn.getTitle(), mPlusIn.getContent(), oData, rightNow);
 //			為了寫log 所以set值進mPlusIn物件(讓mPlusIn的toString有值可以印出來)
 			mPlusIn.setNowTime(sdf.format(date));
@@ -65,3 +80,4 @@ public class AsyncTask {
 		}
 	}
 }
+;
