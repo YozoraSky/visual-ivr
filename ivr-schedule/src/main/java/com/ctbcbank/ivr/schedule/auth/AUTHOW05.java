@@ -58,7 +58,7 @@ public class AUTHOW05 extends Auth {
 //			EDC機型2
 			String edc_type_2 = new String(Arrays.copyOfRange(temp, 69, 74),"big5");
 //			統編末四碼
-			String corp_no_4 = new String(Arrays.copyOfRange(temp, 75, 78),"big5");
+			String corp_no_4 = new String(Arrays.copyOfRange(temp, 74, 78),"big5");
 //			商店狀態(是否解約)
 			String status = new String(Arrays.copyOfRange(temp, 78, 79),"big5");
 //			聯絡電話-區碼

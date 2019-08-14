@@ -27,6 +27,7 @@ public class MPlusController {
 	@ApiOperation(value = "M plus API和IVR之間的橋樑", notes = "接收ivr的資訊，傳送給MPlus的API 再透過那個API去呼叫MPlus主機")
 	@PostMapping("/mPlus")
 	public ResultOutStatus MPlus(@RequestBody MPlusIn mPlusIn) {
+		log.writeMPlusInputLog(mPlusIn);
 		long mPlusInTime = System.currentTimeMillis();
 		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
 		ResultOutStatus resultOut = new ResultOutStatus();

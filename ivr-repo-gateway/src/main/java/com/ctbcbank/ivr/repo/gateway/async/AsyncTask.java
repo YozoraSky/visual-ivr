@@ -73,7 +73,7 @@ public class AsyncTask {
 			String result = mPlusServiceSoapProxy.sendMessage(mPlusIn.getGroupId(), mPlusIn.getTitle(), mPlusIn.getContent(), oData, rightNow);
 //			為了寫log 所以set值進mPlusIn物件(讓mPlusIn的toString有值可以印出來)
 			mPlusIn.setNowTime(sdf.format(date));
-			log.writeMPlusLog(mPlusIn, result);
+			log.writeMPlusOutputLog(mPlusIn, result);
 		}
 		catch(Exception e) {
 			log.writeError(mPlusIn, e, Log.IVRMPLUSGATEWAY);

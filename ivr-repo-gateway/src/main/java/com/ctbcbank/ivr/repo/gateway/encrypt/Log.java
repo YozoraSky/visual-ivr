@@ -42,14 +42,24 @@ public class Log {
 		return null;
 	}
 	
-	public void writeMPlusLog(MPlusIn mPlusIn, String output) {
+	public void writeMPlusInputLog(MPlusIn mPlusIn) {
 		logger_mPlus.info("input : {}#\n"
-	  			  		+ "output : {}#\n"
 	  			  		+ "CallUUID : {}#\n"
 	  			  		+ "ConnID : {}#\n"
 	  			  		+ "GvpSessionID : {}#\n"
 	  			  		+ "#$$%%%%$$#", 
 	  			  		mPlusIn.toString(),
+	  			  		mPlusIn.getCallUUID(),
+	  			  		mPlusIn.getConnID(),
+	  			  		mPlusIn.getGvpSessionID());
+	}
+	
+	public void writeMPlusOutputLog(MPlusIn mPlusIn, String output) {
+		logger_mPlus.info("output : {}#\n"
+	  			  		+ "CallUUID : {}#\n"
+	  			  		+ "ConnID : {}#\n"
+	  			  		+ "GvpSessionID : {}#\n"
+	  			  		+ "#$$%%%%$$#",
 	  			  		output,
 	  			  		mPlusIn.getCallUUID(),
 	  			  		mPlusIn.getConnID(),
