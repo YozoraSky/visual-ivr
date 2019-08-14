@@ -48,7 +48,7 @@ public class Log {
 	  			  		+ "ConnID : {}#\n"
 	  			  		+ "GvpSessionID : {}#\n"
 	  			  		+ "#$$%%%%$$#", 
-	  			  		mPlusIn.toString(),
+	  			  		mPlusIn.getIvrCallLog().toString(),
 	  			  		mPlusIn.getCallUUID(),
 	  			  		mPlusIn.getConnID(),
 	  			  		mPlusIn.getGvpSessionID());
@@ -56,11 +56,17 @@ public class Log {
 	
 	public void writeMPlusOutputLog(MPlusIn mPlusIn, String output) {
 		logger_mPlus.info("output : {}#\n"
+						+ "MPlusGroupId : {}#\n"
+						+ "NoticeTitle : {}#\n"
+						+ "NoticeContent : {}#\n"
 	  			  		+ "CallUUID : {}#\n"
 	  			  		+ "ConnID : {}#\n"
 	  			  		+ "GvpSessionID : {}#\n"
 	  			  		+ "#$$%%%%$$#",
 	  			  		output,
+	  			  		mPlusIn.getGroupId(),
+	  			  		mPlusIn.getTitle(),
+	  			  		mPlusIn.getContent(),
 	  			  		mPlusIn.getCallUUID(),
 	  			  		mPlusIn.getConnID(),
 	  			  		mPlusIn.getGvpSessionID());
