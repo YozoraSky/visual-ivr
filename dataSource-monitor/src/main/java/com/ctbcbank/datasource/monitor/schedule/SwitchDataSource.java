@@ -62,6 +62,7 @@ public class SwitchDataSource {
 		} catch(Exception e) {
 			logger.info(e.toString());
 			alert = " (warning)";
+			reConnectToMainDBCount = 0;
 			mainDBConnectFailCount++;
 			if(mainDBConnectFailCount>=3) {
 				dataSource = "backup";
