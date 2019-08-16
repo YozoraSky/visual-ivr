@@ -84,7 +84,7 @@ public class SocketChannel{
 				processResult.setProcessResultEnum(ProcessResultEnum.DATA_NOT_FOUND);
 			}
 			socket.close();
-			log.writeSocketInfo(socketIn, socket, inputHexLen+socketIn.getSocketData(), result.trim(), Log.IVRSOCKETGATEWAY);
+			log.writeSocketInfo(socketIn, socket, inputHexLen+socketIn.getSocketData(), result.trim());
 		}
 		return socketOut;
 	}

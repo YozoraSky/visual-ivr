@@ -75,7 +75,7 @@ public class LineController {
 				out.setResultCode(jsonObject.getString("resultCode"));
 				out.setTransactionId(jsonObject.getString("transactionId"));
 			}
-			log.writeInfo(lineIn, jsonString, jsonObject, Log.IVRLINEGATEWAY);
+			log.writeLineInfo(lineIn, jsonString, jsonObject);
 		}catch(Exception e) {
 			log.writeError(lineIn, e, Log.IVRLINEGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
@@ -112,7 +112,7 @@ public class LineController {
 				processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
 				out.setUid(jsonObject.getString("uid"));
 			}
-			log.writeInfo(lineIn, jsonString, jsonObject, Log.IVRLINEGATEWAY);
+			log.writeLineInfo(lineIn, jsonString, jsonObject);
 		}catch(Exception e) {
 			log.writeError(lineIn, e, Log.IVRLINEGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
@@ -163,7 +163,7 @@ public class LineController {
 				out.setResultCode(jsonObject.getString("resultCode"));
 				out.setTransactionId(jsonObject.getString("transactionId"));
 			}
-			log.writeInfo(lineIn, jsonString, jsonObject, Log.IVRLINEGATEWAY);
+			log.writeLineInfo(lineIn, jsonString, jsonObject);
 		}catch(Exception e) {
 			log.writeError(lineIn, e, Log.IVRLINEGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
