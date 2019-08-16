@@ -65,7 +65,7 @@ public class IaIvrController {
 			String input = String.format("type : %s, amount : %s, modifiedDate : %s, transactionId : %s",
 					authSetBackupIn.getType(), authSetBackupIn.getAmount(), authSetBackupIn.getModifiedDate(),
 					authSetBackupIn.getTransactionId());
-			log.writeAuthBackupInfo(authSetBackupIn, input, Log.IVRAUTHBACKUPGATEWAY);
+			log.writeAuthBackupInfo(authSetBackupIn, input);
 		} catch (Exception e) {
 			log.writeError(authSetBackupIn, e, Log.IVRAUTHBACKUPGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
@@ -111,7 +111,7 @@ public class IaIvrController {
 			String input = String.format("cardNumber : %s, amount : %s, retlId : %s, TrackExpirationDate : %s, transactionId : %s", 
 					authInsertIVRDataIn.getCardNumber(), authInsertIVRDataIn.getAmount(), authInsertIVRDataIn.getRetlId(),authInsertIVRDataIn.getTrackExpirationDate(),
 					authInsertIVRDataIn.getTransactionId());
-			log.writeAuthBackupInfo(authInsertIVRDataIn, input, Log.IVRAUTHBACKUPGATEWAY);
+			log.writeAuthBackupInfo(authInsertIVRDataIn, input);
 		} catch (Exception e) {
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());

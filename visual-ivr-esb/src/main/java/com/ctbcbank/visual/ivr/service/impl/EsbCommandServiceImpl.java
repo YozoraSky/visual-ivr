@@ -113,7 +113,7 @@ public class EsbCommandServiceImpl extends EsbCommonService implements EsbComman
 		Element element = (Element) serviceEnvelopeDocument.getRootElement();
 		element.element("ServiceBody").add(rqDocument.getRootElement());
 		String xml = serviceEnvelopeDocument.asXML();
-		log.writeEsbInputInfo(esbIn, xml, esbIn.getServiceName(), Log.IVRGATEWAY);
+		log.writeEsbInputInfo(esbIn, xml, esbIn.getServiceName());
 		long ESBinTime = System.currentTimeMillis();
 		Object jmsObjResult = this.sendAndReceive(xml);
 		long ESBoutTime = System.currentTimeMillis();
@@ -122,7 +122,7 @@ public class EsbCommandServiceImpl extends EsbCommonService implements EsbComman
 		if(jmsObjResult != null) {
 			jmsResult = jmsObjResult.toString();
 		}
-		log.writeEsbOutputInfo(esbIn, jmsResult, esbIn.getServiceName(), Log.IVRGATEWAY);
+		log.writeEsbOutputInfo(esbIn, jmsResult, esbIn.getServiceName());
 		if (StringUtils.isNotBlank(jmsResult)) {
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 			ServiceEnvelope result = (ServiceEnvelope) unmarshaller.unmarshal(new StringReader(jmsResult));
