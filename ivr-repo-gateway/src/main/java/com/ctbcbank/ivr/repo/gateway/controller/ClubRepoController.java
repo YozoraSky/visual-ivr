@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,6 @@ import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResult;
 import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResultEnum;
 import com.ctbcbank.ivr.repo.gateway.model.in.RepoModel;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOut;
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 //import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
@@ -49,7 +48,7 @@ public class ClubRepoController {
 	@PostMapping("/procedure_1_string_output")
 	public ResultOut sp_WriteCTITaskList3(@ModelAttribute final RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		ResultOut resultOut = new ResultOut();
 		ProcessResult processResult = resultOut.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
@@ -75,7 +74,7 @@ public class ClubRepoController {
 				}
 			});
 			long DBOutTime = System.currentTimeMillis();
-			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
+			log.writeTimeLog(repoModel.getConnID(), uuid, "IVRDB", DBInTime, DBOutTime);
 			map.put("Value", String.valueOf(i));
 			data.add(map);
 			resultOut.setDataList(data);
@@ -93,7 +92,7 @@ public class ClubRepoController {
 		processResult.setGvpSessionID(repoModel.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultOut;
 	}
 

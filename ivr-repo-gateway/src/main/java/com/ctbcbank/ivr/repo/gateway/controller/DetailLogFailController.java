@@ -3,8 +3,6 @@ package com.ctbcbank.ivr.repo.gateway.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,9 +19,6 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "當DetailLog批次自動執行失敗時，可透過此API手動重新執行")
 public class DetailLogFailController {
 	private Logger logger = LoggerFactory.getLogger("batch_Dlog");
-	@Autowired
-	@Qualifier("ivrLogJdbcTemplate")
-	private JdbcTemplate jdbcTemplate;
 	@Autowired
 	private DetailLog detailLog;
 	

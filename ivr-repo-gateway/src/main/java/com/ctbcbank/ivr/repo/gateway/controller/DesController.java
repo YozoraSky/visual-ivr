@@ -3,6 +3,7 @@ package com.ctbcbank.ivr.repo.gateway.controller;
 import java.net.InetAddress;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,8 +20,6 @@ import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResultEnum;
 import com.ctbcbank.ivr.repo.gateway.model.in.RepoDesModel;
 import com.ctbcbank.ivr.repo.gateway.model.out.DesResult;
 import com.ctbcbank.ivr.repo.gateway.properties.KeyProperties;
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,7 +38,7 @@ public class DesController {
 	@PostMapping("/des")
 	public DesResult des(@ApiParam(required = true, value = "加密資料") @RequestBody final RepoDesModel repoDesModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		DesResult desResult = new DesResult();
 		ProcessResult processResult = desResult.getProcessResult();
 		Map<String, Object> map = repoDesModel.getData();
@@ -73,7 +72,7 @@ public class DesController {
 		processResult.setCallUUID(repoDesModel.getCallUUID());
 		processResult.setGvpSessionID(repoDesModel.getGvpSessionID());
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoDesModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoDesModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return desResult;
 	}
 

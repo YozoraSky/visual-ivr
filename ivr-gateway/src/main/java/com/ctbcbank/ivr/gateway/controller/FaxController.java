@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,6 @@ import com.ctbcbank.ivr.gateway.fax.FaxProperties;
 import com.ctbcbank.visual.ivr.encrypt.Log;
 import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,7 +42,7 @@ public class FaxController {
 	@PostMapping("/fax")
 	public FaxOut fax(@RequestBody FaxIn faxIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		FaxOut faxOut = new FaxOut();
 		ProcessResult processResult = faxOut.getProcessResult();
 		String result = StringUtils.EMPTY;
@@ -68,7 +67,7 @@ public class FaxController {
 				connect_ip = faxProperties.getMain_ip();
 			result = httpPost(connect_ip, JSONObject.fromObject(faxIn.getData()).toString());
 			long faxOutTime = System.currentTimeMillis();
-			log.writeTimeLog(faxIn.getConnID(), UUID, "IVRFAX", faxInTime, faxOutTime);
+			log.writeTimeLog(faxIn.getConnID(), uuid, "IVRFAX", faxInTime, faxOutTime);
 			processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
 			faxOut.setResult(result);
 			log.writeFaxInfo(faxIn, faxIn.getData(), result);
@@ -83,7 +82,7 @@ public class FaxController {
 		processResult.setGvpSessionID(faxIn.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(faxIn.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(faxIn.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return faxOut;
 	}
 	

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,8 +24,6 @@ import com.ctbcbank.ivr.old.gateway.enumeration.ProcessResult;
 import com.ctbcbank.ivr.old.gateway.enumeration.ProcessResultEnum;
 import com.ctbcbank.ivr.old.gateway.model.in.RepoModel;
 import com.ctbcbank.ivr.old.gateway.model.out.ResultOut;
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,7 +43,7 @@ public class ConfigRepoController {
 	@PostMapping("/execute")
 	public ResultOut execute(@ModelAttribute RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		ResultOut resultOut = new ResultOut();
 		ProcessResult processResult = resultOut.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
@@ -54,7 +53,7 @@ public class ConfigRepoController {
 			long DBInTime = System.currentTimeMillis();
 			jdbcTemplate.execute(repoModel.getSql());
 			long DBOutTime = System.currentTimeMillis();
-			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
+			log.writeTimeLog(repoModel.getConnID(), uuid, "IVRDB", DBInTime, DBOutTime);
 			processResult.setProcessResultEnum(ProcessResultEnum.EDIT_SUCCESS);
 			log.writeInfo(repoModel, repoModel.getSql(), Log.INPUT);
 		}
@@ -69,7 +68,7 @@ public class ConfigRepoController {
 		processResult.setGvpSessionID(repoModel.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultOut;
 	}
 	
@@ -78,7 +77,7 @@ public class ConfigRepoController {
 	@PostMapping("/query")
 	public ResultOut query(@ModelAttribute RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		ResultOut resultOut = new ResultOut();
 		ProcessResult processResult = resultOut.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
@@ -89,7 +88,7 @@ public class ConfigRepoController {
 			long DBInTime = System.currentTimeMillis();
 			List<Map<String, Object>> dataList = jdbcTemplate.queryForList(repoModel.getSql());
 			long DBOutTime = System.currentTimeMillis();
-			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
+			log.writeTimeLog(repoModel.getConnID(), uuid, "IVRDB", DBInTime, DBOutTime);
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Pattern pattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.\\d{3}$|"
 											+ "\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.\\d{2}$|"
@@ -125,7 +124,7 @@ public class ConfigRepoController {
 		processResult.setGvpSessionID(repoModel.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultOut;
 	}
 }

@@ -1,6 +1,8 @@
 package com.ctbcbank.ivr.gateway.controller;
 
 import java.net.InetAddress;
+import java.util.UUID;
+
 import org.apache.commons.lang.StringUtils;
 import org.datacontract.schemas._2004._07.Ctcb_IAcquirer_Eai.IaIvrDataInfo;
 import org.datacontract.schemas._2004._07.Ctcb_IAcquirer_Eai.IaIvrSetInfo;
@@ -16,8 +18,6 @@ import com.ctbcbank.ivr.gateway.authBackup.AuthSetBackupIn;
 import com.ctbcbank.visual.ivr.encrypt.Log;
 import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
 
 import Eai.IAcquirer.Ctcb.ServiceNameProxy;
 import io.swagger.annotations.Api;
@@ -36,7 +36,7 @@ public class IaIvrController {
 	public AuthBackupOut setAuthBackupFromIvr(
 			@ApiParam(required = true, value = "輸入資料") @RequestBody AuthSetBackupIn authSetBackupIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		AuthBackupOut authBackupOut = new AuthBackupOut();
 		ProcessResult processResult = authBackupOut.getProcessResult();
 		ServiceNameProxy client;
@@ -50,7 +50,7 @@ public class IaIvrController {
 			result = client.setAuthBackupFromIvr(authSetBackupIn.getType(), authSetBackupIn.getAmount(),
 					authSetBackupIn.getModifiedDate(), authSetBackupIn.getTransactionId());
 			long authBackupOutTime = System.currentTimeMillis();
-			log.writeTimeLog(authSetBackupIn.getConnID(), UUID, "IVRAUTHBACKUP", authBackupInTime, authBackupOutTime);
+			log.writeTimeLog(authSetBackupIn.getConnID(), uuid, "IVRAUTHBACKUP", authBackupInTime, authBackupOutTime);
 			authBackupOut.setRspCode(result.getError().getCode());
 			authBackupOut.setTransactionId(result.getTransactionId());
 			if (result.getIsSuccess()) {
@@ -77,7 +77,7 @@ public class IaIvrController {
 		processResult.setGvpSessionID(authSetBackupIn.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(authSetBackupIn.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(authSetBackupIn.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return authBackupOut;
 	}
 
@@ -86,7 +86,7 @@ public class IaIvrController {
 	public AuthBackupOut insertIVRData(
 			@ApiParam(required = true, value = "輸入資料") @RequestBody AuthInsertIVRDataIn authInsertIVRDataIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		AuthBackupOut authBackupOut = new AuthBackupOut();
 		ProcessResult processResult = authBackupOut.getProcessResult();
 		ServiceNameProxy client;
@@ -101,7 +101,7 @@ public class IaIvrController {
 					authInsertIVRDataIn.getRetlId(), authInsertIVRDataIn.getTrackExpirationDate(),
 					authInsertIVRDataIn.getTransactionId());
 			long authBackupOutTime = System.currentTimeMillis();
-			log.writeTimeLog(authInsertIVRDataIn.getConnID(), UUID, "IVRAUTHBACKUP", authBackupInTime, authBackupOutTime);
+			log.writeTimeLog(authInsertIVRDataIn.getConnID(), uuid, "IVRAUTHBACKUP", authBackupInTime, authBackupOutTime);
 			authBackupOut.setRspCode(DataResult.getError().getCode());
 			authBackupOut.setTransactionId(DataResult.getTransactionId());
 			authBackupOut.setAuthApprvCode(DataResult.getAuthApprvCode());
@@ -122,7 +122,7 @@ public class IaIvrController {
 		processResult.setGvpSessionID(authInsertIVRDataIn.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(authInsertIVRDataIn.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(authInsertIVRDataIn.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return authBackupOut;
 	}
 }

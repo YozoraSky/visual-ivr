@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,6 @@ import com.ctbcbank.ivr.gateway.line.LineSendOut;
 import com.ctbcbank.visual.ivr.encrypt.Log;
 import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,7 +44,7 @@ public class LineController {
 	@PostMapping("/lineBcSend")
 	public LineSendOut lineBcSend(@ApiParam(required = true, value = "line推播相關資料(json格式)") @RequestBody LineBcSendIn lineIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		LineSendOut out = new LineSendOut();
 		ProcessResult processResult = out.getProcessResult();
 		JSONObject jsonObject = null;
@@ -69,7 +68,7 @@ public class LineController {
 			long lineInTime = System.currentTimeMillis();
 			jsonObject = httpPost(lineProperties.getLineBcSendUrl(),jsonString);
 			long lineOutTime = System.currentTimeMillis();
-			log.writeTimeLog(lineIn.getConnID(), UUID, "IVRLINE", lineInTime, lineOutTime);
+			log.writeTimeLog(lineIn.getConnID(), uuid, "IVRLINE", lineInTime, lineOutTime);
 			if(jsonObject!=null) {
 				processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
 				out.setResultCode(jsonObject.getString("resultCode"));
@@ -87,7 +86,7 @@ public class LineController {
 		processResult.setGvpSessionID(lineIn.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(lineIn.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(lineIn.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return out;
 	}
 	
@@ -95,7 +94,7 @@ public class LineController {
 	@PostMapping("/lineBcGetUid")
 	public LineGetUidOut lineBcGetUid(@ApiParam(required = true, value = "填寫客戶natioalId") @RequestBody LineBcGetUidIn lineIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		LineGetUidOut out = new LineGetUidOut();
 		ProcessResult processResult = out.getProcessResult();
 		JSONObject jsonObject = null;
@@ -107,7 +106,7 @@ public class LineController {
 			long lineInTime = System.currentTimeMillis();
 			jsonObject = httpPost(lineProperties.getLineBcGetUidUrl(),jsonString);
 			long lineOutTime = System.currentTimeMillis();
-			log.writeTimeLog(lineIn.getConnID(), UUID, "IVRLINE", lineInTime, lineOutTime);
+			log.writeTimeLog(lineIn.getConnID(), uuid, "IVRLINE", lineInTime, lineOutTime);
 			if(jsonObject!=null) {
 				processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
 				out.setUid(jsonObject.getString("uid"));
@@ -124,7 +123,7 @@ public class LineController {
 		processResult.setGvpSessionID(lineIn.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(lineIn.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(lineIn.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return out;	
 	}
 	
@@ -132,7 +131,7 @@ public class LineController {
 	@PostMapping("/lineCcSend")
 	public LineSendOut lineCcSend(@ApiParam(required = true, value = "line推播相關資料(json格式)") @RequestBody LineCcSendIn lineIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		LineSendOut out = new LineSendOut();
 		ProcessResult processResult = out.getProcessResult();
 		JSONObject jsonObject = null;
@@ -157,7 +156,7 @@ public class LineController {
 			long lineInTime = System.currentTimeMillis();
 			jsonObject = httpPost(lineProperties.getLineCcUrl(),jsonString);
 			long lineOutTime = System.currentTimeMillis();
-			log.writeTimeLog(lineIn.getConnID(), UUID, "IVRLINE", lineInTime, lineOutTime);
+			log.writeTimeLog(lineIn.getConnID(), uuid, "IVRLINE", lineInTime, lineOutTime);
 			if(jsonObject!=null) {
 				processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
 				out.setResultCode(jsonObject.getString("resultCode"));
@@ -175,7 +174,7 @@ public class LineController {
 		processResult.setGvpSessionID(lineIn.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(lineIn.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(lineIn.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return out;
 	}
 	

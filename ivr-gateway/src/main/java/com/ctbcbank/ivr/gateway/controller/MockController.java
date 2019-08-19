@@ -3,6 +3,7 @@ package com.ctbcbank.ivr.gateway.controller;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,8 +20,6 @@ import com.ctbcbank.visual.ivr.esb.model.EsbCommandOut;
 import com.ctbcbank.visual.ivr.esb.model.EsbIn;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
 import com.ctbcbank.visual.ivr.service.EsbCommandService;
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
 
 
 @RestController
@@ -34,7 +33,7 @@ public class MockController {
 	
  	@PostMapping("/mockCommand")
 	public EsbCommandOut command(@RequestBody final EsbIn esbIn) throws InterruptedException{
- 		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+ 		String uuid = UUID.randomUUID().toString();
  		EsbCommandOut esbCommandOut = null;
 		ProcessResult processResult = null;
 		String hostAddress = StringUtils.EMPTY;
@@ -45,7 +44,7 @@ public class MockController {
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			esbCommandOut = esbCommandService.excute(esbIn, UUID);
+			esbCommandOut = esbCommandService.excute(esbIn, uuid);
 			processResult = esbCommandOut.getProcessResult();
 		}
 		catch (Exception e) {

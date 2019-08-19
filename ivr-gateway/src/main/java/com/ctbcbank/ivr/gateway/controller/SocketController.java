@@ -2,6 +2,7 @@ package com.ctbcbank.ivr.gateway.controller;
 
 
 import java.net.InetAddress;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,6 @@ import com.ctbcbank.ivr.gateway.socket.SocketOut;
 import com.ctbcbank.visual.ivr.encrypt.Log;
 import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,14 +36,14 @@ public class SocketController {
 	@PostMapping("/socket")
 	public SocketOut socket(@ApiParam(required = true, value = "已組好的iso8583報文字串") @RequestBody final SocketIn socketIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		SocketOut socketOut = null;
 		ProcessResult processResult = null;
 		String hostAddress = StringUtils.EMPTY;
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			socketOut = socketChannel.sendAndReceive(socketIn, UUID);
+			socketOut = socketChannel.sendAndReceive(socketIn, uuid);
 			processResult = socketOut.getProcessResult();
 		} catch (Exception e) {
 			if(socketOut==null)
@@ -60,7 +59,7 @@ public class SocketController {
 		processResult.setGvpSessionID(socketIn.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(socketIn.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(socketIn.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return socketOut;
 	} 
 }

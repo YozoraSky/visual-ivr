@@ -1,6 +1,7 @@
 package com.ctbcbank.ivr.gateway.controller;
 
 import java.net.InetAddress;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,6 @@ import com.ctbcbank.visual.ivr.esb.model.EsbCommandOut;
 import com.ctbcbank.visual.ivr.esb.model.EsbIn;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
 import com.ctbcbank.visual.ivr.service.EsbCommandService;
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,14 +34,14 @@ public class IvrController {
 	@PostMapping("/command") //@PostMapping = @RequestMapping(method = RequestMethod.POST)
 	public EsbCommandOut command(@ApiParam(required = true, value = "電文內容(json格式)") @RequestBody final EsbIn esbIn) throws Exception{
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		EsbCommandOut esbCommandOut = null;
 		ProcessResult processResult = null;
 		String hostAddress = StringUtils.EMPTY;
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			esbCommandOut = esbCommandService.excute(esbIn, UUID);
+			esbCommandOut = esbCommandService.excute(esbIn, uuid);
 			processResult = esbCommandOut.getProcessResult();
 		}
 		catch (Exception e) {
@@ -59,7 +58,7 @@ public class IvrController {
 		processResult.setGvpSessionID(esbIn.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(esbIn.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(esbIn.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return esbCommandOut;
 	}
 }

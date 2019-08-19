@@ -1,5 +1,7 @@
 package com.ctbcbank.ivr.repo.gateway.controller;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,8 +12,6 @@ import com.ctbcbank.ivr.repo.gateway.encrypt.Log;
 import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessStatus;
 import com.ctbcbank.ivr.repo.gateway.model.in.MPlusIn;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOutStatus;
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +29,7 @@ public class MPlusController {
 	public ResultOutStatus MPlus(@RequestBody MPlusIn mPlusIn) {
 		log.writeMPlusInputLog(mPlusIn);
 		long mPlusInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		ResultOutStatus resultOut = new ResultOutStatus();
 		if(mPlusIn!=null) {
 			resultOut.setStatus(ProcessStatus.SUCCESS.getStatus());
@@ -38,7 +38,7 @@ public class MPlusController {
 		else
 			resultOut.setStatus(ProcessStatus.FAIL.getStatus());
 		long mPlusOutTime = System.currentTimeMillis();
-		log.writeTimeLog(mPlusIn.getConnID(), UUID, "IVR", mPlusInTime, mPlusOutTime);
+		log.writeTimeLog(mPlusIn.getConnID(), uuid, "IVR", mPlusInTime, mPlusOutTime);
 		return resultOut;
 	}
 }

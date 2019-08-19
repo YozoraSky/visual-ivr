@@ -2,6 +2,7 @@ package com.ctbcbank.ivr.gateway.controller;
 
 import java.net.InetAddress;
 import java.rmi.RemoteException;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,6 @@ import com.ctbcbank.ivr.gateway.shanghai.voice.ShanghaiVoiceOut;
 import com.ctbcbank.visual.ivr.encrypt.Log;
 import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +36,7 @@ public class ShanghaiVoiceController {
 	@PostMapping("/isValid")
 	public ShanghaiVoiceOut isValid(@ApiParam(required = true, value = "輸入資料") @RequestBody IsValidIn isValidIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		ShanghaiVoiceOut shanghaiVoiceOut = new ShanghaiVoiceOut();
 		ProcessResult processResult = shanghaiVoiceOut.getProcessResult();
 		ForIVRSoapProxy forIVRSoapProxy;
@@ -53,7 +52,7 @@ public class ShanghaiVoiceController {
 					isValidIn.getCountryCode(), isValidIn.getLicenseKey(), isValidIn.getCustomerPassword(),
 					isValidIn.getChannelId());
 			long shangHaiVoiceOutTime = System.currentTimeMillis();
-			log.writeTimeLog(isValidIn.getConnID(), UUID, "IVRSHANGHAIVOICE", shangHaiVoiceInTime,
+			log.writeTimeLog(isValidIn.getConnID(), uuid, "IVRSHANGHAIVOICE", shangHaiVoiceInTime,
 					shangHaiVoiceOutTime);
 			JSON json = xmlSerializer.read(result);
 			shanghaiVoiceOut.setData(json.toString());
@@ -70,7 +69,7 @@ public class ShanghaiVoiceController {
 		processResult.setGvpSessionID(isValidIn.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(isValidIn.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(isValidIn.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return shanghaiVoiceOut;
 	}
 
@@ -78,7 +77,7 @@ public class ShanghaiVoiceController {
 	@PostMapping("/changePassword")
 	public ShanghaiVoiceOut changePassword(@ApiParam(required = true, value = "輸入資料") @RequestBody ChangePasswordIn changePasswordIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		ShanghaiVoiceOut shanghaiVoiceOut = new ShanghaiVoiceOut();
 		ProcessResult processResult = shanghaiVoiceOut.getProcessResult();
 		ForIVRSoapProxy forIVRSoapProxy;
@@ -95,7 +94,7 @@ public class ShanghaiVoiceController {
 					changePasswordIn.getLicenseKey(), changePasswordIn.getOldPassword(),
 					changePasswordIn.getNewPassword(), changePasswordIn.getChannelId());
 			long shangHaiVoiceOutTime = System.currentTimeMillis();
-			log.writeTimeLog(changePasswordIn.getConnID(), UUID, "IVRSHANGHAIVOICE", shangHaiVoiceInTime,
+			log.writeTimeLog(changePasswordIn.getConnID(), uuid, "IVRSHANGHAIVOICE", shangHaiVoiceInTime,
 					shangHaiVoiceOutTime);
 			JSON json = xmlSerializer.read(result);
 			shanghaiVoiceOut.setData(json.toString());
@@ -112,7 +111,7 @@ public class ShanghaiVoiceController {
 		processResult.setGvpSessionID(changePasswordIn.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(changePasswordIn.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(changePasswordIn.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return shanghaiVoiceOut;
 	}
 }

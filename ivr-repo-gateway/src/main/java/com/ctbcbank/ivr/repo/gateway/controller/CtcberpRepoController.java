@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,6 @@ import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResult;
 import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResultEnum;
 import com.ctbcbank.ivr.repo.gateway.model.in.RepoModel;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOut;
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,7 +47,7 @@ public class CtcberpRepoController {
 	@PostMapping("/queryForMultipleResultSet")
 	public ResultOut queryForMultipleResultSet(@ModelAttribute final RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate().toString();
+		String uuid = UUID.randomUUID().toString();
 		ResultOut resultOut = new ResultOut();
 		ProcessResult processResult = resultOut.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
@@ -86,7 +85,7 @@ public class CtcberpRepoController {
 				}
 			});
 			long DBOutTime = System.currentTimeMillis();
-			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
+			log.writeTimeLog(repoModel.getConnID(), uuid, "IVRDB", DBInTime, DBOutTime);
 			resultOut.setDataList(result);
 			processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
 			log.writeInfo(repoModel, repoModel.getSql(), result);
@@ -102,7 +101,7 @@ public class CtcberpRepoController {
 		processResult.setGvpSessionID(repoModel.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultOut;
 	}
 }
