@@ -7,7 +7,8 @@ public enum ProcessResultEnum {
 	ADD_SUCCESS(ProcessStatus.SUCCESS, "APP-001-003", "新增成功"),
 	EDIT_SUCCESS(ProcessStatus.SUCCESS, "APP-001-004","編輯成功"),
 	DES_SUCCESS(ProcessStatus.SUCCESS, "APP-001-005","Des成功"),
-	SEND_SUCCESS(ProcessStatus.SUCCESS, "APP-001-006", "送出簡訊成功");
+	AES_SUCCESS(ProcessStatus.SUCCESS, "APP-001-006","Aes成功"),
+	SEND_SUCCESS(ProcessStatus.SUCCESS, "APP-001-007", "送出簡訊成功");
 	private ProcessStatus status;
 	private String code;
 	private String message;

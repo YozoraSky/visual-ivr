@@ -4,7 +4,7 @@ import java.util.Map;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class DesResult extends ReturnModel{
+public class DesAesResult extends ReturnModel{
 	private static final long serialVersionUID = 4990701120737069116L;
 	
 	@ApiModelProperty(value = "加解密結果", required = true)

@@ -43,7 +43,7 @@ public class AsyncTask {
 		try {
 			MPlusServiceSoapProxy mPlusServiceSoapProxy = new MPlusServiceSoapProxy();
 			IvrCallLog oData = new IvrCallLog();
-			SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+			SimpleDateFormat sdf  = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
 			Calendar startTime = Calendar.getInstance();
 			Calendar endTime = Calendar.getInstance();
 			if(!mPlusIn.getIvrCallLog().getStartTime().equals(StringUtils.EMPTY)) {
