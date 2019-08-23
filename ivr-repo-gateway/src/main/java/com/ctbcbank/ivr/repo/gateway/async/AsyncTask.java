@@ -47,10 +47,11 @@ public class AsyncTask {
 			Calendar startTime = Calendar.getInstance();
 			Calendar endTime = Calendar.getInstance();
 			if(!mPlusIn.getIvrCallLog().getStartTime().equals(StringUtils.EMPTY)) {
-				startTime.setTimeInMillis(sdf.parse(mPlusIn.getIvrCallLog().getStartTime()).getTime());
+//				轉時區?中信那邊會自動-8小時，所以補上8小時的毫秒(28800000)
+				startTime.setTimeInMillis(sdf.parse(mPlusIn.getIvrCallLog().getStartTime()).getTime()+28800000);
 			}
 			if(!mPlusIn.getIvrCallLog().getEndTime().equals(StringUtils.EMPTY)) {
-				endTime.setTimeInMillis(sdf.parse(mPlusIn.getIvrCallLog().getEndTime()).getTime());
+				endTime.setTimeInMillis(sdf.parse(mPlusIn.getIvrCallLog().getEndTime()).getTime()+28800000);
 			}
 			oData.setAgentExt(mPlusIn.getIvrCallLog().getAgentExt());
 			oData.setAgentName(mPlusIn.getIvrCallLog().getAgentName());

@@ -1,7 +1,6 @@
 package com.ctbcbank.ivr.gateway.controller;
 
 import java.net.InetAddress;
-import java.rmi.RemoteException;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
