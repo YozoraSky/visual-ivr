@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<title>MQ Table Form</title>
+	<style type="text/css">
+		body {background:azure; color:black}
+		a:link {color:red"}
+		a:visited {color:blue}
+		a:active {color:green}
+	</style>
+</head>
+<body>
+	<h1>MQ Table Form</h1>
+    <form action="#" th:action="@{/mqTable}" th:object="${smsParams}" method="post">
+        <p>Id: <input type="text" th:field="*{id}" /></p>
+        <p>IdName: <input type="text" th:field="*{idName}" /></p>
+        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+        <input type="button" value="匯出至excel" name="B1" onClick=""> 
+    </form>
+    <table border="1" id="table1">
+		<caption>Result</caption>
+		<thead>
+			<tr>
+				<th>RecordId</th>
+				<th>SMS_Id</th>
+				<th>SMS_IdName</th>
+				<th>Channel</th>
+				<th>QueueManager</th>
+				<th>QueueName</th>
+				<th>HeaderLength</th>
+				<th>DataLength</th>
+				<th>DataEncoding</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="l : ${list}">
+				<td th:text="${l.RecordId}"/>
+				<td th:text="${l.SMS_Id}"/>
+				<td th:text="${l.SMS_IdName}"/>
+				<td th:text="${l.Channel}"/>
+				<td th:text="${l.QueueManager}"/>
+				<td th:text="${l.QueueName}"/>
+				<td th:text="${l.HeaderLength}"/>
+				<td th:text="${l.DataLength}"/>
+				<td th:text="${l.DataEncoding}"/>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>
