@@ -1,4 +1,4 @@
-package com.ctbcbank.ivr.repo.gateway.properties;
+package com.ctbcbank.ivr.repo.gateway.webpage.bean;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;

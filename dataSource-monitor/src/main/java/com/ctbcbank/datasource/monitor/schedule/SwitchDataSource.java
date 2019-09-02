@@ -12,15 +12,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.ctbcbank.datasource.monitor.object.DataSourceStatus;
 import com.ctbcbank.datasource.monitor.properties.DynamicDataSourceProperties;
 import com.ctbcbank.datasource.monitor.properties.KeyProperties;
 
 @Component
-@EnableScheduling
 public class SwitchDataSource {
 	private Logger logger = LoggerFactory.getLogger("dataSource-monitor");
 	@Autowired
@@ -39,52 +37,61 @@ public class SwitchDataSource {
 	private DynamicDataSourceProperties dynamicDataSourceProperties;
 	@Autowired
 	private KeyProperties keyProperties;
-	
-	private static String dataSource = "main"; //main abd backup
+
+	private static String dataSource = "main"; // main abd backup
 	private static int mainDBConnectFailCount = 0;
 	private static int reConnectToMainDBCount = 0;
-	
-	@Scheduled(cron = "0/15 * * * * ?")
-	public void run() {
-		String alert = StringUtils.EMPTY;
+
+	public void auto() {
 		try {
 			configJdbcTemplate.queryForMap("SELECT 1");
-			if(mainDBConnectFailCount>=3) {
+			if (mainDBConnectFailCount >= dynamicDataSourceProperties.getMainDataBaseFailCount()) {
 				reConnectToMainDBCount++;
-				if(reConnectToMainDBCount>=3) {
+				if (reConnectToMainDBCount >= dynamicDataSourceProperties.getReconnectToMainDataBaseCount()) {
 					mainDBConnectFailCount = 0;
 					reConnectToMainDBCount = 0;
 					dataSource = "main";
 				}
-			}
-			else
+			} else
 				mainDBConnectFailCount = 0;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.info(e.toString());
-			alert = " (warning)";
 			reConnectToMainDBCount = 0;
 			mainDBConnectFailCount++;
-			if(mainDBConnectFailCount>=3) {
+			if (mainDBConnectFailCount >= dynamicDataSourceProperties.getMainDataBaseFailCount()) {
 				dataSource = "backup";
 			}
 		}
+		transfer();
+	}
+
+	public void manual(String dataSource) {
+		SwitchDataSource.dataSource = dataSource;
+		mainDBConnectFailCount = dynamicDataSourceProperties.getMainDataBaseFailCount();
+		reConnectToMainDBCount = dynamicDataSourceProperties.getReconnectToMainDataBaseCount();
+		transfer();
+	}
+
+	public void transfer() {
 		String[] ip = dynamicDataSourceProperties.getIp();
 		String result = StringUtils.EMPTY;
-		if(dataSource.equals("main")) {
-			for(int i=0;i<ip.length;i++) {
-				result = httpGet("http://" + ip[i] + "ivr-repo-gateway/datasource/switch?dataSource=main&key=" + keyProperties.getKey());
-				logger.info("http://" + ip[i] + " " + result + alert);
-				alert = StringUtils.EMPTY;
-			}
-		}
-		else {
-			for(int i=0;i<ip.length;i++) {
-				result = httpGet("http://" + ip[i] + "ivr-repo-gateway/datasource/switch?dataSource=backup&key=" + keyProperties.getKey());
+		if (dataSource.equals("main")) {
+			for (int i = 0; i < ip.length; i++) {
+				result = httpGet("http://" + ip[i] + "ivr-repo-gateway/datasource/switch?dataSource=main&key="
+						+ keyProperties.getKey());
 				logger.info("http://" + ip[i] + " " + result);
 			}
+			DataSourceStatus.setConnection("main");
+		} else {
+			for (int i = 0; i < ip.length; i++) {
+				result = httpGet("http://" + ip[i] + "ivr-repo-gateway/datasource/switch?dataSource=backup&key="
+						+ keyProperties.getKey());
+				logger.info("http://" + ip[i] + " " + result);
+			}
+			DataSourceStatus.setConnection("backup");
 		}
 	}
-	
+
 	public String httpGet(String url) {
 		String result = StringUtils.EMPTY;
 		try {
@@ -101,7 +108,7 @@ public class SwitchDataSource {
 			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 			String line;
 			StringBuilder stringBuilder = new StringBuilder();
-			while((line = bufferedReader.readLine()) != null) {
+			while ((line = bufferedReader.readLine()) != null) {
 				stringBuilder.append(line);
 			}
 			bufferedReader.close();

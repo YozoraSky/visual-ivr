@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="refresh" content="15" charset="UTF-8" />
+<title>DataSource Monitor</title>
+<style type="text/css">
+body {
+	background: azure;
+	color: black
+}
+
+a:link {
+	color: red"
+}
+
+a:visited {
+	color: blue
+}
+
+a:active {
+	color: green
+}
+</style>
+</head>
+<body>
+	<p th:text="'Status : ' + ${status}">Status : </p>
+	<table border="1">
+		<caption>資料庫連線資訊</caption>
+		<tr>
+			<th colspan="2">Taipei Server</th>
+			<th colspan="2">Taichung Server</th>
+		</tr>
+		<tr bgcolor="greenyellow">
+			<th>SCSDPGWEAP01</th>
+			<th>SCSDPGWEAP02</th>
+			<th>SCSDP3GWEAP01</th>
+			<th>SCSDP3GWEAP02</th>
+		</tr>
+		<tr>
+			<td th:text="${connection}"/>
+			<td th:text="${connection}"/>
+			<td th:text="${connection}"/>
+			<td th:text="${connection}"/>
+		</tr>
+	</table>
+	<form action="#" th:action="@{/switchConnection}" th:object="${radio}" method="post">
+		<p id="autoOrNot">
+			<input type="radio" name="switch" value="auto" id="auto" onclick="change(false)" th:field="*{autoOrNot}"/>自動
+			<input type="radio" name="switch" value="manual" id="manual" onclick="change(true)" th:field="*{autoOrNot}"/>手動
+		</p>
+		<p style="display:none;" id="radioList">
+		   <input type="radio" name="changeDataSource" value="main" id="taipei" th:field="*{connection}"/>台北
+		   <input type="radio" name="changeDataSource" value="backup" id="taichung" th:field="*{connection}"/>台中
+		</p>
+		<p><input type="submit" value="確認" /></p>
+	</form>
+	<script>
+		function change(val) // no ';' here
+		{
+			var radioList = document.getElementById("radioList");
+			if (val){
+				radioList.style.display="inline";
+			}
+			else{
+				radioList.style.display="none";
+			}
+		}
+	</script>
+</body>
+</html>

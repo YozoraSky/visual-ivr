@@ -1,4 +1,4 @@
-package com.ctbcbank.ivr.repo.gateway.properties;
+package com.ctbcbank.ivr.repo.gateway.webpage.bean;
 
 public class Product {
 	private String name;
