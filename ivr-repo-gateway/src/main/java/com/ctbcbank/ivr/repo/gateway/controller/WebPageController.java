@@ -1,6 +1,5 @@
 package com.ctbcbank.ivr.repo.gateway.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,36 +10,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ctbcbank.ivr.repo.gateway.monitor.DynamicDataSource;
-import com.ctbcbank.ivr.repo.gateway.webpage.bean.Product;
 import com.ctbcbank.ivr.repo.gateway.webpage.bean.SMSParams;
 
 @Controller
 public class WebPageController {
 	@Autowired
 	private DynamicDataSource dynamicDataSource;
-	
-	@RequestMapping("/product")
-	public String test(Model model) {
-		Product prod1 = new Product();
-		prod1.setName("test1");
-		prod1.setPrice("123");
-		Product prod2 = new Product();
-		prod2.setName("test2");
-		prod2.setPrice("543");
-		Product prod3 = new Product();
-		prod3.setName("test2");
-		prod3.setPrice("543");
-		ArrayList<Product> list = new ArrayList<Product>();
-		list.add(prod1);
-		list.add(prod2);
-		list.add(prod3);
-		model.addAttribute("allProducts", list);
-		model.addAttribute("name", "John");
-		return "product";
-	}
     
 	@GetMapping("/index")
 	public String index() {
