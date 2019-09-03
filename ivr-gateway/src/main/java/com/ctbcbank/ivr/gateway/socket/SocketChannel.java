@@ -76,7 +76,11 @@ public class SocketChannel{
 				}
 				result = outputHexLen + new String(dataByte,2,length,StandardCharsets.US_ASCII);
 				ParseISO8583 parse = new ParseISO8583();
-				String rspCode = parse.getRspCode(new String(dataByte,14,length,StandardCharsets.US_ASCII));
+				String rspCode = parse.getRspCode(new String(dataByte,14,length,StandardCharsets.US_ASCII), socketIn, log);
+				if(rspCode.equals(StringUtils.EMPTY)) {
+					processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
+					processResult.setReturnMessage("ISOException error! see log to get detail error msg");
+				}
 				socketOut.setRspCode(rspCode);
 				socketOut.setData(result.trim());
 			}
