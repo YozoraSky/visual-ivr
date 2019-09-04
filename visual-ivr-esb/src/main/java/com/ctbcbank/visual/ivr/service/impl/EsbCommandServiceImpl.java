@@ -85,7 +85,7 @@ public class EsbCommandServiceImpl extends EsbCommonService implements EsbComman
 			serviceEnvelope.getServiceHeader().setTransactionID(transactionID);
 			Map<String, Object> reqBdyMap = (Map<String, Object>) esbIn.getData().get("REQBDY");
 			if(reqBdyMap.containsKey("TranNo"))
-				reqBdyMap.put("TranNo", transactionID);
+				reqBdyMap.put("TranNo", getTranNo());
 		}
 		else {
 			serviceEnvelope.getServiceHeader().setTransactionID(this.getTransactionID());

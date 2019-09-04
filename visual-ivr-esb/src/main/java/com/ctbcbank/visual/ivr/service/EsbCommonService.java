@@ -56,7 +56,11 @@ public class EsbCommonService {
 //		SSS+getSerialNum()代表流水號
 		return GS + DateTime.now().toString("yyyyMMddHHmmssSSS") + getSerialNum();
 	}
-
+	
+	public String getTranNo() {
+		return GS + DateTime.now().toString("yyyyMMddHHmmssSS").substring(2);
+	}
+	
 	public String getSystemId() {
 		return SYSTEM_ID;
 	}
