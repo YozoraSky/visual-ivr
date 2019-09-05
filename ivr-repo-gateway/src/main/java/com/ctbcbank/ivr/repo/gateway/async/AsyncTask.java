@@ -41,7 +41,7 @@ public class AsyncTask {
 	@Async("myAsync")
 	public void mPlusExecute(MPlusIn mPlusIn) {
 		try {
-			MPlusServiceSoapProxy mPlusServiceSoapProxy = new MPlusServiceSoapProxy();
+			MPlusServiceSoapProxy mPlusServiceSoapProxy = new MPlusServiceSoapProxy(mPlusProperties.getIp());
 			IvrCallLog oData = new IvrCallLog();
 			SimpleDateFormat sdf  = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
 			Calendar startTime = Calendar.getInstance();

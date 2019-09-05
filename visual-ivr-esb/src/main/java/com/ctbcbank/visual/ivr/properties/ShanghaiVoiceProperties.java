@@ -1,14 +1,13 @@
-package com.ctbcbank.ivr.repo.gateway.properties;
+package com.ctbcbank.visual.ivr.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "mplus")
+@ConfigurationProperties(prefix = "shanghai.voice")
 @PropertySource(value = { "classpath:webService.properties" })
-public class MPlusProperties {
-	private String sql;
+public class ShanghaiVoiceProperties {
 	private String ip;
 
 	public String getIp() {
@@ -17,13 +16,5 @@ public class MPlusProperties {
 
 	public void setIp(String ip) {
 		this.ip = ip;
-	}
-
-	public String getSql() {
-		return sql;
-	}
-
-	public void setSql(String sql) {
-		this.sql = sql;
 	}
 }

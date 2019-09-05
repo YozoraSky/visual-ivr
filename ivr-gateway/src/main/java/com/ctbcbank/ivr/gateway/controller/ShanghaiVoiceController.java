@@ -17,6 +17,7 @@ import com.ctbcbank.ivr.gateway.shanghai.voice.ShanghaiVoiceOut;
 import com.ctbcbank.visual.ivr.encrypt.Log;
 import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
+import com.ctbcbank.visual.ivr.properties.ShanghaiVoiceProperties;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,6 +31,8 @@ import net.sf.json.xml.XMLSerializer;
 public class ShanghaiVoiceController {
 	@Autowired
 	private Log log;
+	@Autowired
+	private ShanghaiVoiceProperties shanghaiVoiceProperties;
 
 	@ApiOperation(value = "密碼是否有效", notes = "核申密碼是否有效")
 	@PostMapping("/isValid")
@@ -45,7 +48,7 @@ public class ShanghaiVoiceController {
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			forIVRSoapProxy = new ForIVRSoapProxy();
+			forIVRSoapProxy = new ForIVRSoapProxy(shanghaiVoiceProperties.getIp());
 			long shangHaiVoiceInTime = System.currentTimeMillis();
 			result = forIVRSoapProxy.isValid(isValidIn.getTransNo(), isValidIn.getCustomerAccount(),
 					isValidIn.getCountryCode(), isValidIn.getLicenseKey(), isValidIn.getCustomerPassword(),
@@ -86,7 +89,7 @@ public class ShanghaiVoiceController {
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			forIVRSoapProxy = new ForIVRSoapProxy();
+			forIVRSoapProxy = new ForIVRSoapProxy(shanghaiVoiceProperties.getIp());
 			long shangHaiVoiceInTime = System.currentTimeMillis();
 			result = forIVRSoapProxy.changePassword(changePasswordIn.getTransNo(),
 					changePasswordIn.getCustomerAccount(), changePasswordIn.getCountryCode(),

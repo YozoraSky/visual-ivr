@@ -18,6 +18,7 @@ import com.ctbcbank.ivr.gateway.authBackup.AuthSetBackupIn;
 import com.ctbcbank.visual.ivr.encrypt.Log;
 import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
+import com.ctbcbank.visual.ivr.properties.IaIvrProperties;
 
 import Eai.IAcquirer.Ctcb.ServiceNameProxy;
 import io.swagger.annotations.Api;
@@ -30,6 +31,8 @@ import io.swagger.annotations.ApiParam;
 public class IaIvrController {
 	@Autowired
 	private Log log;
+	@Autowired
+	private IaIvrProperties iaIvrProperties;
 
 	@ApiOperation(value = "備援授權開關", notes = "開啟或關閉備援授權功能")
 	@PostMapping("/setAuthBackupFromIvr")
@@ -45,7 +48,7 @@ public class IaIvrController {
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			client = new ServiceNameProxy();
+			client = new ServiceNameProxy(iaIvrProperties.getIp());
 			long authBackupInTime = System.currentTimeMillis();
 			result = client.setAuthBackupFromIvr(authSetBackupIn.getType(), authSetBackupIn.getAmount(),
 					authSetBackupIn.getModifiedDate(), authSetBackupIn.getTransactionId());
@@ -95,7 +98,7 @@ public class IaIvrController {
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			client = new ServiceNameProxy();
+			client = new ServiceNameProxy(iaIvrProperties.getIp());
 			long authBackupInTime = System.currentTimeMillis();
 			DataResult = client.insertIVRData(authInsertIVRDataIn.getCardNumber(), authInsertIVRDataIn.getAmount(),
 					authInsertIVRDataIn.getRetlId(), authInsertIVRDataIn.getTrackExpirationDate(),
