@@ -27,7 +27,7 @@ public class SocketChannel{
 	
 	public static synchronized int getChangePort() {
 		changePort++;
-		if(changePort == 3)
+		if(changePort == 2)
 			changePort = 0;
 		return changePort;
 	}
@@ -47,7 +47,6 @@ public class SocketChannel{
 		switch(getChangePort()) {
 			case 0: nowPort = socketProperties.getPort();break;
 			case 1: nowPort = socketProperties.getPort2();break;
-			case 2: nowPort = socketProperties.getPort3();break;
 			default: nowPort = socketProperties.getPort();break;
 		}
 		System.out.println(nowPort);

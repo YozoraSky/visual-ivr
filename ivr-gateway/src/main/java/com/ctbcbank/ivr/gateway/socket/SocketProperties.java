@@ -13,8 +13,6 @@ public class SocketProperties {
 	private int port;
 	@Value("${socket.port2}")
 	private int port2;
-	@Value("${socket.port3}")
-	private int port3;
 	@Value("${socket.connectTimeout}")
 	private int connectTimeout;
 	@Value("${socket.soTimeout}")
@@ -49,11 +47,5 @@ public class SocketProperties {
 	}
 	public void setPort2(int port2) {
 		this.port2 = port2;
-	}
-	public int getPort3() {
-		return port3;
-	}
-	public void setPort3(int port3) {
-		this.port3 = port3;
 	}
 }
