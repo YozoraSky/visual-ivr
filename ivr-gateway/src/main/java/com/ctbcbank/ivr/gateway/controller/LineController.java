@@ -53,12 +53,12 @@ public class LineController {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			String jsonString = lineProperties.getLineBcSendString()
-											  .replace("@transactionId", lineIn.getTransactionId())
-											  .replace("@uid", lineIn.getUid())
-											  .replace("@templateId", lineIn.getTemplateId())
-											  .replace("@channelId", lineIn.getChannelId());
+											  .replace("@transactionId", lineIn.getTransactionId()==null?StringUtils.EMPTY:lineIn.getTransactionId())
+											  .replace("@uid", lineIn.getUid()==null?StringUtils.EMPTY:lineIn.getUid())
+											  .replace("@templateId", lineIn.getTemplateId()==null?StringUtils.EMPTY:lineIn.getTemplateId())
+											  .replace("@channelId", lineIn.getChannelId()==null?StringUtils.EMPTY:lineIn.getChannelId());
 			StringBuilder stringBuilder = new StringBuilder();
-			if(lineIn.getFields().size()!=0) {
+			if(lineIn.getFields()!=null && lineIn.getFields().size()!=0) {
 				for(int i=0;i<lineIn.getFields().size();i++) {
 					stringBuilder.append("\"" + lineIn.getFields().get(i) + "\",");
 				}
@@ -102,7 +102,7 @@ public class LineController {
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			String jsonString = lineProperties.getLineBcGetUidString().replace("@nationalId", lineIn.getNationalId());
+			String jsonString = lineProperties.getLineBcGetUidString().replace("@nationalId", lineIn.getNationalId()==null?StringUtils.EMPTY:lineIn.getNationalId());
 			long lineInTime = System.currentTimeMillis();
 			jsonObject = httpPost(lineProperties.getLineBcGetUidUrl(),jsonString);
 			long lineOutTime = System.currentTimeMillis();
@@ -140,12 +140,12 @@ public class LineController {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			String jsonString = lineProperties.getLineCcString()
-											  .replace("@transactionId", lineIn.getTransactionId())
-											  .replace("@to", lineIn.getTo())
-											  .replace("@templateId", lineIn.getTemplateId())
-											  .replace("@channelId", lineIn.getChannelId());
+											  .replace("@transactionId", lineIn.getTransactionId()==null?StringUtils.EMPTY:lineIn.getTransactionId())
+											  .replace("@to", lineIn.getTo()==null?StringUtils.EMPTY:lineIn.getTo())
+											  .replace("@templateId", lineIn.getTemplateId()==null?StringUtils.EMPTY:lineIn.getTemplateId())
+											  .replace("@channelId", lineIn.getChannelId()==null?StringUtils.EMPTY:lineIn.getChannelId());
 			StringBuilder stringBuilder = new StringBuilder();
-			if(lineIn.getFields().size()!=0) {
+			if(lineIn.getFields()!=null && lineIn.getFields().size()!=0) {
 				for(int i=0;i<lineIn.getFields().size();i++) {
 					stringBuilder.append("\"" + lineIn.getFields().get(i) + "\",");
 				}

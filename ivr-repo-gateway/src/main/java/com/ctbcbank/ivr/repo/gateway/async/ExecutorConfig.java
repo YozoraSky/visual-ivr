@@ -41,6 +41,7 @@ public class ExecutorConfig {
 		// rejection-policy：當pool到達max size，如何處理新任務
 		// CALLER_RUNS：不在新線程中執行任務，而是由調用者所在的線程來執行任務
 		executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+		executor.setWaitForTasksToCompleteOnShutdown(true);
 		executor.initialize();
 		return executor;
 	}
