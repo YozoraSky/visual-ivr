@@ -52,10 +52,6 @@ public class FaxController {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			long faxInTime = System.currentTimeMillis();
-			for(int i=0;i<2;i++) {
-				if(checkConnect(faxProperties.getMain_ip()))
-					break;
-			}
 			if(!checkConnectExecuteTimes(2,faxProperties.getMain_ip())) {
 				if(!checkConnectExecuteTimes(2,faxProperties.getBackup_ip())) {
 					throw new Exception("Taipei and Taichung servers hang up");
