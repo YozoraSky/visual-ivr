@@ -32,7 +32,7 @@ public class CheckWarConnection {
 	@Autowired
 	private MonitoringProperties monitoringProperties;
 	
-	@Scheduled(cron="0/30 * * * * ?")
+	@Scheduled(initialDelay=60000, fixedRate=30000)
 	public void run(){
 		String result;
 		String[] wars = monitoringProperties.getWar();
