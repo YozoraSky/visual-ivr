@@ -15,7 +15,7 @@ public class Batch {
 	@Autowired
 	private SwitchDataSource switchDataSource;
 	
-	@Scheduled(cron = "${dynamicDataSource.cron.msg}")
+	@Scheduled(initialDelayString = "${dynamicDataSource.initialDelay}", fixedRateString = "${dynamicDataSource.fixedRate}")
 	public void run() {
 		if(DataSourceStatus.getAutoOrNot())
 			switchDataSource.auto();

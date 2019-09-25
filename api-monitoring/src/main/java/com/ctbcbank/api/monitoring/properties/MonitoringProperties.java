@@ -1,19 +1,18 @@
 package com.ctbcbank.api.monitoring.properties;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConfigurationProperties(prefix = "monitor")
 @PropertySource(value = { "classpath:monitor.properties" })
 public class MonitoringProperties {
 	
-	@Value("${monitor.war}")
 	private String war[];
-	@Value("${monitor.file}")
 	private String file;
-	@Value("${monitor.url}")
 	private String url;
+	private int warningTimes;
 	
 	public String getUrl() {
 		return url;
@@ -32,6 +31,12 @@ public class MonitoringProperties {
 	}
 	public void setFile(String file) {
 		this.file = file;
+	}
+	public int getWarningTimes() {
+		return warningTimes;
+	}
+	public void setWarningTimes(int warningTimes) {
+		this.warningTimes = warningTimes;
 	}
 	
 }

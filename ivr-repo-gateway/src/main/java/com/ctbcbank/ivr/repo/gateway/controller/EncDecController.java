@@ -77,8 +77,9 @@ public class EncDecController {
 		log.writeTimeLog(repoDesModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return desResult;
 	}
+	
 	@ApiOperation(value = "利用Aes來解密custId", notes = "利用Aes來解密custId")
-	@RequestMapping("/decryptCustId")
+	@PostMapping("/decryptCustId")
 	public DesAesResult decryptCustId(@ApiParam(required = true, value = "加密資料") @RequestBody DecryptCustIdIn decryptCustIdIn) {
 		long ivrInTime = System.currentTimeMillis();
 		String uuid = UUID.randomUUID().toString();
