@@ -66,7 +66,7 @@ public class FaxController {
 			log.writeTimeLog(faxIn.getConnID(), uuid, "IVRFAX", faxInTime, faxOutTime);
 			processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
 			faxOut.setResult(result);
-			log.writeFaxInfo(faxIn, faxIn.getData(), result);
+			log.writeFaxInfo(faxIn, JSONObject.fromObject(faxIn.getData()).toString(), result);
 		} catch (Exception e) {
 			log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
