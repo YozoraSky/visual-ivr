@@ -96,7 +96,7 @@ public class EsbConfig {
 		jmsTemplate.setExplicitQosEnabled(true);
 		jmsTemplate.setReceiveTimeout(esbProperties.getTimeout());
 		jmsTemplate.setPriority(7);
-		jmsTemplate.setTimeToLive(3000);
+		jmsTemplate.setTimeToLive(72000);
 		jmsTemplate.setDefaultDestination((Destination) queueDestination().getObject());
 		return jmsTemplate;
 	}
