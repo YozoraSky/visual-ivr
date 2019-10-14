@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class ClubRepoController {
 	@PostMapping("/procedure_1_string_output")
 	public ResultOut sp_WriteCTITaskList3(@ModelAttribute final RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String uuid = UUID.randomUUID().toString();
 		ResultOut resultOut = new ResultOut();
 		ProcessResult processResult = resultOut.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
@@ -73,7 +74,7 @@ public class ClubRepoController {
 				}
 			});
 			long DBOutTime = System.currentTimeMillis();
-			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
+			log.writeTimeLog(repoModel.getConnID(), uuid, "IVRDB", DBInTime, DBOutTime);
 			map.put("Value", String.valueOf(i));
 			data.add(map);
 			resultOut.setDataList(data);
@@ -81,7 +82,7 @@ public class ClubRepoController {
 			log.writeInfo(repoModel, repoModel.getSql(), data);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e.toString());
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
@@ -91,7 +92,7 @@ public class ClubRepoController {
 		processResult.setGvpSessionID(repoModel.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultOut;
 	}
 

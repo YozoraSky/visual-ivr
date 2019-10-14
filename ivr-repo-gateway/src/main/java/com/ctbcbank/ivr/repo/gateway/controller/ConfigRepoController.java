@@ -3,6 +3,8 @@ package com.ctbcbank.ivr.repo.gateway.controller;
 import java.net.InetAddress;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
@@ -14,16 +16,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.CallableStatementCreator;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +36,7 @@ import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResultEnum;
 import com.ctbcbank.ivr.repo.gateway.model.in.RepoModel;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOut;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOutIDPriority;
+import com.ctbcbank.ivr.repo.gateway.monitor.DynamicDataSource;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,8 +47,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags = "針對Config data base進行操作")
 public class ConfigRepoController {
 	@Autowired
-	@Qualifier("ivrConfigJdbcTemplate")
-	private JdbcTemplate jdbcTemplate;
+	private DynamicDataSource dynamicDataSource;
 	@Autowired
 	private Log log;
 	
@@ -54,7 +55,7 @@ public class ConfigRepoController {
 	@PostMapping("/execute")
 	public ResultOut execute(@ModelAttribute RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String uuid = UUID.randomUUID().toString();
 		ResultOut resultOut = new ResultOut();
 		ProcessResult processResult = resultOut.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
@@ -62,14 +63,14 @@ public class ConfigRepoController {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			long DBInTime = System.currentTimeMillis();
-			jdbcTemplate.execute(repoModel.getSql());
+			dynamicDataSource.getConfigJdbcTemplate().execute(repoModel.getSql());
 			long DBOutTime = System.currentTimeMillis();
-			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
+			log.writeTimeLog(repoModel.getConnID(), uuid, "IVRDB", DBInTime, DBOutTime);
 			processResult.setProcessResultEnum(ProcessResultEnum.EDIT_SUCCESS);
 			log.writeInfo(repoModel, repoModel.getSql(), Log.INPUT);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e.toString());
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
@@ -79,7 +80,7 @@ public class ConfigRepoController {
 		processResult.setGvpSessionID(repoModel.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultOut;
 	}
 	
@@ -88,7 +89,7 @@ public class ConfigRepoController {
 	@PostMapping("/query")
 	public ResultOut query(@ModelAttribute RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String uuid = UUID.randomUUID().toString();
 		ResultOut resultOut = new ResultOut();
 		ProcessResult processResult = resultOut.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
@@ -97,9 +98,9 @@ public class ConfigRepoController {
 			hostAddress = iAddress.getHostAddress();
 			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 			long DBInTime = System.currentTimeMillis();
-			List<Map<String, Object>> dataList = jdbcTemplate.queryForList(repoModel.getSql());
+			List<Map<String, Object>> dataList = dynamicDataSource.getConfigJdbcTemplate().queryForList(repoModel.getSql());
 			long DBOutTime = System.currentTimeMillis();
-			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
+			log.writeTimeLog(repoModel.getConnID(), uuid, "IVRDB", DBInTime, DBOutTime);
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Pattern pattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.\\d{3}$|"
 											+ "\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.\\d{2}$|"
@@ -125,7 +126,7 @@ public class ConfigRepoController {
 			log.writeInfo(repoModel, repoModel.getSql(), list);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e.toString());
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
@@ -135,7 +136,69 @@ public class ConfigRepoController {
 		processResult.setGvpSessionID(repoModel.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
+		return resultOut;
+	}
+	
+	@ApiOperation(value = "查詢", notes = "回傳多個結果集。  \n補充:可執行內容只有select的預存程序(即預存程序中不可含有insert,update......等等)，須按照MSSQL的預存程序呼叫方法來呼叫。")
+	@PostMapping("/queryForMultipleResultSet")
+	public ResultOut queryForMultipleResultSet(@ModelAttribute final RepoModel repoModel) {
+		long ivrInTime = System.currentTimeMillis();
+		String uuid = UUID.randomUUID().toString();
+		ResultOut resultOut = new ResultOut();
+		ProcessResult processResult = resultOut.getProcessResult();
+		String hostAddress = StringUtils.EMPTY;
+		try {
+			InetAddress iAddress = InetAddress.getLocalHost();
+			hostAddress = iAddress.getHostAddress();
+			long DBInTime = System.currentTimeMillis();
+			@SuppressWarnings("unchecked")
+			List<Map<String, Object>> result = (List<Map<String, Object>>) dynamicDataSource.getConfigJdbcTemplate().execute(new CallableStatementCreator() {
+				@Override
+				public CallableStatement createCallableStatement(Connection con) throws SQLException {
+					CallableStatement cstmt = con.prepareCall(repoModel.getSql());
+					return cstmt;
+				}
+			}, new CallableStatementCallback<Object>() {
+				@Override
+				public Object doInCallableStatement(CallableStatement cs) throws SQLException, DataAccessException {
+					List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+			        boolean resultsAvailable = cs.execute();
+			        while (resultsAvailable){
+			        	ResultSet rs = cs.getResultSet();
+			        	ResultSetMetaData rsmd = rs.getMetaData();
+			        	while(rs.next()){
+			        		Map<String, Object> map = new HashMap<String, Object>(); 
+			        		int columnCount = rsmd.getColumnCount();
+			        		for(int i=0;i<columnCount;i++){
+			        			String columnName = rsmd.getColumnName(i+1);
+			        			map.put(columnName, rs.getObject(i+1));
+			        		}
+			        		resultList.add(map);
+			        	}
+			        	resultsAvailable = cs.getMoreResults();
+			        }
+			        return resultList;
+				}
+			});
+			long DBOutTime = System.currentTimeMillis();
+			log.writeTimeLog(repoModel.getConnID(), uuid, "IVRDB", DBInTime, DBOutTime);
+			resultOut.setDataList(result);
+			processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
+			log.writeInfo(repoModel, repoModel.getSql(), result);
+		}
+		catch (Exception e) {
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
+			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
+			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
+			processResult.setReturnMessage(e.getMessage());
+		}
+		processResult.setCallUUID(repoModel.getCallUUID());
+		processResult.setConnID(repoModel.getConnID());
+		processResult.setGvpSessionID(repoModel.getGvpSessionID());
+		processResult.setApServerName(hostAddress);
+		long ivrOutTime = System.currentTimeMillis();
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultOut;
 	}
 	
@@ -144,7 +207,7 @@ public class ConfigRepoController {
 	@PostMapping("/procedure_1_integer_output")
 	public ResultOut sp_WriteCTITaskList3(@ModelAttribute final RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String uuid = UUID.randomUUID().toString();
 		ResultOut resultOut = new ResultOut();
 		ProcessResult processResult = resultOut.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
@@ -154,7 +217,7 @@ public class ConfigRepoController {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			long DBInTime = System.currentTimeMillis();
-			int i = (Integer) jdbcTemplate.execute(new CallableStatementCreator() {
+			int i = (Integer) dynamicDataSource.getConfigJdbcTemplate().execute(new CallableStatementCreator() {
 				@Override
 				public CallableStatement createCallableStatement(Connection con) throws SQLException {
 					CallableStatement cstmt = con.prepareCall("{" + repoModel.getSql() + "}");
@@ -175,7 +238,7 @@ public class ConfigRepoController {
 				}
 			});
 			long DBOutTime = System.currentTimeMillis();
-			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
+			log.writeTimeLog(repoModel.getConnID(), uuid, "IVRDB", DBInTime, DBOutTime);
 			map.put("Value", String.valueOf(i));
 			data.add(map);
 			resultOut.setDataList(data);
@@ -183,7 +246,7 @@ public class ConfigRepoController {
 			log.writeInfo(repoModel, repoModel.getSql(), data);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e.toString());
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
@@ -193,7 +256,7 @@ public class ConfigRepoController {
 		processResult.setGvpSessionID(repoModel.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultOut;
 	}
 	
@@ -201,7 +264,7 @@ public class ConfigRepoController {
 	@PostMapping("/compareCustomerIDPriority")
 	public ResultOutIDPriority compareCustomerIDFromMobilephone(@ModelAttribute RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String uuid = UUID.randomUUID().toString();
 		ResultOutIDPriority resultOut = new ResultOutIDPriority();
 		ProcessResult processResult = resultOut.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
@@ -213,9 +276,9 @@ public class ConfigRepoController {
 			hostAddress = iAddress.getHostAddress();
 			List<Map<String,Object>> result = new ArrayList<Map<String,Object>>();
 			long DBInTime = System.currentTimeMillis();
-			List<Map<String, Object>> dataList = jdbcTemplate.queryForList(repoModel.getSql());
+			List<Map<String, Object>> dataList = dynamicDataSource.getConfigJdbcTemplate().queryForList(repoModel.getSql());
 			long DBOutTime = System.currentTimeMillis();
-			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
+			log.writeTimeLog(repoModel.getConnID(), uuid, "IVRDB", DBInTime, DBOutTime);
 			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Pattern pattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.\\d{3}$|"
@@ -282,7 +345,7 @@ public class ConfigRepoController {
 			log.writeInfo(repoModel, repoModel.getSql(), result, bmas, idCount);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e.toString());
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
@@ -292,7 +355,7 @@ public class ConfigRepoController {
 		processResult.setGvpSessionID(repoModel.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultOut;
 	}
 }

@@ -6,20 +6,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ctbcbank.ivr.repo.gateway.async.AsyncTask;
-import com.ctbcbank.ivr.repo.gateway.encrypt.DES;
 import com.ctbcbank.ivr.repo.gateway.encrypt.Log;
 import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResult;
 import com.ctbcbank.ivr.repo.gateway.enumeration.ProcessResultEnum;
@@ -28,7 +26,7 @@ import com.ctbcbank.ivr.repo.gateway.model.in.RepoModel;
 import com.ctbcbank.ivr.repo.gateway.model.in.SplunkIn;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOut;
 import com.ctbcbank.ivr.repo.gateway.model.out.ResultOutStatus;
-import com.ctbcbank.ivr.repo.gateway.properties.KeyProperties;
+import com.ctbcbank.ivr.repo.gateway.monitor.DynamicDataSource;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,16 +35,10 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/log")
 @Api(tags = "針對Log data base進行操作")
 public class LogRepoController {
-	private Logger loggerA = LoggerFactory.getLogger("splunk_A");
-	private Logger loggerB = LoggerFactory.getLogger("splunk_B");
-	private Logger ivrDetailLog = LoggerFactory.getLogger("ivr_detail_log");
 	@Autowired
-	@Qualifier("ivrLogJdbcTemplate")
-	private JdbcTemplate jdbcTemplate;
+	private DynamicDataSource dynamicDataSource;
 	@Autowired
 	private AsyncTask task;
-	@Autowired
-	private KeyProperties keyProperties;
 	@Autowired
 	private Log log;
 	
@@ -54,7 +46,7 @@ public class LogRepoController {
 	@PostMapping("/execute")
 	public ResultOut execute(@ModelAttribute RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String uuid = UUID.randomUUID().toString();
 		ResultOut resultInfo = new ResultOut();
 		ProcessResult processResult = resultInfo.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
@@ -62,14 +54,14 @@ public class LogRepoController {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			long DBInTime = System.currentTimeMillis();
-			jdbcTemplate.execute(repoModel.getSql());
+			dynamicDataSource.getLogJdbcTemplate().execute(repoModel.getSql());
 			long DBOutTime = System.currentTimeMillis();
-			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
+			log.writeTimeLog(repoModel.getConnID(), uuid, "IVRDB", DBInTime, DBOutTime);
 			processResult.setProcessResultEnum(ProcessResultEnum.EDIT_SUCCESS);
 			log.writeInfo(repoModel, repoModel.getSql(), Log.INPUT);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e.toString());
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
@@ -79,7 +71,7 @@ public class LogRepoController {
 		processResult.setGvpSessionID(repoModel.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultInfo;
 	}
 	
@@ -87,7 +79,7 @@ public class LogRepoController {
 	@PostMapping("/executeThread")
 	public ResultOutStatus executeThread(@ModelAttribute final RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String uuid = UUID.randomUUID().toString();
 		try {
 			log.writeInfo(repoModel, repoModel.getSql(), Log.INPUT);
 		} catch (Exception e) {
@@ -107,13 +99,13 @@ public class LogRepoController {
 //					}
 //				}
 //			}.start();
-			task.jdbcExecute(jdbcTemplate, repoModel);
+			task.jdbcExecute(dynamicDataSource.getLogJdbcTemplate(), repoModel);
 		}
 		else {
 			resultOut.setStatus(ProcessStatus.FAIL.getStatus());
 		}
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultOut;
 	}
 	
@@ -122,7 +114,7 @@ public class LogRepoController {
 	@PostMapping("/IVRDetailLog")
 	public ResultOutStatus IVRDetailLog(@ModelAttribute final RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String uuid = UUID.randomUUID().toString();
 		try {
 			log.writeInfo(repoModel, repoModel.getSql(), Log.INPUT);
 		} catch (Exception e) {
@@ -132,13 +124,13 @@ public class LogRepoController {
 		ResultOutStatus resultOut = new ResultOutStatus();
 		if(!repoModel.getSql().equals(StringUtils.EMPTY)) {
 			resultOut.setStatus(ProcessStatus.SUCCESS.getStatus());
-			task.jdbcExecute(jdbcTemplate, repoModel);
+			task.jdbcExecute(dynamicDataSource.getLogJdbcTemplate(), repoModel);
 		}
 		else {
 			resultOut.setStatus(ProcessStatus.FAIL.getStatus());
 		}	
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultOut;
 	}
 	
@@ -147,44 +139,44 @@ public class LogRepoController {
 	@PostMapping("/query")
 	public ResultOut query(@ModelAttribute RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
-		ResultOut resultInfo = new ResultOut();
-		ProcessResult processResult = resultInfo.getProcessResult();
+		String uuid = UUID.randomUUID().toString();
+		ResultOut resultOut = new ResultOut();
+		ProcessResult processResult = resultOut.getProcessResult();
 		String hostAddress = StringUtils.EMPTY;
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			long DBInTime = System.currentTimeMillis();
-			List<Map<String, Object>> dataList = jdbcTemplate.queryForList(repoModel.getSql());
-			long DBOutTime = System.currentTimeMillis();
-			log.writeTimeLog(repoModel.getConnID(), UUID, "IVRDB", DBInTime, DBOutTime);
 			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+			long DBInTime = System.currentTimeMillis();
+			List<Map<String, Object>> dataList = dynamicDataSource.getLogJdbcTemplate().queryForList(repoModel.getSql());
+			long DBOutTime = System.currentTimeMillis();
+			log.writeTimeLog(repoModel.getConnID(), uuid, "IVRDB", DBInTime, DBOutTime);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Pattern pattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.\\d{3}$|"
+											+ "\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.\\d{2}$|"
+											+ "\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.\\d{1}$");
+			Matcher match;
 			for(Map<String, Object> m:dataList) {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				for(Map.Entry<String, Object> entry:m.entrySet()) {
-					String k = entry.getKey();
 					if(entry.getValue()!=null) {
-						String v = entry.getValue().toString();
-//						判斷v是否為日期形式，若是的話，去掉其後面的毫秒!，以避免在composer收到的日期形式為毫秒。
-						try {
-							Date date = sdf.parse(v);
-							m.put(k, sdf.format(date));
-						} 
-						catch (Exception e) {
+						match = pattern.matcher(entry.getValue().toString());
+						if(match.matches()) {
+							Date date = sdf.parse(entry.getValue().toString());
+							m.put(entry.getKey(), sdf.format(date));
 						}
 					}
 				}
 				list.add(m);
 			}
 			if (!dataList.isEmpty())
-				resultInfo.setDataList(list);
+				resultOut.setDataList(list);
 			else
-				resultInfo.setDataList(new ArrayList<Map<String, Object>>());
+				resultOut.setDataList(new ArrayList<Map<String, Object>>());
 			processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
 			log.writeInfo(repoModel, repoModel.getSql(), list);
 		}
 		catch (Exception e) {
-			log.writeError(repoModel, e.toString());
+			log.writeError(repoModel, e, Log.IVRREPOGATEWAY);
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
@@ -194,21 +186,20 @@ public class LogRepoController {
 		processResult.setGvpSessionID(repoModel.getGvpSessionID());
 		processResult.setApServerName(hostAddress);
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
-		return resultInfo;
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
+		return resultOut;
 	}
 	
 	@ApiOperation(value = "紀錄splunk log", notes = "把splunkA和splunkB的sql語句分別寫成2個log檔案")
 	@PostMapping("/writeSplunkLog")
 	public ResultOutStatus writeSplunkLog(@ModelAttribute SplunkIn splunkIn) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String uuid = UUID.randomUUID().toString();
 		ResultOutStatus resultOutStatus = new ResultOutStatus();
-		loggerA.info(splunkIn.getSplunk_a());
-		loggerB.info(splunkIn.getSplunk_b());
+		log.writeSplunkLog(splunkIn.getSplunk_a(), splunkIn.getSplunk_b());
 		resultOutStatus.setStatus("s");
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(splunkIn.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(splunkIn.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultOutStatus;
 	}
 	
@@ -218,22 +209,16 @@ public class LogRepoController {
 	@PostMapping("/IVRDetailLog_notUsed")
 	public ResultOutStatus writeLog(@ModelAttribute RepoModel repoModel) {
 		long ivrInTime = System.currentTimeMillis();
-		String UUID = java.util.UUID.randomUUID().toString();
+		String uuid = UUID.randomUUID().toString();
 		ResultOutStatus resultOutStatus = new ResultOutStatus();
-		String hostAddress = StringUtils.EMPTY;
 		try {
-			InetAddress iAddress = InetAddress.getLocalHost();
-			hostAddress = iAddress.getHostAddress();
-			String sql = repoModel.getSql().replace("[ProcessDate]", "[ProcessDate],[HostAddress]")
-										   .replace("getdate()", "getdate(),'" + hostAddress + "'");
-			ivrDetailLog.info(DES._EncryptByDES(sql, keyProperties.getKey()) + "#");
+			log.writeDetailLog(repoModel.getSql());
 			resultOutStatus.setStatus("s");
 		} catch (Exception e) {
 			resultOutStatus.setStatus("f");
-			e.printStackTrace();
 		}
 		long ivrOutTime = System.currentTimeMillis();
-		log.writeTimeLog(repoModel.getConnID(), UUID, "IVR", ivrInTime, ivrOutTime);
+		log.writeTimeLog(repoModel.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return resultOutStatus;
 	}
 }

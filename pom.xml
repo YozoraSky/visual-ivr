@@ -12,9 +12,9 @@
 		<module>ivr-gateway</module>
 		<module>ivr-repo-gateway</module>
 		<module>visual-ivr-esb</module>
-		<module>visual-ivr-service</module>
-    	<module>ivr-mq-gateway</module>
-    	<module>ivr-schedule</module>
+    	<module>ivr-old-gateway</module>
+    	<module>api-monitoring</module>
+    	<module>dataSource-monitor</module>
   </modules>
     
 	<parent>
@@ -34,11 +34,6 @@
 			<dependency>
 				<groupId>com.ctbcbank</groupId>
 				<artifactId>visual-ivr-esb</artifactId>
-				<version>1.0</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ctbcbank</groupId>
-				<artifactId>visual-ivr-service</artifactId>
 				<version>1.0</version>
 			</dependency>
 		</dependencies>

@@ -81,7 +81,11 @@ public class EsbCommandServiceImpl extends EsbCommonService implements EsbComman
 		//serviceEnvelope.getServiceHeader則代表serviceEnvelope的function
 		final ServiceEnvelope serviceEnvelope = this.getServiceEnvelope();
 		if(((String)reqhdrMap.get("TrnCode")).indexOf("3260") != -1) {
-			serviceEnvelope.getServiceHeader().setTransactionID(this.getGSTransactionID());
+			String transactionID = this.getGSTransactionID();
+			serviceEnvelope.getServiceHeader().setTransactionID(transactionID);
+			Map<String, Object> reqBdyMap = (Map<String, Object>) esbIn.getData().get("REQBDY");
+			if(reqBdyMap.containsKey("TranNo"))
+				reqBdyMap.put("TranNo", getTranNo());
 		}
 		else {
 			serviceEnvelope.getServiceHeader().setTransactionID(this.getTransactionID());
@@ -109,19 +113,7 @@ public class EsbCommandServiceImpl extends EsbCommonService implements EsbComman
 		Element element = (Element) serviceEnvelopeDocument.getRootElement();
 		element.element("ServiceBody").add(rqDocument.getRootElement());
 		String xml = serviceEnvelopeDocument.asXML();
-		log.writeEsbInputInfo(esbIn, xml, esbIn.getServiceName(), Log.IVRGATEWAY);
-//		String xmlCiphertext = EncryptByDES(xml);
-//		logger.info("========={} input========= : {}\n"
-//				  + "data length : {}#\n"
-//				  + "CallUUID : {}#\n"
-//				  + "ConnID : {}#\n"
-//				  + "GvpSessionID : {}#\n"
-//				  + "#$$%%%%$$#",
-//				  esbIn.getServiceName(), xmlCiphertext,
-//				  xmlCiphertext.length(),
-//				  esbIn.getCallUUID(),
-//				  esbIn.getConnID(),
-//				  esbIn.getGvpSessionID());
+		log.writeEsbInputInfo(esbIn, xml, esbIn.getServiceName());
 		long ESBinTime = System.currentTimeMillis();
 		Object jmsObjResult = this.sendAndReceive(xml);
 		long ESBoutTime = System.currentTimeMillis();
@@ -130,19 +122,7 @@ public class EsbCommandServiceImpl extends EsbCommonService implements EsbComman
 		if(jmsObjResult != null) {
 			jmsResult = jmsObjResult.toString();
 		}
-		log.writeEsbOutputInfo(esbIn, jmsResult, esbIn.getServiceName(), Log.IVRGATEWAY);
-//		String jmsResultCiphertext = EncryptByDES(jmsResult);
-//		logger.info("========={} output========= : {}\n"
-//				  + "data length : {}#\n"
-//				  + "CallUUID : {}#\n"
-//				  + "ConnID : {}#\n"
-//				  + "GvpSessionID : {}#\n"
-//				  + "#$$%%%%$$#", 
-//				  esbIn.getServiceName(), jmsResultCiphertext,
-//				  jmsResultCiphertext.length(),
-//				  esbIn.getCallUUID(),
-//				  esbIn.getConnID(),
-//				  esbIn.getGvpSessionID());
+		log.writeEsbOutputInfo(esbIn, jmsResult, esbIn.getServiceName());
 		if (StringUtils.isNotBlank(jmsResult)) {
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 			ServiceEnvelope result = (ServiceEnvelope) unmarshaller.unmarshal(new StringReader(jmsResult));
