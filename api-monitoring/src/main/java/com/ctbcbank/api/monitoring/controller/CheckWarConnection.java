@@ -33,17 +33,18 @@ public class CheckWarConnection {
 
 	@Scheduled(initialDelayString = "${monitor.initialDelay}", fixedRateString = "${monitor.fixedRate}")
 	public void run() {
-		String result;
 		String[] wars = monitoringProperties.getWar();
+		String results[] = new String[wars.length];
 		try {
+			for (int i=0;i<wars.length;i++) {
+				results[i] = wars[i] + "-----";
+				results[i] += httpPost(monitoringProperties.getUrl().replace("@war", wars[i]), wars[i]);
+			}
 			File file = new File(monitoringProperties.getFile());
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-			for (String war : wars) {
-				result = httpPost(monitoringProperties.getUrl().replace("@war", war), war);
-				bw.write(war + "-----" + result);
-				bw.write("\n");
+			for(String result:results) {
+				bw.write(result + "\n");
 			}
-			bw.flush();
 			bw.close();
 		} catch (Exception e) {
 			logger.info("error : ", e);
