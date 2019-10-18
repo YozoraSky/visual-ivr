@@ -316,7 +316,7 @@ public class ConfigRepoController {
 				if(comparison) {
 					List<Integer> priority = new ArrayList<Integer>();
 					for(Map<String,Object> m:list) {
-						switch((String)m.get("Segment")) {
+						switch(m.get("Segment")!=null?(String)m.get("Segment"):StringUtils.EMPTY) {
 							case "SVP":priority.add(1);break;
 							case "VIP":priority.add(2);break;
 							case "VTB":priority.add(3);break;
