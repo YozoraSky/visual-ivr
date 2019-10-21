@@ -23,6 +23,9 @@ public class SocketChannel{
 	private SocketProperties socketProperties;
 	@Autowired
 	private Log log;
+	private Socket socket;
+	private BufferedOutputStream outputStream;
+	private BufferedInputStream inputStream;
 	private static int changePort = 0;
 	
 	public static synchronized int getChangePort() {
@@ -50,11 +53,11 @@ public class SocketChannel{
 			default: nowPort = socketProperties.getPort();break;
 		}
 		System.out.println(nowPort);
-		Socket socket = connect(nowPort);
+		connect(nowPort);
 		socket.setSoTimeout(socketProperties.getSoTimeout());
 		if(socket!=null && socket.isConnected()) {
-			BufferedOutputStream outputStream = new BufferedOutputStream(socket.getOutputStream());
-			BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
+			outputStream = new BufferedOutputStream(socket.getOutputStream());
+			inputStream = new BufferedInputStream(socket.getInputStream());
 			outputStream.write(iso8583MessageByte);
 			long socketInTime = System.currentTimeMillis();
 			outputStream.flush();
@@ -86,13 +89,12 @@ public class SocketChannel{
 			else {
 				processResult.setProcessResultEnum(ProcessResultEnum.DATA_NOT_FOUND);
 			}
-			socket.close();
 			log.writeSocketInfo(socketIn, socket, inputHexLen+socketIn.getSocketData(), result.trim());
 		}
 		return socketOut;
 	}
-    
-//    方法1:把isoMessage的長度和內容皆轉成為16進位字串，並串接起來，之後再一起轉成byte陣列
+
+	//    方法1:把isoMessage的長度和內容皆轉成為16進位字串，並串接起來，之後再一起轉成byte陣列
 //    方法2:把isoMessage的長度轉成16進位字串，再轉成byte陣列(2 byte)，並和isoMessage的getBytes()組合成新陣列
     private byte[] buildMessage(byte[] isoMessage, String hexLen) {
     	byte[] result = new byte[isoMessage.length + 2];
@@ -111,7 +113,7 @@ public class SocketChannel{
     }
     
     private Socket connect(int port) throws Exception {
-    	Socket socket = new Socket();
+    	socket = new Socket();
     	SocketAddress sokcetAddress = new InetSocketAddress(socketProperties.getIp(),port);
     	boolean status = false;
     	for(int i=0;i<3;i++) {
@@ -129,5 +131,17 @@ public class SocketChannel{
     		throw new Exception("Connect fail");
     	return socket;
     }
+
+	public Socket getSocket() {
+		return socket;
+	}
+	
+	public BufferedOutputStream getOutputStream() {
+		return outputStream;
+	}
+
+	public BufferedInputStream getInputStream() {
+		return inputStream;
+	}
 }
 

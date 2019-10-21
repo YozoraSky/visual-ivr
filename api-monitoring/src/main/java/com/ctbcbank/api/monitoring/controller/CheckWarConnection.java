@@ -35,42 +35,61 @@ public class CheckWarConnection {
 	public void run() {
 		String[] wars = monitoringProperties.getWar();
 		String results[] = new String[wars.length];
+		FileWriter fileWriter = null;
+		BufferedWriter bw = null;
 		try {
-			for (int i=0;i<wars.length;i++) {
+			for (int i = 0; i < wars.length; i++) {
 				results[i] = wars[i] + "-----";
 				results[i] += httpPost(monitoringProperties.getUrl().replace("@war", wars[i]), wars[i]);
 			}
-			File file = new File(monitoringProperties.getFile());
-			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-			for(String result:results) {
+			fileWriter = new FileWriter(new File(monitoringProperties.getFile()));
+			bw = new BufferedWriter(fileWriter);
+			for (String result : results) {
 				bw.write(result + "\n");
 			}
-			bw.close();
 		} catch (Exception e) {
 			logger.info("error : ", e);
+		} finally {
+			if (fileWriter != null) {
+				try {
+					fileWriter.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if (bw != null) {
+				try {
+					bw.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
 	public String httpPost(String url, String war) {
+		HttpURLConnection httpConnection = null;
+		DataInputStream inputStream = null;
+		InputStreamReader inputStreamReader = null;
+		BufferedReader bufferReader = null;
 		try {
 			String result = StringUtils.EMPTY;
 			URL endpoint = new URL(url);
-			HttpURLConnection httpConnection = (HttpURLConnection) endpoint.openConnection();
+			httpConnection = (HttpURLConnection) endpoint.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setReadTimeout(5000);
 			httpConnection.setConnectTimeout(5000);
 			httpConnection.setDoOutput(true);
 			httpConnection.setDoInput(true);
 			httpConnection.setRequestProperty("Content-Type", "Text");
-			DataInputStream inputStream = new DataInputStream(httpConnection.getInputStream());
-			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-			BufferedReader bufferReader = new BufferedReader(inputStreamReader);
+			inputStream = new DataInputStream(httpConnection.getInputStream());
+			inputStreamReader = new InputStreamReader(inputStream);
+			bufferReader = new BufferedReader(inputStreamReader);
 			String line;
 			StringBuilder stringBuilder = new StringBuilder();
 			while ((line = bufferReader.readLine()) != null) {
 				stringBuilder.append(line);
 			}
-			bufferReader.close();
 			result = stringBuilder.toString();
 			switch (war) {
 			case "ivr-gateway":
@@ -87,20 +106,44 @@ public class CheckWarConnection {
 			switch (war) {
 			case "ivr-gateway":
 				ivr_gateway++;
-				if(ivr_gateway>=monitoringProperties.getWarningTimes())
+				if (ivr_gateway >= monitoringProperties.getWarningTimes())
 					result = "Error";
 				else
 					result = "Warning";
 				break;
 			case "ivr-repo-gateway":
 				ivr_repo_gateway++;
-				if(ivr_repo_gateway>=monitoringProperties.getWarningTimes())
+				if (ivr_repo_gateway >= monitoringProperties.getWarningTimes())
 					result = "Error";
 				else
 					result = "Warning";
 				break;
 			}
 			return result;
+		} finally {
+			if (httpConnection != null)
+				httpConnection.disconnect();
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if (inputStreamReader != null) {
+				try {
+					inputStreamReader.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if (bufferReader != null) {
+				try {
+					bufferReader.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 }

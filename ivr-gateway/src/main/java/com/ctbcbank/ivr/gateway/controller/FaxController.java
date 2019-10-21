@@ -3,12 +3,10 @@ package com.ctbcbank.ivr.gateway.controller;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
-import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +22,7 @@ import com.ctbcbank.ivr.gateway.fax.FaxProperties;
 import com.ctbcbank.visual.ivr.encrypt.Log;
 import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
+import com.ctbcbank.visual.ivr.esb.model.RequestModel;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +36,7 @@ public class FaxController {
 	private FaxProperties faxProperties;
 	@Autowired
 	private Log log;
-	
+
 	@ApiOperation(value = "連接fax API", notes = "")
 	@PostMapping("/fax")
 	public FaxOut fax(@RequestBody FaxIn faxIn) {
@@ -52,16 +51,14 @@ public class FaxController {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
 			long faxInTime = System.currentTimeMillis();
-			if(!checkConnectExecuteTimes(2,faxProperties.getMain_ip())) {
-				if(!checkConnectExecuteTimes(2,faxProperties.getBackup_ip())) {
+			if (!checkConnectExecuteTimes(2, faxProperties.getMain_ip(), faxIn)) {
+				if (!checkConnectExecuteTimes(2, faxProperties.getBackup_ip(), faxIn)) {
 					throw new Exception("Taipei and Taichung servers hang up");
-				}
-				else
+				} else
 					connect_ip = faxProperties.getBackup_ip();
-			}
-			else
+			} else
 				connect_ip = faxProperties.getMain_ip();
-			result = httpPost(connect_ip, JSONObject.fromObject(faxIn.getData()).toString());
+			result = httpPost(connect_ip, JSONObject.fromObject(faxIn.getData()).toString(), faxIn);
 			long faxOutTime = System.currentTimeMillis();
 			log.writeTimeLog(faxIn.getConnID(), uuid, "IVRFAX", faxInTime, faxOutTime);
 			processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
@@ -81,72 +78,147 @@ public class FaxController {
 		log.writeTimeLog(faxIn.getConnID(), uuid, "IVR", ivrInTime, ivrOutTime);
 		return faxOut;
 	}
-	
-	public String httpPost(String url, String output) throws Exception{
-		URL endpoint = new URL(url);
-		HttpURLConnection httpConnection = (HttpURLConnection) endpoint.openConnection();
-		httpConnection.setConnectTimeout(faxProperties.getConnectTimeout());
-		httpConnection.setReadTimeout(faxProperties.getSoTimeout());
-		httpConnection.setRequestMethod("POST");
-		httpConnection.setDoOutput(true);
-		httpConnection.setDoInput(true);
-		httpConnection.setRequestProperty("Content-Type", "application/json");
-		DataOutputStream outputStream = new DataOutputStream(httpConnection.getOutputStream());
-		outputStream.write(output.getBytes("UTF-8"));
-		outputStream.flush();
-		outputStream.close();
-		DataInputStream inputStream = new DataInputStream(httpConnection.getInputStream());
-		InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-		BufferedReader bufferReader = new BufferedReader(inputStreamReader);
-		String line;
+
+	public String httpPost(String url, String output, RequestModel faxIn) {
+		HttpURLConnection httpConnection = null;
+		DataOutputStream outputStream = null;
+		DataInputStream inputStream = null;
+		InputStreamReader inputStreamReader = null;
+		BufferedReader bufferReader = null;
 		StringBuilder stringBuilder = new StringBuilder();
-		while((line = bufferReader.readLine())!=null) {
-			stringBuilder.append(line);
+		try {
+			URL endpoint = new URL(url);
+			httpConnection = (HttpURLConnection) endpoint.openConnection();
+			httpConnection.setConnectTimeout(faxProperties.getConnectTimeout());
+			httpConnection.setReadTimeout(faxProperties.getSoTimeout());
+			httpConnection.setRequestMethod("POST");
+			httpConnection.setDoOutput(true);
+			httpConnection.setDoInput(true);
+			httpConnection.setRequestProperty("Content-Type", "application/json");
+			outputStream = new DataOutputStream(httpConnection.getOutputStream());
+			outputStream.write(output.getBytes("UTF-8"));
+			outputStream.flush();
+			outputStream.close();
+			inputStream = new DataInputStream(httpConnection.getInputStream());
+			inputStreamReader = new InputStreamReader(inputStream);
+			bufferReader = new BufferedReader(inputStreamReader);
+			String line;
+			while ((line = bufferReader.readLine()) != null) {
+				stringBuilder.append(line);
+			}
+		} catch (Exception e) {
+			log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
+		} finally {
+			if(httpConnection!=null)
+				httpConnection.disconnect();
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (Exception e) {
+					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
+				}
+			}
+			if(inputStream!=null) {
+				try {
+					inputStream.close();
+				} catch (Exception e) {
+					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
+				}
+			}
+			if(inputStreamReader!=null) {
+				try {
+					inputStreamReader.close();
+				} catch (Exception e) {
+					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
+				}
+			}
+			if(bufferReader!=null) {
+				try {
+					bufferReader.close();
+				} catch (Exception e) {
+					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
+				}
+			}
 		}
-		bufferReader.close();
 		return stringBuilder.toString();
 	}
-	
-	public boolean checkConnectExecuteTimes(int times, String url) {
+
+	public boolean checkConnectExecuteTimes(int times, String url, RequestModel faxIn) {
 		boolean status = false;
-		for(int i=0;i<times;i++) {
-			if(checkConnect(url)) {
+		for (int i = 0; i < times; i++) {
+			if (checkConnect(url, faxIn)) {
 				status = true;
 				break;
 			}
 		}
 		return status;
 	}
-	
-	public boolean checkConnect(String url) {
+
+	public boolean checkConnect(String url, RequestModel faxIn) {
+		HttpURLConnection httpConnection = null;
+		DataOutputStream outputStream = null;
+		DataInputStream inputStream = null;
+		InputStreamReader inputStreamReader = null;
+		BufferedReader bufferReader = null;
 		try {
 			URL endpoint = new URL(url);
-			HttpURLConnection httpConnection = (HttpURLConnection) endpoint.openConnection();
+			httpConnection = (HttpURLConnection) endpoint.openConnection();
 			httpConnection.setRequestMethod("POST");
 			httpConnection.setConnectTimeout(faxProperties.getConnectTimeout());
 			httpConnection.setReadTimeout(faxProperties.getSoTimeout());
 			httpConnection.setDoOutput(true);
 			httpConnection.setDoInput(true);
 			httpConnection.setRequestProperty("Content-Type", "Text");
-			DataOutputStream outputStream = new DataOutputStream(httpConnection.getOutputStream());
+			outputStream = new DataOutputStream(httpConnection.getOutputStream());
 			outputStream.write("TEST".getBytes("UTF-8"));
 			outputStream.flush();
 			outputStream.close();
-			DataInputStream inputStream = new DataInputStream(httpConnection.getInputStream());
-			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-			BufferedReader bufferReader = new BufferedReader(inputStreamReader);
+			inputStream = new DataInputStream(httpConnection.getInputStream());
+			inputStreamReader = new InputStreamReader(inputStream);
+			bufferReader = new BufferedReader(inputStreamReader);
 			String line;
 			StringBuilder stringBuilder = new StringBuilder();
 			while ((line = bufferReader.readLine()) != null) {
 				stringBuilder.append(line);
 			}
-			bufferReader.close();
 			String ok = stringBuilder.toString();
-			if(ok.equals("ok"))
+			if (ok.equals("ok"))
 				return true;
-			else return false;
+			else
+				return false;
 		} catch (Exception e) {
 			return false;
+		} finally {
+			if(httpConnection!=null)
+				httpConnection.disconnect();
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (Exception e) {
+					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
+				}
+			}
+			if(inputStream!=null) {
+				try {
+					inputStream.close();
+				} catch (Exception e) {
+					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
+				}
+			}
+			if(inputStreamReader!=null) {
+				try {
+					inputStreamReader.close();
+				} catch (Exception e) {
+					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
+				}
+			}
+			if(bufferReader!=null) {
+				try {
+					bufferReader.close();
+				} catch (Exception e) {
+					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
+				}
+			}
 		}
 	}
 }

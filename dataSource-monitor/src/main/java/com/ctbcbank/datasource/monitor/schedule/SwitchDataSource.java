@@ -2,6 +2,7 @@ package com.ctbcbank.datasource.monitor.schedule;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -94,28 +95,55 @@ public class SwitchDataSource {
 
 	public String httpGet(String url) {
 		String result = StringUtils.EMPTY;
+		HttpURLConnection httpConnection = null;
+		InputStream inputStream = null;
+		InputStreamReader inputStreamReader = null;
+		BufferedReader bufferedReader = null;
 		try {
 			URL endpoint = new URL(url);
-			HttpURLConnection httpConnection = (HttpURLConnection) endpoint.openConnection();
+			httpConnection = (HttpURLConnection) endpoint.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setConnectTimeout(5000);
 //			httpConnection.setReadTimeout(5000);
 			httpConnection.setDoOutput(true);
 			httpConnection.setDoInput(true);
 			httpConnection.setRequestProperty("Content-Type", "Text");
-			DataInputStream inputStream = new DataInputStream(httpConnection.getInputStream());
-			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+			inputStream = new DataInputStream(httpConnection.getInputStream());
+			inputStreamReader = new InputStreamReader(inputStream);
+			bufferedReader = new BufferedReader(inputStreamReader);
 			String line;
 			StringBuilder stringBuilder = new StringBuilder();
 			while ((line = bufferedReader.readLine()) != null) {
 				stringBuilder.append(line);
 			}
-			bufferedReader.close();
 			result = stringBuilder.toString();
 		} catch (Exception e) {
 			result = "httpGet fail";
 			logger.info("error : ", e);
+		} finally {
+			if(httpConnection!=null)
+				httpConnection.disconnect();
+			if(inputStream!=null) {
+				try {
+					inputStream.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if(inputStreamReader!=null) {
+				try {
+					inputStreamReader.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if(bufferedReader!=null) {
+				try {
+					bufferedReader.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return result;
 	}
