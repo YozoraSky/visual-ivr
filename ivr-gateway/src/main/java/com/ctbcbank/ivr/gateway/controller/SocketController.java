@@ -52,28 +52,6 @@ public class SocketController {
 			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
 			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
 			processResult.setReturnMessage(e.getMessage());
-		} finally {
-			if(socketChannel.getSocket()!=null) {
-				try {
-					socketChannel.getSocket().close();
-				} catch (Exception e) {
-					log.writeError(socketIn, e, Log.IVRSOCKETGATEWAY);
-				}
-			}
-			if(socketChannel.getInputStream()!=null) {
-				try {
-					socketChannel.getInputStream().close();
-				} catch (Exception e) {
-					log.writeError(socketIn, e, Log.IVRSOCKETGATEWAY);
-				}
-			}
-			if(socketChannel.getOutputStream()!=null) {
-				try {
-					socketChannel.getOutputStream().close();
-				} catch (Exception e) {
-					log.writeError(socketIn, e, Log.IVRSOCKETGATEWAY);
-				}
-			}
 		}
 		processResult.setCallUUID(socketIn.getCallUUID());
 		processResult.setConnID(socketIn.getConnID());
