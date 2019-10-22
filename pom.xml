@@ -13,7 +13,6 @@
 		<module>ivr-repo-gateway</module>
 		<module>visual-ivr-esb</module>
     	<module>ivr-old-gateway</module>
-    	<module>api-monitoring</module>
     	<module>dataSource-monitor</module>
   </modules>
     
