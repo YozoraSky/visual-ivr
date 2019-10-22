@@ -288,11 +288,15 @@ public class ConfigRepoController {
 			if(!dataList.isEmpty()) {
 				Set<String> customerIDSet = new HashSet<String>();
 				String customerId = (String) dataList.get(0).get("customerId");
-				customerId = customerId.substring(customerId.length() - 10, customerId.length());
+				if(customerId.length()>10) {
+					customerId = customerId.substring(customerId.length() - 10, customerId.length());
+				}
 				boolean comparison = true;
 				for(Map<String, Object> m:dataList) {
 					String temp = ((String)m.get("customerId"));
-					temp = temp.substring(temp.length() - 10, temp.length());
+					if(temp.length()>10) {
+						temp = temp.substring(temp.length() - 10, temp.length());
+					}
 					customerIDSet.add(temp);
 					if(!temp.equals(customerId))
 						comparison = false;
