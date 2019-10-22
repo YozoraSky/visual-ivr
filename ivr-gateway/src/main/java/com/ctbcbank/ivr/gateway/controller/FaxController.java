@@ -118,9 +118,9 @@ public class FaxController {
 					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
 				}
 			}
-			if(inputStream!=null) {
+			if(bufferReader!=null) {
 				try {
-					inputStream.close();
+					bufferReader.close();
 				} catch (Exception e) {
 					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
 				}
@@ -132,9 +132,9 @@ public class FaxController {
 					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
 				}
 			}
-			if(bufferReader!=null) {
+			if(inputStream!=null) {
 				try {
-					bufferReader.close();
+					inputStream.close();
 				} catch (Exception e) {
 					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
 				}
@@ -198,9 +198,9 @@ public class FaxController {
 					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
 				}
 			}
-			if(inputStream!=null) {
+			if(bufferReader!=null) {
 				try {
-					inputStream.close();
+					bufferReader.close();
 				} catch (Exception e) {
 					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
 				}
@@ -212,9 +212,9 @@ public class FaxController {
 					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
 				}
 			}
-			if(bufferReader!=null) {
+			if(inputStream!=null) {
 				try {
-					bufferReader.close();
+					inputStream.close();
 				} catch (Exception e) {
 					log.writeError(faxIn, e, Log.IVRFAXGATEWAY);
 				}

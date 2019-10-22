@@ -225,9 +225,9 @@ public class LineController {
 					log.writeError(lineIn, e, Log.IVRLINEGATEWAY);
 				}
 			}
-			if (inputStream != null) {
+			if (bufferReader != null) {
 				try {
-					inputStream.close();
+					bufferReader.close();
 				} catch (Exception e) {
 					log.writeError(lineIn, e, Log.IVRLINEGATEWAY);
 				}
@@ -239,9 +239,9 @@ public class LineController {
 					log.writeError(lineIn, e, Log.IVRLINEGATEWAY);
 				}
 			}
-			if (bufferReader != null) {
+			if (inputStream != null) {
 				try {
-					bufferReader.close();
+					inputStream.close();
 				} catch (Exception e) {
 					log.writeError(lineIn, e, Log.IVRLINEGATEWAY);
 				}

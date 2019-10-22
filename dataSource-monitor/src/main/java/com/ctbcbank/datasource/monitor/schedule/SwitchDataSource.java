@@ -123,9 +123,9 @@ public class SwitchDataSource {
 		} finally {
 			if(httpConnection!=null)
 				httpConnection.disconnect();
-			if(inputStream!=null) {
+			if(bufferedReader!=null) {
 				try {
-					inputStream.close();
+					bufferedReader.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -137,9 +137,9 @@ public class SwitchDataSource {
 					e.printStackTrace();
 				}
 			}
-			if(bufferedReader!=null) {
+			if(inputStream!=null) {
 				try {
-					bufferedReader.close();
+					inputStream.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

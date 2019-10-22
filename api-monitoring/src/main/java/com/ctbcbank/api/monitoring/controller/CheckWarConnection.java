@@ -50,16 +50,16 @@ public class CheckWarConnection {
 		} catch (Exception e) {
 			logger.info("error : ", e);
 		} finally {
-			if (fileWriter != null) {
+			if (bw != null) {
 				try {
-					fileWriter.close();
+					bw.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-			if (bw != null) {
+			if (fileWriter != null) {
 				try {
-					bw.close();
+					fileWriter.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
