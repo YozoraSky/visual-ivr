@@ -79,6 +79,7 @@ public class FaxController {
 		return faxOut;
 	}
 
+//	發送Http請求給傳真Server
 	public String httpPost(String url, String output, RequestModel faxIn) {
 		HttpURLConnection httpConnection = null;
 		DataOutputStream outputStream = null;
@@ -143,6 +144,7 @@ public class FaxController {
 		return stringBuilder.toString();
 	}
 
+//	次數依據輸入參數(times)，決定要測試幾次連線是否成功
 	public boolean checkConnectExecuteTimes(int times, String url, RequestModel faxIn) {
 		boolean status = false;
 		for (int i = 0; i < times; i++) {
@@ -154,6 +156,7 @@ public class FaxController {
 		return status;
 	}
 
+//	確認連線是否成功
 	public boolean checkConnect(String url, RequestModel faxIn) {
 		HttpURLConnection httpConnection = null;
 		DataOutputStream outputStream = null;

@@ -23,6 +23,7 @@ public class SocketChannel {
 	private Log log;
 	private static int changePort = 0;
 
+//	輪流打2個port
 	public static synchronized int getChangePort() {
 		changePort++;
 		if (changePort == 2)
@@ -60,6 +61,7 @@ public class SocketChannel {
 			}
 			System.out.println(nowPort);
 			socket = connect(nowPort, socketProperties);
+//			設定socket接收資料的Timeout
 			socket.setSoTimeout(socketProperties.getSoTimeout());
 			if (socket != null && socket.isConnected()) {
 				outputStream = new BufferedOutputStream(socket.getOutputStream());
@@ -67,17 +69,19 @@ public class SocketChannel {
 				if(System.currentTimeMillis()-ivrInTime>socketProperties.getSoTimeout())
 					throw new Exception("API busy!");
 				long socketInTime = System.currentTimeMillis();
+//				送出ISO8583報文
 				outputStream.write(iso8583MessageByte);
 				outputStream.flush();
 				byte[] dataByte = new byte[2048];
 				int length = -1;
-//			接收回傳值
+//				接收回傳值
 				length = inputStream.read(dataByte);
 				long socketOutTime = System.currentTimeMillis();
 				log.writeTimeLog(socketIn.getConnID(), UUID, "IVRTANDEM", socketInTime, socketOutTime);
 				if (length != -1) {
 					processResult.setProcessResultEnum(ProcessResultEnum.QUERY_SUCCESS);
 					String outputHexLen = StringUtils.EMPTY;
+//					整理長度字串
 					for (int i = 0; i < 2; i++) {
 						if (Integer.toHexString(dataByte[i] & 0xff).length() == 1)
 							outputHexLen += "0" + Integer.toHexString(dataByte[i] & 0xff).toUpperCase();
@@ -86,6 +90,7 @@ public class SocketChannel {
 					}
 					result = outputHexLen + new String(dataByte, 2, length, StandardCharsets.US_ASCII);
 					ParseISO8583 parse = new ParseISO8583();
+//					解析回傳的ISO8583報文，並取得return code
 					String rspCode = parse.getRspCode(new String(dataByte, 14, length, StandardCharsets.US_ASCII),
 							socketIn, log);
 					if (rspCode.equals(StringUtils.EMPTY)) {
@@ -146,9 +151,12 @@ public class SocketChannel {
 	private Socket connect(int port ,SocketProperties socketProperties) throws Exception {
 		Socket socket = new Socket();
 		SocketAddress sokcetAddress = new InetSocketAddress(socketProperties.getIp(), port);
+//		紀錄連線狀態
 		boolean status = false;
+//		重複3次連線動作，若3次連線皆為失敗，則判斷此次連線不成功
 		for (int i = 0; i < 3; i++) {
 			try {
+//				進行連線，並設定連線Timeout
 				socket.connect(sokcetAddress, socketProperties.getConnectTimeout());
 				status = true;
 				break;

@@ -61,6 +61,7 @@ public class LineController {
 					.replace("@templateId", lineIn.getTemplateId() == null ? StringUtils.EMPTY : lineIn.getTemplateId())
 					.replace("@channelId", lineIn.getChannelId() == null ? StringUtils.EMPTY : lineIn.getChannelId());
 			StringBuilder stringBuilder = new StringBuilder();
+//			整理Fields參數(加上雙引號)
 			if (lineIn.getFields() != null && lineIn.getFields().size() != 0) {
 				for (int i = 0; i < lineIn.getFields().size(); i++) {
 					stringBuilder.append("\"" + lineIn.getFields().get(i) + "\",");
@@ -152,6 +153,7 @@ public class LineController {
 					.replace("@templateId", lineIn.getTemplateId() == null ? StringUtils.EMPTY : lineIn.getTemplateId())
 					.replace("@channelId", lineIn.getChannelId() == null ? StringUtils.EMPTY : lineIn.getChannelId());
 			StringBuilder stringBuilder = new StringBuilder();
+//			整理Fields參數(加上雙引號)
 			if (lineIn.getFields() != null && lineIn.getFields().size() != 0) {
 				for (int i = 0; i < lineIn.getFields().size(); i++) {
 					stringBuilder.append("\"" + lineIn.getFields().get(i) + "\",");
@@ -185,6 +187,7 @@ public class LineController {
 		return out;
 	}
 
+//	發送Http請求給Line Server
 	public JSONObject httpPost(String url, String output, RequestModel lineIn) throws Exception {
 		HttpURLConnection httpConnection = null;
 		DataOutputStream outputStream = null;

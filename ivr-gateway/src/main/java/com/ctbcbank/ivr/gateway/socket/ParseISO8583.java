@@ -9,6 +9,7 @@ import org.jpos.iso.packager.GenericPackager;
 
 import com.ctbcbank.visual.ivr.encrypt.Log;
 
+//解析ISO8583報文
 public class ParseISO8583 {
 	
 	public String getRspCode(String hexString, SocketIn socketIn, Log log) {

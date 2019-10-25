@@ -17,6 +17,7 @@ public class WebPageController {
 	@Autowired
 	private SwitchDataSource switchDataSource;
 	
+//	查看DataSourceStatus(取得當前的連線資訊)，展示給前端
 	@GetMapping("/switchConnection")
     public String switchConnection(Model model) {
 		model.addAttribute("connection", DataSourceStatus.getConnection().equals("main")?"Taipei":"Taichung");
@@ -24,6 +25,8 @@ public class WebPageController {
 		model.addAttribute("radio", new Radio());
         return "switchConnection";
     }
+	
+//	根據使用者在前端的輸入，改變連線資訊，並展示給前端
 	@PostMapping("/switchConnection")
     public String switchConnection(@ModelAttribute(value = "radio") Radio radio, Model model) {
 		if(radio.getAutoOrNot().equals("auto")) {

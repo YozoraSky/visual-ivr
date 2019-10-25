@@ -43,6 +43,7 @@ public class SwitchDataSource {
 	private static int mainDBConnectFailCount = 0;
 	private static int reConnectToMainDBCount = 0;
 
+//	自動判斷目前的連線狀態
 	public void auto() {
 		try {
 			configJdbcTemplate.queryForMap("SELECT 1");
@@ -66,6 +67,7 @@ public class SwitchDataSource {
 		transfer();
 	}
 
+//	根據參數，決定連線狀態
 	public void manual(String dataSource) {
 		SwitchDataSource.dataSource = dataSource;
 		mainDBConnectFailCount = dynamicDataSourceProperties.getMainDataBaseFailCount();
@@ -73,6 +75,7 @@ public class SwitchDataSource {
 		transfer();
 	}
 
+//	執行切換連線的動作
 	public void transfer() {
 		String[] ip = dynamicDataSourceProperties.getIp();
 		String result = StringUtils.EMPTY;
