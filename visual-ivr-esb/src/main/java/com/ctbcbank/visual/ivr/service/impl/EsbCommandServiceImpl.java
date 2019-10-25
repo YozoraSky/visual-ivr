@@ -30,6 +30,7 @@ import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessStatus;
 import com.ctbcbank.visual.ivr.esb.model.EsbCommandOut;
 import com.ctbcbank.visual.ivr.esb.model.EsbIn;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
+import com.ctbcbank.visual.ivr.properties.EsbProperties;
 import com.ctbcbank.visual.ivr.service.EsbCommandService;
 import com.ctbcbank.visual.ivr.service.EsbCommonService;
 
@@ -56,6 +57,8 @@ public class EsbCommandServiceImpl extends EsbCommonService implements EsbComman
 	@Autowired
 	private JsonToXMLConverter jsonToXMLConverter;
 	@Autowired
+	private EsbProperties esbProperties;
+	@Autowired
 	private Log log;
 
 	public EsbCommandServiceImpl() {
@@ -64,7 +67,7 @@ public class EsbCommandServiceImpl extends EsbCommonService implements EsbComman
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public EsbCommandOut excute(final EsbIn esbIn, String UUID) throws Exception {
+	public EsbCommandOut excute(final EsbIn esbIn, String UUID, long ivrInTime) throws Exception {
 		final EsbCommandOut esbCommandOut = new EsbCommandOut();
 		esbCommandOut.setServiceName(esbIn.getServiceName());
 		final ProcessResult processResult = esbCommandOut.getProcessResult();
@@ -115,7 +118,8 @@ public class EsbCommandServiceImpl extends EsbCommonService implements EsbComman
 		String xml = serviceEnvelopeDocument.asXML();
 		log.writeEsbInputInfo(esbIn, xml, esbIn.getServiceName());
 		long ESBinTime = System.currentTimeMillis();
-		Object jmsObjResult = this.sendAndReceive(xml);
+		
+		Object jmsObjResult = this.sendAndReceive(xml, ivrInTime);
 		long ESBoutTime = System.currentTimeMillis();
 		log.writeTimeLog(esbIn.getConnID(), UUID, "IVRESB", ESBinTime, ESBoutTime);
 		String jmsResult = StringUtils.EMPTY;
@@ -170,9 +174,11 @@ public class EsbCommandServiceImpl extends EsbCommonService implements EsbComman
 		
 	}
 
-	protected Object sendAndReceive(Object value) {
+	protected Object sendAndReceive(Object value, long ivrInTime) throws Exception{
 		Object response = null;
 		EsbMessagePostProcessor message = new EsbMessagePostProcessor(this.esbJmsReceiver.getDefaultDestination());
+		if((System.currentTimeMillis() - ivrInTime)>esbProperties.getTimeout())
+			throw new Exception("API busy!");
 		this.esbJmsSender.convertAndSend(value, message);
 		response = this.esbJmsReceiver.receiveSelectedAndConvert(message.getMessageSelector());
 		return response;

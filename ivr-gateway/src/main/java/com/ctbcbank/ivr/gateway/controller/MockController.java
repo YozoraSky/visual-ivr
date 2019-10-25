@@ -33,6 +33,7 @@ public class MockController {
 	
  	@PostMapping("/mockCommand")
 	public EsbCommandOut command(@RequestBody final EsbIn esbIn) throws InterruptedException{
+ 		long ivrInTime = System.currentTimeMillis();
  		String uuid = UUID.randomUUID().toString();
  		EsbCommandOut esbCommandOut = null;
 		ProcessResult processResult = null;
@@ -44,7 +45,7 @@ public class MockController {
 		try {
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			esbCommandOut = esbCommandService.excute(esbIn, uuid);
+			esbCommandOut = esbCommandService.excute(esbIn, uuid, ivrInTime);
 			processResult = esbCommandOut.getProcessResult();
 		}
 		catch (Exception e) {

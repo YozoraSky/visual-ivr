@@ -34,7 +34,7 @@ public class MockEsbServiceImpl implements EsbCommandService {
 	DataSource dataSource;
 	//	實作
 	@Override
-	public EsbCommandOut excute(EsbIn esbIn, String UUID) throws Exception {
+	public EsbCommandOut excute(EsbIn esbIn, String UUID, long ivrInTime) throws Exception {
 		String sqlStmt = StringUtils.EMPTY;
 		String result = StringUtils.EMPTY;
 		String searchKey = StringUtils.EMPTY;

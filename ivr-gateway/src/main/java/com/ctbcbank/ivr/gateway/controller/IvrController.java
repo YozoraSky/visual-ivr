@@ -15,6 +15,7 @@ import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
 import com.ctbcbank.visual.ivr.esb.model.EsbCommandOut;
 import com.ctbcbank.visual.ivr.esb.model.EsbIn;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
+import com.ctbcbank.visual.ivr.properties.EsbProperties;
 import com.ctbcbank.visual.ivr.service.EsbCommandService;
 
 import io.swagger.annotations.Api;
@@ -28,6 +29,8 @@ public class IvrController {
 	@Autowired
 	private EsbCommandService esbCommandService;
 	@Autowired
+	private EsbProperties esbProperties;
+	@Autowired
 	private Log log;
 	
 	@ApiOperation(value = "連接ESB主機", notes = "接收json格式的電文資料，轉成xml格式，再送進ESB主機。並接收ESB給的回傳值")
@@ -39,9 +42,11 @@ public class IvrController {
 		ProcessResult processResult = null;
 		String hostAddress = StringUtils.EMPTY;
 		try {
+			if(System.currentTimeMillis()-ivrInTime>esbProperties.getTimeout())
+				throw new Exception("Internet busy!");
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			esbCommandOut = esbCommandService.excute(esbIn, uuid);
+			esbCommandOut = esbCommandService.excute(esbIn, uuid, ivrInTime);
 			processResult = esbCommandOut.getProcessResult();
 		}
 		catch (Exception e) {
@@ -50,7 +55,12 @@ public class IvrController {
 			}
 			processResult = esbCommandOut.getProcessResult();
 			log.writeError(esbIn, e, Log.IVRGATEWAY);
-			processResult.setProcessResultEnum(ProcessResultEnum.SYSTEM_ERROR);
+			processResult.setReturnCode(ProcessResultEnum.SYSTEM_ERROR.getCode());
+			processResult.setStatus(ProcessResultEnum.SYSTEM_ERROR.getStatus());
+			if(!ProcessResultEnum.SYSTEM_ERROR.getMessage().equals("Internet busy!") || !ProcessResultEnum.SYSTEM_ERROR.getMessage().equals("API busy!"))
+				processResult.setReturnMessage(e.getMessage());
+			else
+				processResult.setReturnMessage(ProcessResultEnum.SYSTEM_ERROR.getMessage());
 		}
 		esbCommandOut.setServiceName(esbIn.getServiceName());
 		processResult.setCallUUID(esbIn.getCallUUID());

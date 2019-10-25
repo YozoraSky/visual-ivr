@@ -20,8 +20,6 @@ import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
 @Component
 public class SocketChannel {
 	@Autowired
-	private SocketProperties socketProperties;
-	@Autowired
 	private Log log;
 	private static int changePort = 0;
 
@@ -32,7 +30,7 @@ public class SocketChannel {
 		return changePort;
 	}
 
-	public SocketOut sendAndReceive(SocketIn socketIn, String UUID) throws Exception {
+	public SocketOut sendAndReceive(SocketIn socketIn, String UUID, SocketProperties socketProperties, long ivrInTime) throws Exception {
 		SocketOut socketOut = new SocketOut();
 		Socket socket = null;
 		BufferedOutputStream outputStream = null;
@@ -61,13 +59,15 @@ public class SocketChannel {
 				break;
 			}
 			System.out.println(nowPort);
-			socket = connect(nowPort);
+			socket = connect(nowPort, socketProperties);
 			socket.setSoTimeout(socketProperties.getSoTimeout());
 			if (socket != null && socket.isConnected()) {
 				outputStream = new BufferedOutputStream(socket.getOutputStream());
 				inputStream = new BufferedInputStream(socket.getInputStream());
-				outputStream.write(iso8583MessageByte);
+				if(System.currentTimeMillis()-ivrInTime>socketProperties.getSoTimeout())
+					throw new Exception("API busy!");
 				long socketInTime = System.currentTimeMillis();
+				outputStream.write(iso8583MessageByte);
 				outputStream.flush();
 				byte[] dataByte = new byte[2048];
 				int length = -1;
@@ -143,7 +143,7 @@ public class SocketChannel {
 		return byteOut;
 	}
 
-	private Socket connect(int port) throws Exception {
+	private Socket connect(int port ,SocketProperties socketProperties) throws Exception {
 		Socket socket = new Socket();
 		SocketAddress sokcetAddress = new InetSocketAddress(socketProperties.getIp(), port);
 		boolean status = false;

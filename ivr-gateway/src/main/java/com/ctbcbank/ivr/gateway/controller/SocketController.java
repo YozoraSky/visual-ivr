@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ctbcbank.ivr.gateway.socket.SocketChannel;
 import com.ctbcbank.ivr.gateway.socket.SocketIn;
 import com.ctbcbank.ivr.gateway.socket.SocketOut;
+import com.ctbcbank.ivr.gateway.socket.SocketProperties;
 import com.ctbcbank.visual.ivr.encrypt.Log;
 import com.ctbcbank.visual.ivr.esb.enumeraion.ProcessResultEnum;
 import com.ctbcbank.visual.ivr.esb.model.ProcessResult;
@@ -27,6 +28,8 @@ import io.swagger.annotations.ApiParam;
 public class SocketController {
 	
 	@Autowired
+	private SocketProperties socketProperties;
+	@Autowired
 	private SocketChannel socketChannel;
 	@Autowired
 	private Log log;
@@ -40,9 +43,11 @@ public class SocketController {
 		ProcessResult processResult = null;
 		String hostAddress = StringUtils.EMPTY;
 		try {
+			if(System.currentTimeMillis()-ivrInTime>socketProperties.getSoTimeout())
+				throw new Exception("Internet busy!");
 			InetAddress iAddress = InetAddress.getLocalHost();
 			hostAddress = iAddress.getHostAddress();
-			socketOut = socketChannel.sendAndReceive(socketIn, uuid);
+			socketOut = socketChannel.sendAndReceive(socketIn, uuid, socketProperties ,ivrInTime);
 			processResult = socketOut.getProcessResult();
 		} catch (Exception e) {
 			if(socketOut==null)
